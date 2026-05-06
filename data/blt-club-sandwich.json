@@ -1,5 +1,5 @@
 {
-  "name": "BLT Club Sandwich",
+  "name": "Club Sandwich",
   "meal_type": "Lunch",
   "servings": 2,
   "prep_time": "10 minutes",
@@ -27,11 +27,6 @@
       "store_section": "Meat/Seafood"
     },
     {
-      "amount": "2 large",
-      "item": "tomatoes, sliced",
-      "store_section": "Produce"
-    },
-    {
       "amount": "4 leaves",
       "item": "romaine lettuce",
       "store_section": "Produce"
@@ -56,7 +51,7 @@
     "Cook bacon until crispy. Drain on paper towels.",
     "Toast bread until golden.",
     "Spread mayo on one side of each slice.",
-    "Layer: first slice \u2014 lettuce, tomato, bacon. Add second slice. Layer turkey, cheese, avocado. Top with third slice.",
+    "Layer: first slice \u2014 lettuce, bacon. Add second slice. Layer turkey, cheese, avocado. Top with third slice.",
     "Secure with toothpicks and cut diagonally into quarters."
   ],
   "substitutions": {

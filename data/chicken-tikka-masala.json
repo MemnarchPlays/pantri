@@ -22,8 +22,13 @@
       "store_section": "Dairy/Eggs"
     },
     {
-      "amount": "1 can",
-      "item": "crushed tomatoes (28 oz)",
+      "amount": "1 can (13.5 oz)",
+      "item": "coconut milk",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "chicken broth",
       "store_section": "Pantry/Dry Goods"
     },
     {
@@ -78,13 +83,14 @@
     "Melt butter in a large pan. Saut\u00e9 onion until golden, 8 minutes.",
     "Add garlic and ginger. Cook 2 minutes.",
     "Add remaining spices and cook 1 minute.",
-    "Pour in crushed tomatoes. Simmer 15 minutes.",
-    "Stir in cream and broiled chicken. Simmer 10 more minutes.",
+    "Pour in coconut milk and chicken broth. Simmer 15 minutes until slightly thickened.",
+    "Stir in broiled chicken. Simmer 10 more minutes.",
     "Serve over basmati rice with naan bread."
   ],
   "substitutions": {
     "dairy_free": "Use coconut yogurt for the marinade and coconut cream instead of heavy cream.",
     "gluten_free": "Already gluten-free \u2014 serve with rice instead of naan.",
     "low_carb": "Skip the rice and naan, serve with cauliflower rice."
-  }
+  },
+  "notes": "Using coconut milk instead of tomatoes gives this a rich, slightly sweet curry base."
 }
