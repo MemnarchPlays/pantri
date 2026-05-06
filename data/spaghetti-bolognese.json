@@ -1,5 +1,5 @@
 {
-  "name": "White Bolognese",
+  "name": "Spaghetti Bolognese",
   "meal_type": "Dinner",
   "servings": 6,
   "prep_time": "15 minutes",
@@ -47,14 +47,9 @@
       "store_section": "Produce"
     },
     {
-      "amount": "1.5 cups",
-      "item": "beef broth",
+      "amount": "1 can",
+      "item": "crushed tomatoes (28 oz)",
       "store_section": "Pantry/Dry Goods"
-    },
-    {
-      "amount": "1/2 cup",
-      "item": "heavy cream",
-      "store_section": "Dairy/Eggs"
     },
     {
       "amount": "1/2 cup",
@@ -78,12 +73,11 @@
     }
   ],
   "instructions": [
-    "Heat olive oil in a large heavy pot. Saut\u00e9 onion, carrots, and celery 8 minutes.",
+    "Heat olive oil in a large heavy pot. Saute onion, carrots, and celery 8 minutes.",
     "Add garlic and cook 1 minute.",
     "Add ground beef and pork. Cook until browned, breaking up the meat.",
     "Pour in wine and cook until evaporated, 3 minutes.",
-    "Add beef broth. Stir well and bring to a simmer.",
-    "Stir in milk and heavy cream.",
+    "Add crushed tomatoes and milk. Stir well.",
     "Reduce heat to low and simmer uncovered 45 minutes, stirring occasionally.",
     "Season with salt and pepper. Serve over spaghetti topped with parmesan."
   ],
@@ -93,5 +87,5 @@
     "low_carb": "Serve sauce over zucchini noodles or spaghetti squash.",
     "vegetarian": "Use lentils and mushrooms instead of meat."
   },
-  "notes": "White bolognese \u2014 rich and creamy without tomatoes. Equally delicious."
+  "notes": "The milk is traditional and makes the sauce creamy \u2014 do not skip it."
 }

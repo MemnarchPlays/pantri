@@ -27,18 +27,13 @@
       "store_section": "Produce"
     },
     {
-      "amount": "2 cups",
-      "item": "beef broth",
+      "amount": "1 can",
+      "item": "diced tomatoes (14 oz)",
       "store_section": "Pantry/Dry Goods"
     },
     {
-      "amount": "2 tbsp",
-      "item": "Worcestershire sauce",
-      "store_section": "Pantry/Dry Goods"
-    },
-    {
-      "amount": "1 tbsp",
-      "item": "tomato-free chili paste or chipotle in adobo",
+      "amount": "1 can",
+      "item": "tomato sauce (15 oz)",
       "store_section": "Pantry/Dry Goods"
     },
     {
@@ -70,9 +65,8 @@
   "instructions": [
     "Brown ground beef in a large pot over medium-high heat. Drain fat.",
     "Add onion and garlic. Cook 5 minutes until softened.",
-    "Stir in chili powder, cumin, paprika, and Worcestershire sauce. Cook 1 minute.",
-    "Add beef broth and chili paste. Stir well.",
-    "Add drained kidney beans.",
+    "Stir in chili powder, cumin, and paprika. Cook 1 minute.",
+    "Add diced tomatoes, tomato sauce, and beans. Stir well.",
     "Bring to a boil then reduce heat. Simmer 30 minutes, stirring occasionally.",
     "Taste and season with salt and pepper. Serve with sour cream and shredded cheese."
   ],
@@ -82,5 +76,5 @@
     "low_carb": "Skip the beans and add diced bell peppers instead.",
     "vegetarian": "Replace ground beef with an extra can of beans and 1 cup diced mushrooms."
   },
-  "notes": "Tomato-free chili \u2014 beef broth and Worcestershire give it great depth."
+  "notes": "Tastes even better the next day. Freezes great for up to 3 months."
 }
