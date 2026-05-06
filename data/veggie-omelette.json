@@ -1,0 +1,73 @@
+{
+  "name": "Veggie Omelette",
+  "meal_type": "Breakfast",
+  "servings": 1,
+  "prep_time": "5 minutes",
+  "cook_time": "10 minutes",
+  "macros_per_serving": {
+    "calories": 280,
+    "protein_g": 22,
+    "carbs_g": 8,
+    "fat_g": 18
+  },
+  "ingredients": [
+    {
+      "amount": "3 large",
+      "item": "eggs",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "milk",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "bell pepper, diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "mushrooms, sliced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "onion, diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1 cup",
+      "item": "baby spinach",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "shredded cheddar cheese",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Whisk eggs with milk, salt, and pepper until combined.",
+    "Melt butter in a non-stick skillet over medium heat.",
+    "Saut\u00e9 bell pepper, mushrooms, and onion 3-4 minutes until softened.",
+    "Add spinach and cook 1 minute until wilted. Push veggies to one side.",
+    "Pour egg mixture over entire pan. Let set around the edges, 2 minutes.",
+    "Sprinkle cheese over one half. Fold omelette in half over the filling. Serve."
+  ],
+  "substitutions": {
+    "dairy_free": "Use oat milk instead of milk, dairy-free butter, and vegan cheese.",
+    "low_carb": "Already low-carb \u2014 skip the milk for even fewer carbs.",
+    "vegan": "Use Just Egg or a tofu scramble base instead of eggs."
+  }
+}

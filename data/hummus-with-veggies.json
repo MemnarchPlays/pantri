@@ -1,0 +1,74 @@
+{
+  "name": "Hummus with Veggies",
+  "meal_type": "Snacks",
+  "servings": 6,
+  "prep_time": "10 minutes",
+  "cook_time": "0 minutes",
+  "macros_per_serving": {
+    "calories": 160,
+    "protein_g": 6,
+    "carbs_g": 18,
+    "fat_g": 7
+  },
+  "ingredients": [
+    {
+      "amount": "2 cans",
+      "item": "chickpeas, drained (15 oz each)",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "tahini",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "3 tbsp",
+      "item": "olive oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2",
+      "item": "lemons, juiced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 cloves",
+      "item": "garlic",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/2 tsp",
+      "item": "cumin",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "ice water",
+      "store_section": "Other"
+    },
+    {
+      "amount": "assorted",
+      "item": "carrots, cucumber, celery, bell pepper",
+      "store_section": "Produce"
+    }
+  ],
+  "instructions": [
+    "Blend chickpeas, tahini, lemon juice, garlic, and cumin in a food processor 1 minute.",
+    "With the processor running, drizzle in olive oil and ice water.",
+    "Blend 2-3 more minutes until very smooth and creamy.",
+    "Season with salt. Transfer to a bowl and drizzle with olive oil.",
+    "Serve with sliced raw vegetables."
+  ],
+  "substitutions": {
+    "dairy_free": "Already dairy-free.",
+    "gluten_free": "Already gluten-free.",
+    "vegan": "Already vegan.",
+    "low_carb": "Increase veggie dippers, reduce chickpea portion."
+  },
+  "notes": "Ice water is the secret to ultra-creamy hummus. Don't skip it."
+}

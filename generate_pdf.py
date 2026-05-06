@@ -108,6 +108,7 @@ def cover_page(styles):
     return [
         Spacer(1, 2.2 * inch),
         Paragraph('Recipe Binder', styles['cover_title']),
+        Spacer(1, 0.2 * inch),
         HRFlowable(width='60%', thickness=2, color=PURPLE, spaceAfter=10),
         Paragraph('Personal Collection', styles['cover_sub']),
         Spacer(1, 0.3 * inch),
@@ -232,6 +233,23 @@ def recipe_page(recipe, styles):
         items.append(Paragraph('Instructions', styles['section_hdr']))
         for i, step in enumerate(instructions, 1):
             items.append(Paragraph(f'{i}.  {step}', styles['step']))
+
+    subs = recipe.get('substitutions', {})
+    if subs:
+        items.append(Spacer(1, 8))
+        items.append(HRFlowable(width='100%', thickness=0.5, color=LIGHT_PURPLE, spaceAfter=4))
+        items.append(Paragraph('Substitutions', styles['section_hdr']))
+        labels = {
+            'dairy_free':  'Dairy-Free',
+            'gluten_free': 'Gluten-Free',
+            'low_carb':    'Low-Carb',
+            'vegetarian':  'Vegetarian',
+            'vegan':       'Vegan',
+        }
+        for key, label in labels.items():
+            val = subs.get(key, '').strip()
+            if val:
+                items.append(Paragraph(f'<b>{label}:</b>  {val}', styles['body']))
 
     notes = recipe.get('notes', '').strip()
     if notes:

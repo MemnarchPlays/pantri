@@ -1,0 +1,80 @@
+{
+  "name": "Classic Chili",
+  "meal_type": "Lunch",
+  "servings": 6,
+  "prep_time": "15 minutes",
+  "cook_time": "45 minutes",
+  "macros_per_serving": {
+    "calories": 380,
+    "protein_g": 28,
+    "carbs_g": 32,
+    "fat_g": 14
+  },
+  "ingredients": [
+    {
+      "amount": "1.5 lbs",
+      "item": "ground beef",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "1 large",
+      "item": "onion, diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "3 cloves",
+      "item": "garlic, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1 can",
+      "item": "diced tomatoes (14 oz)",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 can",
+      "item": "tomato sauce (15 oz)",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 cans",
+      "item": "kidney beans, drained",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "chili powder",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "cumin",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "paprika",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Brown ground beef in a large pot over medium-high heat. Drain fat.",
+    "Add onion and garlic. Cook 5 minutes until softened.",
+    "Stir in chili powder, cumin, and paprika. Cook 1 minute.",
+    "Add diced tomatoes, tomato sauce, and beans. Stir well.",
+    "Bring to a boil then reduce heat. Simmer 30 minutes, stirring occasionally.",
+    "Taste and season with salt and pepper. Serve with sour cream and shredded cheese."
+  ],
+  "substitutions": {
+    "dairy_free": "Skip sour cream and cheese toppings or use dairy-free versions.",
+    "gluten_free": "Already gluten-free.",
+    "low_carb": "Skip the beans and add diced bell peppers instead.",
+    "vegetarian": "Replace ground beef with an extra can of beans and 1 cup diced mushrooms."
+  },
+  "notes": "Tastes even better the next day. Freezes great for up to 3 months."
+}

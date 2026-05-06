@@ -1,0 +1,76 @@
+{
+  "name": "Shrimp Fried Rice",
+  "meal_type": "Dinner",
+  "servings": 4,
+  "prep_time": "10 minutes",
+  "cook_time": "20 minutes",
+  "macros_per_serving": {
+    "calories": 420,
+    "protein_g": 28,
+    "carbs_g": 52,
+    "fat_g": 10
+  },
+  "ingredients": [
+    {
+      "amount": "1 lb",
+      "item": "large shrimp, peeled and deveined",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "3 cups",
+      "item": "cooked jasmine rice (day-old)",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "3",
+      "item": "eggs, beaten",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 cup",
+      "item": "frozen peas and carrots",
+      "store_section": "Frozen"
+    },
+    {
+      "amount": "3 cloves",
+      "item": "garlic, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "3 tbsp",
+      "item": "soy sauce",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "sesame oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "vegetable oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "3",
+      "item": "green onions, sliced",
+      "store_section": "Produce"
+    }
+  ],
+  "instructions": [
+    "Heat oil in a large wok or skillet over high heat.",
+    "Cook shrimp 1-2 minutes per side until pink. Remove and set aside.",
+    "Add garlic to the pan and cook 30 seconds.",
+    "Add frozen peas and carrots, cook 2 minutes.",
+    "Push vegetables to the side. Scramble eggs in the empty space until just set.",
+    "Add cold rice and break up any clumps. Stir fry everything together 3-4 minutes.",
+    "Return shrimp. Add soy sauce and sesame oil. Toss well. Garnish with green onions."
+  ],
+  "substitutions": {
+    "dairy_free": "Already dairy-free.",
+    "gluten_free": "Use tamari instead of soy sauce.",
+    "low_carb": "Replace rice with cauliflower rice \u2014 cook 2 minutes less.",
+    "vegetarian": "Replace shrimp with edamame or extra eggs."
+  },
+  "notes": "Day-old rice works best \u2014 fresh rice gets mushy. Make rice the night before."
+}

@@ -1,0 +1,68 @@
+{
+  "name": "BLT Club Sandwich",
+  "meal_type": "Lunch",
+  "servings": 2,
+  "prep_time": "10 minutes",
+  "cook_time": "10 minutes",
+  "macros_per_serving": {
+    "calories": 520,
+    "protein_g": 28,
+    "carbs_g": 44,
+    "fat_g": 24
+  },
+  "ingredients": [
+    {
+      "amount": "6 strips",
+      "item": "bacon",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "6 slices",
+      "item": "sandwich bread, toasted",
+      "store_section": "Bakery"
+    },
+    {
+      "amount": "4 slices",
+      "item": "deli turkey",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "2 large",
+      "item": "tomatoes, sliced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "4 leaves",
+      "item": "romaine lettuce",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "mayonnaise",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "4 slices",
+      "item": "cheddar cheese",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1/2",
+      "item": "avocado, sliced",
+      "store_section": "Produce"
+    }
+  ],
+  "instructions": [
+    "Cook bacon until crispy. Drain on paper towels.",
+    "Toast bread until golden.",
+    "Spread mayo on one side of each slice.",
+    "Layer: first slice \u2014 lettuce, tomato, bacon. Add second slice. Layer turkey, cheese, avocado. Top with third slice.",
+    "Secure with toothpicks and cut diagonally into quarters."
+  ],
+  "substitutions": {
+    "dairy_free": "Skip cheese or use dairy-free slices.",
+    "gluten_free": "Use gluten-free bread.",
+    "low_carb": "Use lettuce leaves as wraps instead of bread.",
+    "vegetarian": "Skip bacon and turkey, add cucumber and extra avocado."
+  }
+}

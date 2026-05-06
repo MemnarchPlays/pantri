@@ -1,0 +1,79 @@
+{
+  "name": "Street Beef Tacos",
+  "meal_type": "Dinner",
+  "servings": 4,
+  "prep_time": "15 minutes",
+  "cook_time": "20 minutes",
+  "macros_per_serving": {
+    "calories": 420,
+    "protein_g": 28,
+    "carbs_g": 38,
+    "fat_g": 16
+  },
+  "ingredients": [
+    {
+      "amount": "1.5 lbs",
+      "item": "ground beef or skirt steak",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "8",
+      "item": "corn tortillas (6-inch)",
+      "store_section": "Bakery"
+    },
+    {
+      "amount": "1",
+      "item": "white onion, finely diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "fresh cilantro, chopped",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2",
+      "item": "limes",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "salsa verde",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1",
+      "item": "avocado, diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 tsp",
+      "item": "cumin",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tsp",
+      "item": "chili powder",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Season beef with cumin, chili powder, salt, and pepper.",
+    "Cook over medium-high heat, breaking up meat, until browned and cooked through, about 10 minutes.",
+    "Warm tortillas directly on a gas burner or in a dry skillet until lightly charred.",
+    "Double up tortillas per taco for sturdiness.",
+    "Fill with beef, then top with onion, cilantro, avocado, and salsa verde.",
+    "Squeeze fresh lime over each taco before serving."
+  ],
+  "substitutions": {
+    "dairy_free": "Already dairy-free.",
+    "gluten_free": "Corn tortillas are naturally gluten-free.",
+    "low_carb": "Serve in lettuce cups instead of tortillas.",
+    "vegetarian": "Replace beef with seasoned black beans and roasted sweet potato."
+  }
+}
