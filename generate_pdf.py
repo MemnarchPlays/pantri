@@ -1,0 +1,303 @@
+#!/usr/bin/env python3
+"""Generate a printable recipe binder PDF from recipe JSON files in the data/ folder."""
+
+import json
+import sys
+from pathlib import Path
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.colors import HexColor, black, white
+from reportlab.lib.units import inch
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+from reportlab.platypus import (
+    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
+    PageBreak, HRFlowable, KeepTogether
+)
+from reportlab.pdfgen import canvas as pdfcanvas
+from datetime import datetime
+
+PURPLE       = HexColor('#6B2D8B')
+DARK_PURPLE  = HexColor('#4A1E6B')
+LIGHT_PURPLE = HexColor('#E8D5F0')
+NEAR_BLACK   = HexColor('#1A1A1A')
+WHITE        = HexColor('#FFFFFF')
+GRAY         = HexColor('#F7F4FA')
+
+DATA_DIR   = Path(__file__).parent / 'data'
+OUTPUT_DIR = Path(__file__).parent / 'output'
+
+STORE_ORDER = [
+    'Produce', 'Meat/Seafood', 'Dairy/Eggs',
+    'Bakery', 'Pantry/Dry Goods', 'Frozen', 'Beverages', 'Other'
+]
+
+MEAL_ORDER = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Desserts', 'Other']
+
+
+class BorderedCanvas(pdfcanvas.Canvas):
+    def __init__(self, *args, **kwargs):
+        pdfcanvas.Canvas.__init__(self, *args, **kwargs)
+        self._saved_page_states = []
+
+    def showPage(self):
+        self._saved_page_states.append(dict(self.__dict__))
+        self._startPage()
+
+    def save(self):
+        for state in self._saved_page_states:
+            self.__dict__.update(state)
+            self._draw_border()
+            pdfcanvas.Canvas.showPage(self)
+        pdfcanvas.Canvas.save(self)
+
+    def _draw_border(self):
+        w, h = letter
+        outer = 0.35 * inch
+        inner = 0.48 * inch
+
+        self.setStrokeColor(PURPLE)
+        self.setLineWidth(3)
+        self.rect(outer, outer, w - 2*outer, h - 2*outer, stroke=1, fill=0)
+
+        self.setStrokeColor(LIGHT_PURPLE)
+        self.setLineWidth(0.75)
+        self.rect(inner, inner, w - 2*inner, h - 2*inner, stroke=1, fill=0)
+
+        corner = 0.18 * inch
+        self.setStrokeColor(DARK_PURPLE)
+        self.setLineWidth(1.5)
+        for x, y in [(outer, outer), (w-outer, outer), (outer, h-outer), (w-outer, h-outer)]:
+            dx = corner if x == outer else -corner
+            dy = corner if y == outer else -corner
+            self.line(x, y, x + dx, y)
+            self.line(x, y, x, y + dy)
+
+
+def build_styles():
+    base = getSampleStyleSheet()
+    return {
+        'cover_title': ParagraphStyle('cover_title', fontName='Helvetica-Bold',
+                                      fontSize=36, textColor=PURPLE, alignment=TA_CENTER,
+                                      spaceAfter=8),
+        'cover_sub':   ParagraphStyle('cover_sub', fontName='Helvetica',
+                                      fontSize=14, textColor=NEAR_BLACK, alignment=TA_CENTER,
+                                      spaceAfter=4),
+        'toc_header':  ParagraphStyle('toc_header', fontName='Helvetica-Bold',
+                                      fontSize=18, textColor=PURPLE, spaceAfter=12),
+        'toc_meal':    ParagraphStyle('toc_meal', fontName='Helvetica-Bold',
+                                      fontSize=12, textColor=DARK_PURPLE, spaceBefore=10, spaceAfter=4),
+        'toc_item':    ParagraphStyle('toc_item', fontName='Helvetica',
+                                      fontSize=10, textColor=NEAR_BLACK, leftIndent=16, spaceAfter=2),
+        'recipe_name': ParagraphStyle('recipe_name', fontName='Helvetica-Bold',
+                                      fontSize=22, textColor=WHITE, alignment=TA_LEFT,
+                                      spaceAfter=0),
+        'section_hdr': ParagraphStyle('section_hdr', fontName='Helvetica-Bold',
+                                      fontSize=11, textColor=DARK_PURPLE, spaceBefore=10, spaceAfter=4),
+        'body':        ParagraphStyle('body', fontName='Helvetica',
+                                      fontSize=10, textColor=NEAR_BLACK, spaceAfter=3),
+        'step':        ParagraphStyle('step', fontName='Helvetica',
+                                      fontSize=10, textColor=NEAR_BLACK, spaceAfter=5,
+                                      leftIndent=8, firstLineIndent=-8),
+        'note':        ParagraphStyle('note', fontName='Helvetica-Oblique',
+                                      fontSize=9, textColor=HexColor('#555555'), spaceAfter=3),
+    }
+
+
+def cover_page(styles):
+    now = datetime.now().strftime('%B %Y')
+    return [
+        Spacer(1, 2.2 * inch),
+        Paragraph('Recipe Binder', styles['cover_title']),
+        HRFlowable(width='60%', thickness=2, color=PURPLE, spaceAfter=10),
+        Paragraph('Personal Collection', styles['cover_sub']),
+        Spacer(1, 0.3 * inch),
+        Paragraph(now, styles['cover_sub']),
+        PageBreak(),
+    ]
+
+
+def toc_page(recipes_by_meal, styles):
+    items = [Paragraph('Table of Contents', styles['toc_header']),
+             HRFlowable(width='100%', thickness=1, color=LIGHT_PURPLE, spaceAfter=8)]
+    for meal in MEAL_ORDER:
+        group = recipes_by_meal.get(meal, [])
+        if not group:
+            continue
+        items.append(Paragraph(meal, styles['toc_meal']))
+        for r in group:
+            items.append(Paragraph(f'• {r["name"]}', styles['toc_item']))
+    items.append(PageBreak())
+    return items
+
+
+def macro_table(recipe, styles):
+    m = recipe.get('macros_per_serving', {})
+    data = [
+        ['Calories', 'Protein', 'Carbs', 'Fat'],
+        [
+            str(m.get('calories', '—')),
+            f'{m.get("protein_g", "—")}g',
+            f'{m.get("carbs_g", "—")}g',
+            f'{m.get("fat_g", "—")}g',
+        ]
+    ]
+    t = Table(data, colWidths=[1.5*inch]*4)
+    t.setStyle(TableStyle([
+        ('BACKGROUND',   (0, 0), (-1, 0), PURPLE),
+        ('TEXTCOLOR',    (0, 0), (-1, 0), WHITE),
+        ('FONTNAME',     (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE',     (0, 0), (-1, 0), 10),
+        ('BACKGROUND',   (0, 1), (-1, 1), LIGHT_PURPLE),
+        ('TEXTCOLOR',    (0, 1), (-1, 1), NEAR_BLACK),
+        ('FONTNAME',     (0, 1), (-1, 1), 'Helvetica-Bold'),
+        ('FONTSIZE',     (0, 1), (-1, 1), 11),
+        ('ALIGN',        (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN',       (0, 0), (-1, -1), 'MIDDLE'),
+        ('ROWBACKGROUNDS', (0, 0), (-1, -1), [PURPLE, LIGHT_PURPLE]),
+        ('GRID',         (0, 0), (-1, -1), 0.5, DARK_PURPLE),
+        ('TOPPADDING',   (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING',(0, 0), (-1, -1), 6),
+        ('ROUNDEDCORNERS', [4]),
+    ]))
+    return t
+
+
+def recipe_header_table(recipe):
+    servings  = recipe.get('servings', '?')
+    prep      = recipe.get('prep_time', '?')
+    cook      = recipe.get('cook_time', '')
+    cook_cell = f'Cook: {cook}' if cook else ''
+    data = [[
+        f'Servings: {servings}',
+        f'Prep: {prep}',
+        cook_cell,
+        recipe.get('meal_type', ''),
+    ]]
+    t = Table(data, colWidths=[1.5*inch, 1.5*inch, 1.5*inch, 1.5*inch])
+    t.setStyle(TableStyle([
+        ('BACKGROUND',    (0, 0), (-1, -1), GRAY),
+        ('TEXTCOLOR',     (0, 0), (-1, -1), DARK_PURPLE),
+        ('FONTNAME',      (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE',      (0, 0), (-1, -1), 9),
+        ('ALIGN',         (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN',        (0, 0), (-1, -1), 'MIDDLE'),
+        ('BOX',           (0, 0), (-1, -1), 1, PURPLE),
+        ('INNERGRID',     (0, 0), (-1, -1), 0.5, LIGHT_PURPLE),
+        ('TOPPADDING',    (0, 0), (-1, -1), 5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+    ]))
+    return t
+
+
+def recipe_name_banner(name):
+    data = [[Paragraph(name, ParagraphStyle(
+        'rn', fontName='Helvetica-Bold', fontSize=20, textColor=WHITE))]]
+    t = Table(data, colWidths=[6*inch])
+    t.setStyle(TableStyle([
+        ('BACKGROUND',    (0, 0), (-1, -1), PURPLE),
+        ('LEFTPADDING',   (0, 0), (-1, -1), 12),
+        ('TOPPADDING',    (0, 0), (-1, -1), 8),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ('ROUNDEDCORNERS', [4]),
+    ]))
+    return t
+
+
+def recipe_page(recipe, styles):
+    items = []
+    items.append(recipe_name_banner(recipe.get('name', 'Untitled')))
+    items.append(Spacer(1, 6))
+    items.append(recipe_header_table(recipe))
+    items.append(Spacer(1, 10))
+
+    items.append(Paragraph('Nutrition Per Serving', styles['section_hdr']))
+    items.append(macro_table(recipe, styles))
+    items.append(Spacer(1, 10))
+
+    ingredients = recipe.get('ingredients', [])
+    if ingredients:
+        items.append(HRFlowable(width='100%', thickness=0.5, color=LIGHT_PURPLE, spaceAfter=4))
+        items.append(Paragraph('Ingredients', styles['section_hdr']))
+        for ing in ingredients:
+            if isinstance(ing, dict):
+                line = f'<b>{ing.get("amount", "")}</b>  {ing.get("item", "")}'
+            else:
+                line = str(ing)
+            items.append(Paragraph(f'• {line}', styles['body']))
+
+    instructions = recipe.get('instructions', [])
+    if instructions:
+        items.append(Spacer(1, 8))
+        items.append(HRFlowable(width='100%', thickness=0.5, color=LIGHT_PURPLE, spaceAfter=4))
+        items.append(Paragraph('Instructions', styles['section_hdr']))
+        for i, step in enumerate(instructions, 1):
+            items.append(Paragraph(f'{i}.  {step}', styles['step']))
+
+    notes = recipe.get('notes', '').strip()
+    if notes:
+        items.append(Spacer(1, 6))
+        items.append(Paragraph(f'<i>Note: {notes}</i>', styles['note']))
+
+    items.append(PageBreak())
+    return items
+
+
+def load_recipes(specific_files=None):
+    if specific_files:
+        paths = [Path(f) for f in specific_files]
+    else:
+        paths = sorted(DATA_DIR.glob('*.json'))
+    recipes = []
+    for p in paths:
+        try:
+            with open(p, encoding='utf-8') as f:
+                recipes.append(json.load(f))
+        except Exception as e:
+            print(f'  Warning: could not load {p.name}: {e}')
+    return recipes
+
+
+def group_by_meal(recipes):
+    groups = {m: [] for m in MEAL_ORDER}
+    for r in recipes:
+        meal = r.get('meal_type', 'Other')
+        if meal not in groups:
+            meal = 'Other'
+        groups[meal].append(r)
+    return groups
+
+
+def generate_binder(specific_files=None, output_name='recipe_binder.pdf'):
+    OUTPUT_DIR.mkdir(exist_ok=True)
+    recipes = load_recipes(specific_files)
+    if not recipes:
+        print('No recipes found. Add .json files to the data/ folder first.')
+        return
+
+    out_path = OUTPUT_DIR / output_name
+    doc = SimpleDocTemplate(
+        str(out_path),
+        pagesize=letter,
+        leftMargin=0.75*inch, rightMargin=0.75*inch,
+        topMargin=0.75*inch,  bottomMargin=0.75*inch,
+    )
+
+    styles = build_styles()
+    groups = group_by_meal(recipes)
+    story  = []
+
+    story += cover_page(styles)
+    story += toc_page(groups, styles)
+
+    for meal in MEAL_ORDER:
+        for recipe in groups.get(meal, []):
+            story += recipe_page(recipe, styles)
+
+    doc.build(story, canvasmaker=BorderedCanvas)
+    print(f'PDF saved: {out_path}')
+    return str(out_path)
+
+
+if __name__ == '__main__':
+    files = sys.argv[1:] if len(sys.argv) > 1 else None
+    generate_binder(files)

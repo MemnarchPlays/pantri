@@ -1,0 +1,89 @@
+{
+  "name": "Beef Lasagna",
+  "meal_type": "Dinner",
+  "servings": 8,
+  "prep_time": "30 minutes",
+  "cook_time": "1 hour 15 minutes",
+  "macros_per_serving": {
+    "calories": 520,
+    "protein_g": 34,
+    "carbs_g": 45,
+    "fat_g": 22
+  },
+  "ingredients": [
+    {
+      "amount": "3 boxes",
+      "item": "lasagna noodles",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 lbs",
+      "item": "ground beef",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "1 large",
+      "item": "onion, diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "4 cloves",
+      "item": "garlic, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 jars",
+      "item": "marinara sauce (24oz)",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "16 oz",
+      "item": "ricotta cheese",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2 cups",
+      "item": "shredded mozzarella",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "grated parmesan",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2",
+      "item": "eggs",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "olive oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "Italian seasoning",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Cook lasagna noodles per box directions until al dente. Drain and lay flat.",
+    "Brown ground beef in a large skillet over medium-high heat. Drain fat.",
+    "Add onion and garlic to the beef and cook until softened, about 5 minutes.",
+    "Stir in marinara sauce and Italian seasoning. Simmer 10 minutes.",
+    "Mix ricotta, eggs, half the parmesan, salt and pepper in a bowl.",
+    "Preheat oven to 375\u00b0F.",
+    "Spread a thin layer of meat sauce in the bottom of a 9x13 baking dish.",
+    "Layer: noodles, ricotta mixture, meat sauce, mozzarella. Repeat twice.",
+    "Top with remaining noodles, meat sauce, mozzarella, and parmesan.",
+    "Cover with foil and bake 45 minutes. Uncover and bake 15 more minutes until bubbly.",
+    "Rest 15 minutes before cutting."
+  ],
+  "notes": "Freezes well. Make a double batch and freeze half before baking."
+}
