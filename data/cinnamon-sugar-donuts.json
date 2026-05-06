@@ -1,0 +1,96 @@
+{
+  "name": "Cinnamon Sugar Donuts",
+  "meal_type": "Desserts",
+  "servings": 12,
+  "prep_time": "10 minutes",
+  "cook_time": "12 minutes",
+  "macros_per_serving": {
+    "calories": 210,
+    "protein_g": 4,
+    "carbs_g": 32,
+    "fat_g": 8
+  },
+  "ingredients": [
+    {
+      "amount": "2 cups",
+      "item": "all-purpose flour",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "3/4 cup",
+      "item": "granulated sugar",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tsp",
+      "item": "baking powder",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 tsp",
+      "item": "cinnamon",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 tsp",
+      "item": "nutmeg",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 tsp",
+      "item": "salt",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "3/4 cup",
+      "item": "milk",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2 large",
+      "item": "eggs",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "4 tbsp",
+      "item": "butter, melted",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "vanilla extract",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "granulated sugar (coating)",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "cinnamon (coating)",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "4 tbsp",
+      "item": "butter, melted (coating)",
+      "store_section": "Dairy/Eggs"
+    }
+  ],
+  "instructions": [
+    "Preheat oven to 400\u00b0F. Grease a donut pan.",
+    "Whisk flour, sugar, baking powder, cinnamon, nutmeg, and salt in a large bowl.",
+    "In another bowl, whisk milk, eggs, melted butter, and vanilla.",
+    "Pour wet ingredients into dry and stir until just combined.",
+    "Pipe or spoon batter into donut pan, filling 3/4 full.",
+    "Bake 10-12 minutes until donuts spring back when touched.",
+    "Mix 1/2 cup sugar with 1 tsp cinnamon in a shallow bowl.",
+    "Brush warm donuts with melted butter, then roll in cinnamon sugar."
+  ],
+  "substitutions": {
+    "dairy_free": "Use oat milk and dairy-free butter.",
+    "gluten_free": "Use a 1:1 gluten-free flour blend.",
+    "vegan": "Use oat milk, vegan butter, and flax eggs."
+  },
+  "notes": "A donut pan is required. Do not overbake \u2014 they dry out quickly."
+}
