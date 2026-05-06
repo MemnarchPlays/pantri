@@ -1,0 +1,65 @@
+{
+  "name": "Philly Cheesesteak",
+  "meal_type": "Lunch",
+  "servings": 2,
+  "prep_time": "10 minutes",
+  "cook_time": "15 minutes",
+  "macros_per_serving": {
+    "calories": 580,
+    "protein_g": 42,
+    "carbs_g": 46,
+    "fat_g": 24
+  },
+  "ingredients": [
+    {
+      "amount": "3/4 lb",
+      "item": "ribeye steak, very thinly sliced",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "2",
+      "item": "hoagie rolls, split",
+      "store_section": "Bakery"
+    },
+    {
+      "amount": "1 large",
+      "item": "onion, thinly sliced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "6 slices",
+      "item": "provolone cheese",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "vegetable oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "Worcestershire sauce",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Ask your butcher to slice the ribeye paper-thin, or freeze 30 minutes and slice yourself.",
+    "Heat oil in a large cast iron skillet over high heat.",
+    "Cook onion, stirring, until caramelized, about 8 minutes. Push to the side.",
+    "Add steak in a single layer. Season and cook 1-2 minutes, then chop and stir with onions.",
+    "Add Worcestershire sauce. Divide meat into 2 portions in the pan.",
+    "Lay 3 slices of provolone over each portion. Cover 1 minute until melted.",
+    "Scoop into toasted hoagie rolls."
+  ],
+  "substitutions": {
+    "dairy_free": "Skip cheese or use dairy-free provolone.",
+    "gluten_free": "Use a gluten-free hoagie roll.",
+    "low_carb": "Serve the steak mixture over cauliflower rice or in lettuce cups."
+  },
+  "notes": "Very thin slicing is everything. Ask your butcher or partially freeze the meat first."
+}

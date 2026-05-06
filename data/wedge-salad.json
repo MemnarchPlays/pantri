@@ -1,0 +1,63 @@
+{
+  "name": "Wedge Salad",
+  "meal_type": "Lunch",
+  "servings": 4,
+  "prep_time": "10 minutes",
+  "cook_time": "0 minutes",
+  "macros_per_serving": {
+    "calories": 280,
+    "protein_g": 12,
+    "carbs_g": 8,
+    "fat_g": 22
+  },
+  "ingredients": [
+    {
+      "amount": "1 head",
+      "item": "iceberg lettuce, cut into 4 wedges",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "8 strips",
+      "item": "bacon, cooked and crumbled",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "blue cheese crumbles",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "blue cheese dressing",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "red onion, finely diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "fresh chives, chopped",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "to taste",
+      "item": "black pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Cook bacon until crispy and crumble. Set aside.",
+    "Cut iceberg lettuce through the core into 4 equal wedges. Keep core intact.",
+    "Place each wedge on a plate, cut-side up.",
+    "Drizzle blue cheese dressing generously over each wedge.",
+    "Top with bacon, blue cheese crumbles, red onion, and chives.",
+    "Finish with cracked black pepper."
+  ],
+  "substitutions": {
+    "dairy_free": "Use a dairy-free ranch dressing and skip blue cheese.",
+    "gluten_free": "Already gluten-free.",
+    "vegetarian": "Skip bacon and add extra cheese and avocado."
+  }
+}

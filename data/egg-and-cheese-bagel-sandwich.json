@@ -1,0 +1,58 @@
+{
+  "name": "Egg and Cheese Bagel Sandwich",
+  "meal_type": "Breakfast",
+  "servings": 2,
+  "prep_time": "5 minutes",
+  "cook_time": "10 minutes",
+  "macros_per_serving": {
+    "calories": 480,
+    "protein_g": 28,
+    "carbs_g": 48,
+    "fat_g": 18
+  },
+  "ingredients": [
+    {
+      "amount": "2",
+      "item": "everything bagels, sliced",
+      "store_section": "Bakery"
+    },
+    {
+      "amount": "4 large",
+      "item": "eggs",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "4 slices",
+      "item": "American or cheddar cheese",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "4 strips",
+      "item": "bacon",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Cook bacon until crispy. Drain and set aside.",
+    "Toast bagels until golden.",
+    "Melt butter in a skillet over medium-low heat.",
+    "Crack eggs in and cook 3 minutes. Flip and immediately lay cheese on top.",
+    "Cover pan with a lid for 1 minute until cheese melts.",
+    "Assemble: bagel bottom, 2 eggs with cheese, 2 bacon strips, bagel top."
+  ],
+  "substitutions": {
+    "dairy_free": "Use dairy-free cheese and butter.",
+    "gluten_free": "Use a gluten-free bagel.",
+    "vegetarian": "Skip bacon and add sliced avocado."
+  }
+}

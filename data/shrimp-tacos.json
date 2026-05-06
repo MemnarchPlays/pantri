@@ -1,0 +1,83 @@
+{
+  "name": "Shrimp Tacos",
+  "meal_type": "Lunch",
+  "servings": 4,
+  "prep_time": "15 minutes",
+  "cook_time": "10 minutes",
+  "macros_per_serving": {
+    "calories": 380,
+    "protein_g": 28,
+    "carbs_g": 38,
+    "fat_g": 12
+  },
+  "ingredients": [
+    {
+      "amount": "1 lb",
+      "item": "large shrimp, peeled and deveined",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "8",
+      "item": "corn tortillas (6-inch)",
+      "store_section": "Bakery"
+    },
+    {
+      "amount": "2 cups",
+      "item": "coleslaw mix",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "mayonnaise",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "lime juice",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 tsp",
+      "item": "chili powder",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "cumin",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "garlic powder",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "olive oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "fresh cilantro",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1",
+      "item": "lime, cut into wedges",
+      "store_section": "Produce"
+    }
+  ],
+  "instructions": [
+    "Toss shrimp with chili powder, cumin, garlic powder, salt, and olive oil.",
+    "Mix coleslaw with mayonnaise and lime juice. Season with salt.",
+    "Cook shrimp in a hot skillet 1-2 minutes per side until pink and slightly charred.",
+    "Warm tortillas in a dry skillet or directly over a flame.",
+    "Fill each tortilla with slaw, shrimp, and cilantro.",
+    "Serve with lime wedges."
+  ],
+  "substitutions": {
+    "dairy_free": "Already dairy-free.",
+    "gluten_free": "Corn tortillas are naturally gluten-free.",
+    "low_carb": "Serve in lettuce cups instead of tortillas."
+  }
+}

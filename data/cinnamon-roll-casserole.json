@@ -1,0 +1,63 @@
+{
+  "name": "Cinnamon Roll Casserole",
+  "meal_type": "Breakfast",
+  "servings": 8,
+  "prep_time": "10 minutes",
+  "cook_time": "35 minutes",
+  "macros_per_serving": {
+    "calories": 420,
+    "protein_g": 8,
+    "carbs_g": 62,
+    "fat_g": 16
+  },
+  "ingredients": [
+    {
+      "amount": "2 cans",
+      "item": "refrigerated cinnamon rolls (with icing)",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "4 large",
+      "item": "eggs",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "heavy cream",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "maple syrup",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "vanilla extract",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "cinnamon",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    }
+  ],
+  "instructions": [
+    "Preheat oven to 375\u00b0F. Grease a 9x13 baking dish with butter.",
+    "Cut each cinnamon roll into quarters and spread evenly in the dish.",
+    "Whisk eggs, cream, maple syrup, vanilla, and cinnamon together.",
+    "Pour egg mixture evenly over the cinnamon roll pieces.",
+    "Bake 30-35 minutes until puffed, golden, and set in the center.",
+    "Drizzle the included icing over the top while still warm. Serve immediately."
+  ],
+  "substitutions": {
+    "dairy_free": "Use coconut cream and dairy-free cinnamon roll dough.",
+    "gluten_free": "Use gluten-free canned cinnamon rolls if available."
+  },
+  "notes": "Great for holiday mornings. Assemble the night before, refrigerate, and bake in the morning."
+}

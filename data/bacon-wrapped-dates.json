@@ -1,0 +1,47 @@
+{
+  "name": "Bacon Wrapped Dates",
+  "meal_type": "Snacks",
+  "servings": 8,
+  "prep_time": "10 minutes",
+  "cook_time": "20 minutes",
+  "macros_per_serving": {
+    "calories": 180,
+    "protein_g": 6,
+    "carbs_g": 22,
+    "fat_g": 8
+  },
+  "ingredients": [
+    {
+      "amount": "24",
+      "item": "Medjool dates, pitted",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "12 strips",
+      "item": "bacon, halved crosswise",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "4 oz",
+      "item": "goat cheese or blue cheese",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "24",
+      "item": "toothpicks",
+      "store_section": "Other"
+    }
+  ],
+  "instructions": [
+    "Preheat oven to 400\u00b0F. Line a baking sheet with a wire rack.",
+    "Stuff each date with a small amount of goat cheese.",
+    "Wrap each date with a half strip of bacon and secure with a toothpick.",
+    "Place on the rack and bake 18-20 minutes until bacon is crispy.",
+    "Let cool slightly before serving \u2014 the filling is very hot."
+  ],
+  "substitutions": {
+    "dairy_free": "Skip the cheese filling.",
+    "gluten_free": "Already gluten-free."
+  },
+  "notes": "The sweet-salty-savory combination makes these dangerously addictive."
+}

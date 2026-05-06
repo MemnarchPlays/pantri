@@ -1,0 +1,60 @@
+{
+  "name": "Puppy Chow",
+  "meal_type": "Desserts",
+  "servings": 12,
+  "prep_time": "10 minutes",
+  "cook_time": "5 minutes",
+  "macros_per_serving": {
+    "calories": 220,
+    "protein_g": 4,
+    "carbs_g": 32,
+    "fat_g": 10
+  },
+  "ingredients": [
+    {
+      "amount": "9 cups",
+      "item": "Rice Chex cereal",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 cup",
+      "item": "chocolate chips",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "peanut butter",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "4 tbsp",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "vanilla extract",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1.5 cups",
+      "item": "powdered sugar",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Pour cereal into a very large bowl.",
+    "Melt chocolate chips, peanut butter, and butter together in the microwave in 30-second intervals, stirring between each.",
+    "Stir in vanilla until smooth.",
+    "Pour chocolate mixture over cereal and gently fold until evenly coated.",
+    "Transfer to a large zip-top bag. Add powdered sugar.",
+    "Seal and shake until every piece is coated.",
+    "Spread on a parchment-lined baking sheet to cool and set."
+  ],
+  "substitutions": {
+    "dairy_free": "Use dairy-free chocolate chips and dairy-free butter.",
+    "gluten_free": "Rice Chex is gluten-free \u2014 just verify your chocolate chips are too.",
+    "nut_free": "Replace peanut butter with sunflower seed butter."
+  },
+  "notes": "Also called Muddy Buddies. Keeps in an airtight container up to 1 week."
+}

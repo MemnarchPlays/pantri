@@ -1,0 +1,79 @@
+{
+  "name": "Beef Enchiladas",
+  "meal_type": "Dinner",
+  "servings": 6,
+  "prep_time": "20 minutes",
+  "cook_time": "30 minutes",
+  "macros_per_serving": {
+    "calories": 480,
+    "protein_g": 32,
+    "carbs_g": 42,
+    "fat_g": 18
+  },
+  "ingredients": [
+    {
+      "amount": "1.5 lbs",
+      "item": "ground beef",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "12",
+      "item": "corn tortillas",
+      "store_section": "Bakery"
+    },
+    {
+      "amount": "2 cans",
+      "item": "red enchilada sauce (10 oz each)",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 cups",
+      "item": "shredded Mexican cheese blend",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 large",
+      "item": "onion, diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "3 cloves",
+      "item": "garlic, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1 can",
+      "item": "black beans, drained",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tsp",
+      "item": "cumin",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tsp",
+      "item": "chili powder",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Preheat oven to 375\u00b0F.",
+    "Brown ground beef with onion and garlic. Drain fat. Add cumin, chili powder, salt, and beans.",
+    "Pour 1/2 cup enchilada sauce in the bottom of a 9x13 baking dish.",
+    "Warm tortillas briefly so they roll without cracking.",
+    "Fill each tortilla with 3 tbsp of beef mixture, roll tightly, and place seam-side down in dish.",
+    "Pour remaining enchilada sauce over top. Sprinkle with cheese.",
+    "Bake 25-30 minutes until cheese is melted and bubbly."
+  ],
+  "substitutions": {
+    "dairy_free": "Use dairy-free cheese.",
+    "gluten_free": "Corn tortillas are naturally gluten-free.",
+    "vegetarian": "Replace beef with a mix of black beans and corn."
+  }
+}

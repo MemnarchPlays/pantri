@@ -1,0 +1,60 @@
+{
+  "name": "Better Than Sex Cake",
+  "meal_type": "Desserts",
+  "servings": 12,
+  "prep_time": "15 minutes",
+  "cook_time": "30 minutes",
+  "macros_per_serving": {
+    "calories": 480,
+    "protein_g": 6,
+    "carbs_g": 62,
+    "fat_g": 22
+  },
+  "ingredients": [
+    {
+      "amount": "1 box",
+      "item": "chocolate cake mix (plus ingredients on box)",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 can",
+      "item": "sweetened condensed milk (14 oz)",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 jar",
+      "item": "caramel sauce (12 oz)",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "8 oz",
+      "item": "whipped topping (Cool Whip), thawed",
+      "store_section": "Frozen"
+    },
+    {
+      "amount": "4",
+      "item": "Heath or Skor toffee bars, crushed",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "chocolate chips",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Bake chocolate cake in a 9x13 pan according to package directions. Let cool 10 minutes.",
+    "Use the handle of a wooden spoon to poke holes all over the warm cake.",
+    "Pour sweetened condensed milk over the cake, letting it soak into the holes.",
+    "Drizzle caramel sauce over the entire surface.",
+    "Let cake cool completely to room temperature, then refrigerate 1 hour.",
+    "Spread whipped topping evenly over the cold cake.",
+    "Sprinkle crushed toffee bars and chocolate chips over the top.",
+    "Refrigerate at least 2 hours or overnight before serving."
+  ],
+  "substitutions": {
+    "dairy_free": "Use dairy-free cake mix, coconut condensed milk, and dairy-free whipped topping.",
+    "gluten_free": "Use a gluten-free chocolate cake mix."
+  },
+  "notes": "Better the next day \u2014 make it the night before for the best flavor and texture."
+}

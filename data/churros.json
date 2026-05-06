@@ -1,0 +1,79 @@
+{
+  "name": "Churros",
+  "meal_type": "Desserts",
+  "servings": 6,
+  "prep_time": "15 minutes",
+  "cook_time": "15 minutes",
+  "macros_per_serving": {
+    "calories": 280,
+    "protein_g": 4,
+    "carbs_g": 38,
+    "fat_g": 12
+  },
+  "ingredients": [
+    {
+      "amount": "1 cup",
+      "item": "water",
+      "store_section": "Other"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 cup",
+      "item": "all-purpose flour",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "3 large",
+      "item": "eggs",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "vanilla extract",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "pinch",
+      "item": "salt",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "granulated sugar",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "cinnamon",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "oil",
+      "item": "for frying",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "optional",
+      "item": "chocolate dipping sauce",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Bring water, butter, and salt to a boil in a saucepan.",
+    "Add flour all at once and stir vigorously until dough pulls away from sides.",
+    "Cool 5 minutes. Beat in eggs one at a time until smooth. Mix in vanilla.",
+    "Transfer dough to a piping bag with a large star tip.",
+    "Heat 2 inches of oil to 375\u00b0F.",
+    "Pipe 6-inch lengths into the hot oil, cutting with scissors. Fry 3-4 minutes until golden.",
+    "Mix sugar and cinnamon. Roll hot churros in cinnamon sugar immediately."
+  ],
+  "substitutions": {
+    "dairy_free": "Use dairy-free butter.",
+    "gluten_free": "Use a 1:1 gluten-free flour blend."
+  },
+  "notes": "Eat immediately \u2014 churros lose their crunch quickly."
+}

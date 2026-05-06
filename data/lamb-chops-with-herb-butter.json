@@ -1,0 +1,64 @@
+{
+  "name": "Lamb Chops with Herb Butter",
+  "meal_type": "Dinner",
+  "servings": 4,
+  "prep_time": "10 minutes",
+  "cook_time": "15 minutes",
+  "macros_per_serving": {
+    "calories": 520,
+    "protein_g": 42,
+    "carbs_g": 2,
+    "fat_g": 36
+  },
+  "ingredients": [
+    {
+      "amount": "8",
+      "item": "lamb loin chops (1-inch thick)",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "4 tbsp",
+      "item": "butter, softened",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2 cloves",
+      "item": "garlic, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "fresh rosemary, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "fresh thyme, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "olive oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "coarse salt and black pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Mix softened butter with garlic, rosemary, and thyme. Roll in plastic wrap and refrigerate.",
+    "Bring lamb chops to room temperature 20 minutes before cooking.",
+    "Season generously with salt and pepper.",
+    "Heat olive oil in a cast iron skillet over high heat.",
+    "Sear chops 3-4 minutes per side for medium-rare. Do not crowd the pan.",
+    "Rest 5 minutes. Top each chop with a slice of herb butter before serving."
+  ],
+  "substitutions": {
+    "dairy_free": "Skip herb butter or use dairy-free butter.",
+    "gluten_free": "Already gluten-free.",
+    "low_carb": "Already low-carb \u2014 serve with roasted asparagus."
+  },
+  "notes": "Lamb is best at medium-rare (135\u00b0F internal). Do not overcook or it becomes tough."
+}

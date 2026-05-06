@@ -121,7 +121,7 @@ def toc_page(recipes_by_meal, styles):
     items = [Paragraph('Table of Contents', styles['toc_header']),
              HRFlowable(width='100%', thickness=1, color=LIGHT_PURPLE, spaceAfter=8)]
     for meal in MEAL_ORDER:
-        group = recipes_by_meal.get(meal, [])
+        group = sorted(recipes_by_meal.get(meal, []), key=lambda r: r.get('name', '').lower())
         if not group:
             continue
         items.append(Paragraph(meal, styles['toc_meal']))
@@ -308,7 +308,7 @@ def generate_binder(specific_files=None, output_name='recipe_binder.pdf'):
     story += toc_page(groups, styles)
 
     for meal in MEAL_ORDER:
-        for recipe in groups.get(meal, []):
+        for recipe in sorted(groups.get(meal, []), key=lambda r: r.get('name', '').lower()):
             story += recipe_page(recipe, styles)
 
     doc.build(story, canvasmaker=BorderedCanvas)

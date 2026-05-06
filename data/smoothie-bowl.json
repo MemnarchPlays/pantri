@@ -1,0 +1,74 @@
+{
+  "name": "Smoothie Bowl",
+  "meal_type": "Breakfast",
+  "servings": 1,
+  "prep_time": "10 minutes",
+  "cook_time": "0 minutes",
+  "macros_per_serving": {
+    "calories": 340,
+    "protein_g": 12,
+    "carbs_g": 58,
+    "fat_g": 8
+  },
+  "ingredients": [
+    {
+      "amount": "1 cup",
+      "item": "frozen mixed berries",
+      "store_section": "Frozen"
+    },
+    {
+      "amount": "1",
+      "item": "frozen banana",
+      "store_section": "Frozen"
+    },
+    {
+      "amount": "1 scoop",
+      "item": "vanilla protein powder",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "almond milk",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "granola",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "honey",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "peanut butter",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "chia seeds",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "fresh",
+      "item": "sliced banana for topping",
+      "store_section": "Produce"
+    }
+  ],
+  "instructions": [
+    "Blend frozen berries, frozen banana, protein powder, and almond milk until thick and smooth.",
+    "Add more milk 1 tbsp at a time only if needed \u2014 you want it very thick.",
+    "Pour into a bowl.",
+    "Top with granola, sliced banana, chia seeds, a drizzle of honey, and peanut butter.",
+    "Eat immediately before it melts."
+  ],
+  "substitutions": {
+    "dairy_free": "Already dairy-free with almond milk.",
+    "gluten_free": "Use certified gluten-free granola.",
+    "vegan": "Use plant-based protein powder and maple syrup instead of honey.",
+    "low_carb": "Use frozen cauliflower instead of banana and skip granola."
+  },
+  "notes": "Use as little liquid as possible for a thick, spoonable consistency."
+}

@@ -1,0 +1,71 @@
+{
+  "name": "Turkey Avocado Wrap",
+  "meal_type": "Lunch",
+  "servings": 2,
+  "prep_time": "10 minutes",
+  "cook_time": "0 minutes",
+  "macros_per_serving": {
+    "calories": 460,
+    "protein_g": 32,
+    "carbs_g": 42,
+    "fat_g": 18
+  },
+  "ingredients": [
+    {
+      "amount": "2 large",
+      "item": "flour tortillas",
+      "store_section": "Bakery"
+    },
+    {
+      "amount": "6 oz",
+      "item": "deli turkey, sliced",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "1 large",
+      "item": "avocado, sliced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "4 slices",
+      "item": "provolone or Swiss cheese",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2 cups",
+      "item": "romaine lettuce, shredded",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "red onion, thinly sliced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "mayonnaise",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "Dijon mustard",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Mix mayonnaise and Dijon mustard. Spread over each tortilla.",
+    "Layer turkey, cheese, avocado, lettuce, and red onion down the center.",
+    "Season with salt and pepper.",
+    "Fold in the sides and roll tightly. Slice in half diagonally."
+  ],
+  "substitutions": {
+    "dairy_free": "Skip cheese or use dairy-free alternative.",
+    "gluten_free": "Use a gluten-free wrap.",
+    "low_carb": "Wrap everything in large lettuce leaves."
+  }
+}
