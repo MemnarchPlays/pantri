@@ -1,55 +1,47 @@
 {
-  "name": "No-Bake Chocolate Oatmeal Cookies",
+  "name": "No-Bake Cookies",
   "meal_type": "Desserts",
   "servings": 24,
   "prep_time": "5 minutes",
   "cook_time": "10 minutes",
   "macros_per_serving": {
     "calories": 140,
-    "protein_g": 2,
-    "carbs_g": 20,
-    "fat_g": 6
+    "protein_g": 2.0,
+    "carbs_g": 20.0,
+    "fat_g": 6.0
   },
   "ingredients": [
     {
       "amount": "2 cups",
-      "item": "granulated sugar",
-      "store_section": "Pantry/Dry Goods"
+      "item": "granulated sugar"
     },
     {
       "amount": "1/2 cup",
-      "item": "butter",
-      "store_section": "Dairy/Eggs"
+      "item": "butter"
     },
     {
       "amount": "1/2 cup",
-      "item": "milk",
-      "store_section": "Dairy/Eggs"
+      "item": "milk"
     },
     {
       "amount": "1/4 cup",
-      "item": "unsweetened cocoa powder",
-      "store_section": "Pantry/Dry Goods"
+      "item": "unsweetened cocoa powder"
     },
     {
       "amount": "3 cups",
-      "item": "quick oats",
-      "store_section": "Pantry/Dry Goods"
+      "item": "quick oats"
     },
     {
       "amount": "1/2 cup",
-      "item": "peanut butter",
-      "store_section": "Pantry/Dry Goods"
+      "item": "peanut butter"
     },
     {
       "amount": "2 tsp",
-      "item": "vanilla extract",
-      "store_section": "Pantry/Dry Goods"
+      "item": "vanilla extract"
     },
     {
       "amount": "1/4 tsp",
-      "item": "salt",
-      "store_section": "Pantry/Dry Goods"
+      "item": "salt"
     }
   ],
   "instructions": [
