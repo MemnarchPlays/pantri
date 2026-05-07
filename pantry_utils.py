@@ -10,6 +10,9 @@ XLSX     = Path(__file__).parent / 'Food in Storage.xlsx'
 DATA_DIR = Path(__file__).parent / 'data'
 ENV_FILE = Path(__file__).parent / '.env'
 
+EXCLUDE_SHEETS = {'Minimums'}
+MEAL_TYPES     = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Desserts']
+
 
 def to_title(s):
     return re.sub(r"(?<!')\b\w", lambda m: m.group().upper(), s.lower())

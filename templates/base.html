@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pantri</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥘</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<style>
+  {{ theme_css }}
+  body { background: #f9f6fc; font-family: 'Segoe UI', sans-serif; }
+  .navbar { background: var(--purple) !important; }
+  .navbar-brand, .navbar .nav-link { color: white !important; font-weight: 600; }
+  .navbar .nav-link:hover { color: var(--light-purple) !important; }
+  .nav-tabs .nav-link { color: var(--dark-purple) !important; font-weight: 600; background: transparent; border-color: var(--light-purple) var(--light-purple) transparent; }
+  .nav-tabs .nav-link:hover:not(.active) { background: var(--light-purple); color: var(--dark-purple) !important; }
+  .nav-tabs .nav-link.active { color: white !important; background: var(--purple); border-color: var(--purple) var(--purple) var(--purple); }
+  .nav-tabs { border-bottom: 2px solid var(--light-purple); }
+  .card { border: 1.5px solid var(--light-purple); border-radius: 12px; }
+  .card-header { background: var(--purple); color: white; border-radius: 10px 10px 0 0 !important; font-weight: 700; }
+  .btn-primary { background: var(--purple); border-color: var(--dark-purple); }
+  .btn-primary:hover { background: var(--dark-purple); }
+  .btn-outline-primary { color: var(--purple); border-color: var(--purple); }
+  .btn-outline-primary:hover { background: var(--purple); color: white; }
+  table thead { background: var(--dark-purple); color: white; }
+  table tbody tr:hover { background: var(--light-purple); }
+  .search-bar { border: 2px solid var(--light-purple); border-radius: 8px; }
+  .search-bar:focus { border-color: var(--purple); box-shadow: 0 0 0 0.2rem rgba(107,45,139,.15); }
+  h1 small { font-size: 0.5em; color: var(--light-purple); }
+  .ingredient-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: center; }
+  .ingredient-row input { flex: 1; }
+  .ingredient-row .amount-input { flex: 0 0 120px; }
+  .instruction-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: flex-start; }
+  .instruction-row span { padding-top: 8px; font-weight: bold; color: var(--purple); min-width: 24px; }
+  .instruction-row textarea { flex: 1; }
+</style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg mb-4">
+  <div class="container">
+    <a class="navbar-brand" href="{{ url_for('inventory.index') }}">Pantri</a>
+    <div class="navbar-nav ms-auto">
+      <a class="nav-link" href="{{ url_for('inventory.index') }}">Inventory</a>
+      <a class="nav-link" href="{{ url_for('recipes.recipes') }}">Recipes</a>
+      <a class="nav-link" href="{{ url_for('shopping.shopping') }}">Shopping</a>
+      <a class="nav-link" href="{{ url_for('settings.settings') }}">⚙ Settings</a>
+    </div>
+  </div>
+</nav>
+<div class="container pb-5">
+  {% block content %}{% endblock %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

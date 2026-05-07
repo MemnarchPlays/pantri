@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ page_title }}</h1>
+
+{% if not edit_mode %}
+<div class="card mb-3" style="border-color:var(--purple);">
+  <div class="card-body">
+    <label class="form-label fw-bold mb-1">Import from URL</label>
+    <p class="text-muted small mb-2">Paste any recipe URL (AllRecipes, Food Network, most food blogs, etc.) and we'll fill in the form automatically.</p>
+    <div class="d-flex gap-2">
+      <input id="import-url" type="url" class="form-control search-bar" placeholder="https://www.allrecipes.com/recipe/...">
+      <button type="button" id="import-btn" class="btn btn-primary px-4" onclick="importFromUrl()">Import</button>
+    </div>
+    <div id="import-error" class="text-danger small mt-2 d-none"></div>
+    <div id="import-success" class="text-success small mt-2 d-none">✅ Recipe imported — review the fields below and save.</div>
+  </div>
+</div>
+{% endif %}
+
+<div class="card mt-3">
+  <div class="card-header">{{ page_title }}</div>
+  <div class="card-body">
+    <form method="post" id="recipeForm">
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">Recipe Name</label>
+          <input name="name" class="form-control" required value="{{ rv.name }}">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-bold">Meal Type</label>
+          <select name="meal_type" class="form-select">
+            {% for m in meal_types %}
+            <option {% if rv.meal_type == m %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-bold">Servings</label>
+          <input name="servings" type="number" min="1" class="form-control" value="{{ rv.servings or 4 }}">
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          <label class="form-label fw-bold">Prep Time</label>
+          <input name="prep_time" class="form-control" placeholder="e.g. 15 minutes" value="{{ rv.prep_time }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-bold">Cook Time</label>
+          <input name="cook_time" class="form-control" placeholder="e.g. 30 minutes" value="{{ rv.cook_time }}">
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header" style="background:#f3eaf8;color:#4A1E6B;">Macros per Serving (optional)</div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-6 col-md-3">
+              <label class="form-label">Calories</label>
+              <input name="calories" type="number" class="form-control" placeholder="0" value="{{ rv.calories }}">
+            </div>
+            <div class="col-6 col-md-3">
+              <label class="form-label">Protein (g)</label>
+              <input name="protein" type="number" class="form-control" placeholder="0" value="{{ rv.protein }}">
+            </div>
+            <div class="col-6 col-md-3">
+              <label class="form-label">Carbs (g)</label>
+              <input name="carbs" type="number" class="form-control" placeholder="0" value="{{ rv.carbs }}">
+            </div>
+            <div class="col-6 col-md-3">
+              <label class="form-label">Fat (g)</label>
+              <input name="fat" type="number" class="form-control" placeholder="0" value="{{ rv.fat }}">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Ingredients</label>
+        <div id="ingredients">
+          {% for ing in rv.ingredients %}
+          <div class="ingredient-row">
+            <input class="form-control amount-input" name="amount[]" placeholder="Amount (e.g. 1.5 lbs)" value="{{ ing.amount }}">
+            <input class="form-control" name="ingredient[]" placeholder="Ingredient name" value="{{ ing.item }}">
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeRow(this)">✕</button>
+          </div>
+          {% else %}
+          <div class="ingredient-row">
+            <input class="form-control amount-input" name="amount[]" placeholder="Amount (e.g. 1.5 lbs)">
+            <input class="form-control" name="ingredient[]" placeholder="Ingredient name">
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeRow(this)">✕</button>
+          </div>
+          {% endfor %}
+        </div>
+        <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addIngredient()">+ Ingredient</button>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Instructions</label>
+        <div id="instructions">
+          {% for step in rv.instructions %}
+          <div class="instruction-row">
+            <span>{{ loop.index }}.</span>
+            <textarea class="form-control" name="instruction[]" rows="2">{{ step }}</textarea>
+            <button type="button" class="btn btn-outline-danger btn-sm mt-1" onclick="removeRow(this)">✕</button>
+          </div>
+          {% else %}
+          <div class="instruction-row">
+            <span>1.</span>
+            <textarea class="form-control" name="instruction[]" rows="2" placeholder="Step 1..."></textarea>
+            <button type="button" class="btn btn-outline-danger btn-sm mt-1" onclick="removeRow(this)">✕</button>
+          </div>
+          {% endfor %}
+        </div>
+        <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addInstruction()">+ Step</button>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header" style="background:#f3eaf8;color:#4A1E6B;">Substitutions (optional)</div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Dairy-Free</label>
+              <input name="sub_dairy_free" class="form-control" placeholder="e.g. Use oat milk" value="{{ rv.sub_dairy_free }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Gluten-Free</label>
+              <input name="sub_gluten_free" class="form-control" placeholder="e.g. Use GF flour" value="{{ rv.sub_gluten_free }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Vegan</label>
+              <input name="sub_vegan" class="form-control" placeholder="e.g. Use flax eggs" value="{{ rv.sub_vegan }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Vegetarian</label>
+              <input name="sub_vegetarian" class="form-control" placeholder="e.g. Skip bacon" value="{{ rv.sub_vegetarian }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Low-Carb</label>
+              <input name="sub_low_carb" class="form-control" placeholder="e.g. Use cauliflower" value="{{ rv.sub_low_carb }}">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">Notes (optional)</label>
+        <textarea name="notes" class="form-control" rows="2">{{ rv.notes }}</textarea>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary px-4">Save Recipe</button>
+        <a href="{{ url_for('recipes.recipes') }}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function addIngredient(amount='', item='') {
+  const container = document.getElementById('ingredients');
+  const row = document.createElement('div');
+  row.className = 'ingredient-row';
+  row.innerHTML = `
+    <input class="form-control amount-input" name="amount[]" placeholder="Amount (e.g. 1.5 lbs)" value="${amount.replace(/"/g,'&quot;')}">
+    <input class="form-control" name="ingredient[]" placeholder="Ingredient name" value="${item.replace(/"/g,'&quot;')}">
+    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeRow(this)">✕</button>`;
+  container.appendChild(row);
+}
+function addInstruction(text='') {
+  const container = document.getElementById('instructions');
+  const num = container.children.length + 1;
+  const row = document.createElement('div');
+  row.className = 'instruction-row';
+  row.innerHTML = `
+    <span>${num}.</span>
+    <textarea class="form-control" name="instruction[]" rows="2" placeholder="Step ${num}...">${text.replace(/</g,'&lt;')}</textarea>
+    <button type="button" class="btn btn-outline-danger btn-sm mt-1" onclick="removeRow(this)">✕</button>`;
+  container.appendChild(row);
+}
+function removeRow(btn) {
+  btn.closest('.ingredient-row, .instruction-row').remove();
+  document.querySelectorAll('#instructions .instruction-row').forEach((row, i) => {
+    row.querySelector('span').textContent = (i + 1) + '.';
+  });
+}
+async function importFromUrl() {
+  const url = document.getElementById('import-url').value.trim();
+  const errEl = document.getElementById('import-error');
+  const okEl  = document.getElementById('import-success');
+  const btn   = document.getElementById('import-btn');
+  errEl.classList.add('d-none');
+  okEl.classList.add('d-none');
+  if (!url) return;
+  btn.disabled = true;
+  btn.textContent = 'Importing…';
+  try {
+    const resp = await fetch('/recipe/import?url=' + encodeURIComponent(url));
+    const data = await resp.json();
+    if (data.error) { errEl.textContent = data.error; errEl.classList.remove('d-none'); return; }
+
+    const f = document.getElementById('recipeForm');
+    f.querySelector('[name=name]').value     = data.name     || '';
+    f.querySelector('[name=servings]').value = data.servings || 4;
+    f.querySelector('[name=prep_time]').value = data.prep_time || '';
+    f.querySelector('[name=cook_time]').value = data.cook_time || '';
+    f.querySelector('[name=calories]').value  = data.calories  || '';
+    f.querySelector('[name=protein]').value   = data.protein   || '';
+    f.querySelector('[name=carbs]').value     = data.carbs     || '';
+    f.querySelector('[name=fat]').value       = data.fat       || '';
+    f.querySelector('[name=notes]').value     = data.notes     || '';
+
+    const mtSel = f.querySelector('[name=meal_type]');
+    [...mtSel.options].forEach(o => { if (o.value === data.meal_type) mtSel.value = data.meal_type; });
+
+    document.getElementById('ingredients').innerHTML = '';
+    (data.ingredients || []).forEach(i => addIngredient(i.amount, i.item));
+    if (!(data.ingredients || []).length) addIngredient();
+
+    document.getElementById('instructions').innerHTML = '';
+    (data.instructions || []).forEach(s => addInstruction(s));
+    if (!(data.instructions || []).length) addInstruction();
+
+    okEl.classList.remove('d-none');
+    window.scrollTo(0, 0);
+  } catch(e) {
+    errEl.textContent = 'Something went wrong — check the URL and try again.';
+    errEl.classList.remove('d-none');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Import';
+  }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="mb-3">Inventory</h1>
+
+<ul class="nav nav-tabs mb-4">
+  <li class="nav-item">
+    <a class="nav-link {% if tab != 'add' %}active{% endif %}" href="{{ url_for('inventory.index') }}">
+      Items <span class="badge ms-1" style="background:var(--light-purple);color:var(--dark-purple);">{{ total }}</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if tab == 'add' %}active{% endif %}" href="{{ url_for('inventory.index', tab='add') }}">Add Items</a>
+  </li>
+</ul>
+
+{% if tab != 'add' %}
+
+  {% if not locations %}
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <div style="font-size:3rem;margin-bottom:1rem;">📦</div>
+      <h4 style="color:var(--dark-purple);">No storage locations set up yet</h4>
+      <p class="text-muted mb-4">Add your first location (e.g. Pantry, Fridge, Garage Shelf) before tracking inventory.</p>
+      <a href="{{ url_for('settings.settings', tab='locations') }}" class="btn btn-primary px-4">Go to Settings → Locations</a>
+    </div>
+  </div>
+  {% else %}
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="get" class="row g-2">
+        <div class="col-md-5">
+          <input name="q" class="form-control search-bar" placeholder="Search items..." value="{{ q }}">
+        </div>
+        <div class="col-md-4">
+          <select name="loc" class="form-select search-bar">
+            <option value="">All Locations</option>
+            {% for l in locations %}
+            <option value="{{ l }}" {% if loc == l %}selected{% endif %}>{{ l }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">Items</div>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr><th>Item</th><th>Qty</th><th>Unit</th><th>Location</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for i, row in items %}
+          <tr>
+            <td><strong>{{ row.Item }}</strong></td>
+            <td>{{ row.Quantity or '' }}</td>
+            <td>{{ row.Unit | pluralize_unit(row.Quantity) }}</td>
+            <td>{{ row.Location or '' }}</td>
+            <td>
+              <a href="{{ url_for('inventory.edit', row_key=i) }}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+              <a href="{{ url_for('inventory.delete', row_key=i) }}" class="btn btn-sm btn-outline-danger"
+                 onclick="return confirm('Remove this item?')">Del</a>
+            </td>
+          </tr>
+          {% endfor %}
+          {% if not items %}
+          <tr><td colspan="5" class="text-center text-muted py-4">No items found.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% endif %}
+
+{% else %}
+
+  {% if not locations %}
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <div style="font-size:3rem;margin-bottom:1rem;">📦</div>
+      <h4 style="color:var(--dark-purple);">Add a location first</h4>
+      <p class="text-muted mb-4">You need at least one storage location before you can add items.</p>
+      <a href="{{ url_for('settings.settings', tab='locations') }}" class="btn btn-primary px-4">Go to Settings → Locations</a>
+    </div>
+  </div>
+  {% else %}
+
+  <div class="row g-4 align-items-start">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header">Add Single Item</div>
+        <div class="card-body">
+          <form method="post" action="{{ url_for('inventory.add') }}">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Item</label>
+              <input name="Item" class="form-control" placeholder="e.g. Black Beans" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Quantity</label>
+              <input name="Quantity" class="form-control" placeholder="e.g. 3">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Unit</label>
+              <select name="Unit" class="form-select">
+                <option value="">— none —</option>
+                {% for u in units %}
+                <option>{{ u }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Location</label>
+              <select name="Location" class="form-select">
+                {% for l in locations %}
+                <option>{{ l }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Add Item</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header">Bulk Add</div>
+        <div class="card-body d-flex flex-column">
+          <p class="small text-muted mb-2">
+            One item per line: <code>Item, Qty, Unit, Location</code><br>
+            Qty / Unit / Location are optional. Examples:<br>
+            <code>Black Beans, 3, 15oz can, Pantry</code><br>
+            <code>Olive Oil, 1, bottle</code><br>
+            <code>Salt</code>
+          </p>
+          <form method="post" action="{{ url_for('inventory.bulk_add') }}" class="d-flex flex-column flex-grow-1">
+            <div class="mb-3 flex-grow-1">
+              <textarea name="bulk" class="form-control font-monospace h-100" rows="10"
+                        style="min-height:200px"
+                        placeholder="Black Beans, 3, 15oz can, Pantry&#10;Olive Oil, 1, bottle&#10;Salt"></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Default Location</label>
+              <select name="default_location" class="form-select">
+                {% for l in locations %}
+                <option>{{ l }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Add All</button>
+          </form>
+          {% if bulk_results %}
+          <hr>
+          <h6>Results:</h6>
+          <ul class="small mb-0">
+            {% for msg in bulk_results %}
+            <li>{{ msg }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endif %}
+
+{% endif %}
+{% endblock %}

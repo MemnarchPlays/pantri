@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>Recipes</h1>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('recipes.download_pdf') }}" class="btn btn-outline-primary">⬇ Download PDF</a>
+    <a href="{{ url_for('recipes.recipe_add') }}" class="btn btn-primary">+ Add Recipe</a>
+  </div>
+</div>
+
+<ul class="nav nav-tabs mb-4">
+  <li class="nav-item">
+    <a class="nav-link {% if tab != 'canmake' %}active{% endif %}" href="{{ url_for('recipes.recipes') }}">
+      Recipe Library <span class="badge ms-1" style="background:var(--light-purple);color:var(--dark-purple);">{{ recipes|length }}</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if tab == 'canmake' %}active{% endif %}" href="{{ url_for('recipes.recipes', tab='canmake') }}">Can I Make?</a>
+  </li>
+</ul>
+
+{% if tab != 'canmake' %}
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="get" class="row g-2">
+        <div class="col-md-5">
+          <input name="q" class="form-control search-bar" placeholder="Search recipes..." value="{{ q }}">
+        </div>
+        <div class="col-md-4">
+          <select name="meal" class="form-select search-bar">
+            <option value="">All Meal Types</option>
+            {% for m in meal_types %}
+            <option value="{{ m }}" {% if meal == m %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">Recipe Library</div>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead><tr><th>Name</th><th>Meal Type</th><th>Prep</th><th>Serves</th><th></th></tr></thead>
+        <tbody>
+          {% for r in recipes %}
+          <tr>
+            <td><a href="{{ url_for('recipes.recipe_detail', slug=r.slug) }}" class="fw-bold text-decoration-none" style="color:#4A1E6B;">{{ r.name }}</a></td>
+            <td>{{ r.meal_type }}</td>
+            <td>{{ r.prep_time }}</td>
+            <td>{{ r.servings }}</td>
+            <td>
+              <a href="{{ url_for('recipes.recipe_delete', slug=r.slug) }}" class="btn btn-sm btn-outline-danger"
+                 onclick="return confirm('Delete {{ r.name }}?')">Del</a>
+            </td>
+          </tr>
+          {% endfor %}
+          {% if not recipes %}
+          <tr><td colspan="5" class="text-center text-muted py-4">No recipes found.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% else %}
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="get" action="{{ url_for('recipes.recipes') }}" class="row g-2 align-items-end">
+        <input type="hidden" name="tab" value="canmake">
+        <div class="col-12 mb-1">
+          <span class="fw-bold small me-2">Meal Type:</span>
+          <a href="{{ url_for('recipes.recipes', tab='canmake', ingredient=ingredient) }}"
+             class="btn btn-sm me-1 {% if not cm_meal %}btn-primary{% else %}btn-outline-primary{% endif %}">All</a>
+          {% for m in meal_types %}
+          <a href="{{ url_for('recipes.recipes', tab='canmake', cm_meal=m, ingredient=ingredient) }}"
+             class="btn btn-sm me-1 {% if cm_meal == m %}btn-primary{% else %}btn-outline-primary{% endif %}">{{ m }}</a>
+          {% endfor %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-bold small mb-1">Contains Ingredient</label>
+          <div class="d-flex gap-2">
+            <input name="ingredient" class="form-control search-bar"
+                   placeholder="e.g. tuna, chicken, oats…" value="{{ ingredient }}">
+            {% if cm_meal %}<input type="hidden" name="cm_meal" value="{{ cm_meal }}">{% endif %}
+            <button type="submit" class="btn btn-primary px-3">Filter</button>
+            {% if cm_meal or ingredient %}
+            <a href="{{ url_for('recipes.recipes', tab='canmake') }}" class="btn btn-outline-secondary px-3">Clear</a>
+            {% endif %}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for recipe in cm_recipes %}
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-header">{{ recipe.name }}</div>
+        <div class="card-body">
+          <div class="mb-2">
+            <span class="{{ recipe.status_class }}">{{ recipe.status_label }}</span>
+            <span class="text-muted ms-2 small">{{ recipe.meal_type }} · {{ recipe.prep_time }}</span>
+          </div>
+          {% if recipe.missing %}
+          <p class="small text-muted mb-1">Missing:</p>
+          <ul class="small mb-0">
+            {% for m in recipe.missing %}<li>{{ m }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% if not cm_recipes %}
+    <div class="col-12"><p class="text-muted">No recipes match those filters.</p></div>
+    {% endif %}
+  </div>
+
+{% endif %}
+{% endblock %}

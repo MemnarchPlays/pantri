@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>Shopping List</h1>
+</div>
+<div class="row g-4">
+  <div class="col-md-6">
+    <div class="card mb-4">
+      <div class="card-header">🛒 Restock Needs <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">items below minimum</small></div>
+      {% if not low %}
+      <div class="card-body text-muted">Nothing below minimum — pantry is stocked.</div>
+      {% else %}
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead><tr><th>Item</th><th>Have</th><th>Need</th><th>Unit</th></tr></thead>
+          <tbody>
+            {% for item, current, minimum, unit in low %}
+            <tr>
+              <td><strong>{{ item }}</strong></td>
+              <td>{{ current }}</td>
+              <td class="fw-bold text-danger">{{ (minimum - current)|round(1) }}</td>
+              <td class="text-muted">{{ unit | pluralize_unit(current) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">🍳 Missing Recipe Ingredients</div>
+      <div class="card-body">
+        <form method="get" id="recipe-form" class="mb-3">
+          <select name="recipe" class="form-select search-bar"
+                  onchange="this.form.submit()">
+            <option value="">— Pick a recipe —</option>
+            {% for r in all_recipes %}
+            <option value="{{ r.slug }}" {% if selected_recipe == r.slug %}selected{% endif %}>{{ r.name }}</option>
+            {% endfor %}
+          </select>
+        </form>
+        {% if missing_ingredients %}
+        <ul class="list-unstyled mb-2">
+          {% for ing in missing_ingredients %}
+          <li class="py-1" style="border-bottom:1px solid #f0e6f8;">
+            ❌ <strong>{{ ing.amount }}</strong> {{ ing.item }}
+          </li>
+          {% endfor %}
+        </ul>
+        <form method="post" action="{{ url_for('shopping.shopping_list_add_recipe') }}">
+          <input type="hidden" name="recipe" value="{{ selected_recipe }}">
+          <button type="submit" class="btn btn-primary btn-sm w-100">
+            ➕ Add {{ missing_ingredients|length }} missing item{{ 's' if missing_ingredients|length != 1 else '' }} to shopping list
+          </button>
+        </form>
+        {% elif selected_recipe %}
+        <div class="text-success">✅ You have everything for this recipe!</div>
+        {% else %}
+        <p class="text-muted small mb-0">Pick a recipe above to see what you're missing.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if out_of_stock_exclusions %}
+<div class="card mt-4">
+  <div class="card-header">📦 Out of Stock (Staples)</div>
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Item</th><th>Container</th><th></th></tr></thead>
+      <tbody>
+        {% for ex in out_of_stock_exclusions %}
+        <tr>
+          <td><strong>{{ ex.name }}</strong></td>
+          <td class="text-muted">{{ ex.container }}</td>
+          <td class="text-end">
+            <form method="post" action="{{ url_for('settings.exclusions_toggle', name=ex.name) }}" class="d-inline">
+              <button type="submit" class="btn btn-sm btn-outline-success">Mark In Stock</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<div class="card mt-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span>🛍 Shopping List
+      {% if shopping_list %}
+      <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">{{ shopping_list|length }} item{{ 's' if shopping_list|length != 1 else '' }}</small>
+      {% endif %}
+    </span>
+    {% if shopping_list %}
+    <div class="d-flex gap-2">
+      <form method="post" action="{{ url_for('shopping.shopping_list_clear_checked') }}" class="d-inline">
+        <button type="submit" class="btn btn-outline-secondary btn-sm">Remove checked</button>
+      </form>
+      <form method="post" action="{{ url_for('shopping.shopping_list_clear_all') }}" class="d-inline"
+            onsubmit="return confirm('Clear the entire shopping list?')">
+        <button type="submit" class="btn btn-outline-danger btn-sm">Clear all</button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+  {% if not shopping_list %}
+  <div class="card-body text-muted">
+    No items yet — pick a recipe above and add its missing ingredients.
+  </div>
+  {% else %}
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th style="width:2rem"></th><th>Item</th><th>Amount</th><th>From Recipe</th><th></th></tr></thead>
+      <tbody>
+        {% for item in shopping_list %}
+        <tr class="{{ 'text-muted' if item.checked else '' }}" style="{{ 'opacity:.5;' if item.checked else '' }}">
+          <td>
+            <form method="post" action="{{ url_for('shopping.shopping_list_toggle', item_id=item.id) }}">
+              <button type="submit" class="btn btn-sm p-0 border-0 bg-transparent"
+                      title="{{ 'Uncheck' if item.checked else 'Check off' }}">
+                {{ '☑' if item.checked else '☐' }}
+              </button>
+            </form>
+          </td>
+          <td><strong>{{ item.name }}</strong></td>
+          <td>{{ item.amount or '—' }}</td>
+          <td class="text-muted small">{{ item.note or '' }}</td>
+          <td>
+            <a href="{{ url_for('shopping.shopping_list_remove', item_id=item.id) }}"
+               class="btn btn-sm btn-outline-danger"
+               onclick="return confirm('Remove {{ item.name }}?')">✕</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

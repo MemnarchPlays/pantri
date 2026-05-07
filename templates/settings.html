@@ -1,0 +1,612 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="mb-3">Settings</h1>
+
+<ul class="nav nav-tabs mb-4" id="settingsTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link {% if active_tab == 'locations' or active_tab not in ('units', 'minimums', 'exclusions', 'backups', 'appearance', 'discord') %}active{% endif %}"
+            id="locations-tab" data-bs-toggle="tab" data-bs-target="#locations"
+            type="button" role="tab">Locations</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link {% if active_tab == 'units' %}active{% endif %}"
+            id="units-tab" data-bs-toggle="tab" data-bs-target="#units"
+            type="button" role="tab">Units</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link {% if active_tab == 'minimums' %}active{% endif %}"
+            id="minimums-tab" data-bs-toggle="tab" data-bs-target="#minimums"
+            type="button" role="tab">Minimums</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link {% if active_tab == 'exclusions' %}active{% endif %}"
+            id="exclusions-tab" data-bs-toggle="tab" data-bs-target="#exclusions"
+            type="button" role="tab">Exclusions</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link {% if active_tab == 'backups' %}active{% endif %}"
+            id="backups-tab" data-bs-toggle="tab" data-bs-target="#backups"
+            type="button" role="tab">Backups</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link {% if active_tab == 'appearance' %}active{% endif %}"
+            id="appearance-tab" data-bs-toggle="tab" data-bs-target="#appearance"
+            type="button" role="tab">Appearance</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link {% if active_tab == 'discord' %}active{% endif %}"
+            id="discord-tab" data-bs-toggle="tab" data-bs-target="#discord"
+            type="button" role="tab">Discord Bot</button>
+  </li>
+</ul>
+
+<div class="tab-content">
+
+  <!-- ── Locations Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'locations' or active_tab not in ('units', 'minimums', 'exclusions', 'backups', 'appearance', 'discord') %}show active{% endif %}"
+       id="locations" role="tabpanel">
+    <div class="row g-4">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">Storage Locations <small class="fw-normal ms-2" style="font-size:.8em;opacity:.7">drag to reorder</small></div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead><tr><th style="width:2rem"></th><th>Name</th><th>Items</th><th></th></tr></thead>
+              <tbody id="locations-sortable">
+                {% for name, count in locations %}
+                <tr data-name="{{ name }}">
+                  <td class="text-muted" style="cursor:grab;user-select:none;font-size:1.1rem">&#9776;</td>
+                  <td><strong>{{ name }}</strong></td>
+                  <td>{{ count }}</td>
+                  <td>
+                    {% if count == 0 %}
+                    <a href="{{ url_for('settings.locations_delete', name=name) }}" class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Delete location {{ name }}?')">Delete</a>
+                    {% else %}
+                    <span class="text-muted small">{{ count }} item{{ 's' if count != 1 else '' }} — clear first to delete</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">Add Location</div>
+          <div class="card-body">
+            <form method="post" action="{{ url_for('settings.locations_add') }}">
+              <div class="mb-3">
+                <label class="form-label fw-bold">Name</label>
+                <input name="name" class="form-control" placeholder="e.g. Garage Shelf" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Add</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Units Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'units' %}show active{% endif %}"
+       id="units" role="tabpanel">
+    <div class="row g-4">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">Unit List <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">used in add / edit dropdowns &nbsp;·&nbsp; drag to reorder</small></div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead><tr><th style="width:2rem"></th><th>Unit</th><th>Items using it</th><th></th></tr></thead>
+              <tbody id="units-sortable">
+                {% for unit, count in units %}
+                <tr data-unit="{{ unit }}">
+                  <td class="text-muted" style="cursor:grab;user-select:none;font-size:1.1rem">&#9776;</td>
+                  <td><strong>{{ unit }}</strong></td>
+                  <td>{{ count }}</td>
+                  <td class="text-end">
+                    {% if count == 0 %}
+                    <a href="{{ url_for('settings.units_delete', unit=unit) | replace('%7C', '|') }}" class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Delete unit {{ unit }}?')">Delete</a>
+                    {% else %}
+                    <span class="text-muted small">{{ count }} item{{ 's' if count != 1 else '' }} — in use</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+                {% if not units %}
+                <tr><td colspan="4" class="text-center text-muted py-4">No units defined yet.</td></tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">Add Unit</div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">Add standardized unit names (e.g. can, bag, lb). These appear in the add/edit dropdowns so unit spelling stays consistent.</p>
+            <form method="post" action="{{ url_for('settings.units_add') }}">
+              <div class="mb-3">
+                <label class="form-label fw-bold">Unit Name</label>
+                <input name="unit" class="form-control" placeholder="e.g. can, bag, lb" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Add</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Minimums Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'minimums' %}show active{% endif %}"
+       id="minimums" role="tabpanel">
+    <div class="row g-4">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">Current Minimums <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">click a number to edit</small></div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead><tr><th>Item</th><th>Min Qty</th><th></th></tr></thead>
+              <tbody>
+                {% for item, qty, _ in minimums %}
+                <tr>
+                  <td><strong>{{ item }}</strong></td>
+                  <td>
+                    <span class="qty-display" data-item="{{ item }}" title="Click to edit"
+                          style="cursor:pointer;border-bottom:1px dashed var(--purple);padding-bottom:1px;">{{ qty }}</span>
+                    <form class="qty-form d-none" method="post" action="{{ url_for('settings.minimums_set') }}" style="display:inline;">
+                      <input type="hidden" name="item" value="{{ item }}">
+                      <input type="number" name="qty" step="0.1" min="0" value="{{ qty }}"
+                             class="form-control form-control-sm d-inline-block" style="width:80px;">
+                      <button type="submit" class="btn btn-sm btn-primary ms-1">✓</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary ms-1 qty-cancel">✕</button>
+                    </form>
+                  </td>
+                  <td>
+                    <a href="{{ url_for('settings.minimums_delete', item=item) }}" class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Delete minimum for {{ item }}?')">Del</a>
+                  </td>
+                </tr>
+                {% endfor %}
+                {% if not minimums %}
+                <tr><td colspan="3" class="text-center text-muted py-4">No minimums set.</td></tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">Add New Minimum</div>
+          <div class="card-body">
+            <form method="post" action="{{ url_for('settings.minimums_set') }}">
+              <div class="mb-3">
+                <label class="form-label fw-bold">Item</label>
+                <input name="item" class="form-control" placeholder="e.g. Black Beans" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Min Qty</label>
+                <input name="qty" type="number" step="0.1" min="0" class="form-control" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Save</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Exclusions Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'exclusions' %}show active{% endif %}"
+       id="exclusions" role="tabpanel">
+    <div class="row g-4">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">Excluded Items <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">never auto-decremented from pantry</small></div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead><tr><th>Item</th><th>Container</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                {% for ex in exclusions %}
+                <tr>
+                  <td><strong>{{ ex.name }}</strong></td>
+                  <td class="text-muted">{{ ex.container }}</td>
+                  <td>
+                    <form method="post" action="{{ url_for('settings.exclusions_toggle', name=ex.name) }}" class="d-inline">
+                      {% if ex.in_stock %}
+                      <button type="submit" class="btn btn-sm btn-outline-secondary">In Stock</button>
+                      {% else %}
+                      <button type="submit" class="btn btn-sm btn-danger">Out of Stock</button>
+                      {% endif %}
+                    </form>
+                  </td>
+                  <td class="text-end">
+                    <a href="{{ url_for('settings.exclusions_delete', name=ex.name) }}" class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Remove {{ ex.name }} from exclusions?')">Del</a>
+                  </td>
+                </tr>
+                {% endfor %}
+                {% if not exclusions %}
+                <tr><td colspan="4" class="text-center text-muted py-4">No exclusions yet.</td></tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">Add Exclusion</div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">Staples you always have on hand. Recipes won't decrement these automatically.</p>
+            <form method="post" action="{{ url_for('settings.exclusions_add') }}">
+              <div class="mb-3">
+                <label class="form-label fw-bold">Item Name</label>
+                <input name="name" class="form-control" placeholder="e.g. Salt" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Container</label>
+                <input name="container" class="form-control" placeholder="e.g. 1 shaker, 1 5lb bag">
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Add</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Backups Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'backups' %}show active{% endif %}"
+       id="backups" role="tabpanel">
+    <div class="row g-4">
+
+      <div class="col-md-4">
+        <div class="card mb-4">
+          <div class="card-header">Backup Settings</div>
+          <div class="card-body">
+            <form method="post" action="{{ url_for('settings.settings_backups') }}" id="backup-cfg-form">
+
+              <div class="mb-3">
+                <label class="form-label fw-bold">When to back up</label>
+                <div class="d-flex flex-column gap-2">
+                  <label class="d-flex align-items-center gap-2" style="cursor:pointer">
+                    <input type="radio" name="backup_mode" value="actions"
+                           {% if backup_mode == 'actions' %}checked{% endif %}
+                           onchange="updateBackupUI()">
+                    Every X updates
+                  </label>
+                  <label class="d-flex align-items-center gap-2" style="cursor:pointer">
+                    <input type="radio" name="backup_mode" value="interval"
+                           {% if backup_mode == 'interval' %}checked{% endif %}
+                           onchange="updateBackupUI()">
+                    Every X hours
+                  </label>
+                  <label class="d-flex align-items-center gap-2" style="cursor:pointer">
+                    <input type="radio" name="backup_mode" value="manual"
+                           {% if backup_mode == 'manual' %}checked{% endif %}
+                           onchange="updateBackupUI()">
+                    Manual only
+                  </label>
+                </div>
+              </div>
+
+              <div id="cfg-actions" class="mb-3">
+                <label class="form-label fw-bold">Updates between backups</label>
+                <input type="number" name="backup_every_n" min="1" max="500"
+                       class="form-control" value="{{ backup_every_n }}">
+              </div>
+
+              <div id="cfg-interval" class="mb-3">
+                <label class="form-label fw-bold">Hours between backups</label>
+                <input type="number" name="backup_interval_hrs" min="0.25" step="0.25"
+                       class="form-control" value="{{ backup_interval }}">
+                <div class="form-text">Use decimals for less than an hour (e.g. 0.5 = 30 min).</div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-bold">Backups to keep</label>
+                <input type="number" name="max_backups" min="1" max="50"
+                       class="form-control" value="{{ backup_max }}">
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100">Save</button>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">Status &amp; Manual Backup</div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">
+              {{ backup_last_label }}<br>
+              <span id="status-actions">{{ backup_count }} of {{ backup_every_n }} updates since last backup</span>
+              <span id="status-interval">Backing up every {{ backup_interval }}h</span>
+              <span id="status-manual">Manual mode — use Backup Now to create a backup</span>
+            </p>
+            <form method="post" action="{{ url_for('settings.backups_now') }}">
+              <button type="submit" class="btn btn-outline-primary w-100">Backup Now</button>
+            </form>
+          </div>
+        </div>
+        <div class="card mt-4">
+          <div class="card-header">Upload Backup</div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">Upload an xlsx backup from your computer. It will appear in the list and can be restored from there.</p>
+            <form method="post" action="{{ url_for('settings.backups_upload') }}" enctype="multipart/form-data">
+              <div class="mb-3">
+                <input type="file" name="backup_file" accept=".zip,.xlsx" class="form-control" required>
+              </div>
+              <button type="submit" class="btn btn-outline-secondary w-100">⬆ Upload</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+<script>
+function updateBackupUI() {
+  const mode = document.querySelector('input[name=backup_mode]:checked').value;
+  document.getElementById('cfg-actions').style.display   = mode === 'actions'  ? '' : 'none';
+  document.getElementById('cfg-interval').style.display  = mode === 'interval' ? '' : 'none';
+  document.getElementById('status-actions').style.display  = mode === 'actions'  ? '' : 'none';
+  document.getElementById('status-interval').style.display = mode === 'interval' ? '' : 'none';
+  document.getElementById('status-manual').style.display   = mode === 'manual'   ? '' : 'none';
+}
+updateBackupUI();
+</script>
+
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            Saved Backups
+            <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">{{ backups|length }} file{{ 's' if backups|length != 1 else '' }}</small>
+          </div>
+          {% if not backups %}
+          <div class="card-body text-muted">No backups yet — one will be created the next time you save an item.</div>
+          {% else %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead><tr><th>Date</th><th>Size</th><th></th></tr></thead>
+              <tbody>
+                {% for b in backups %}
+                <tr>
+                  <td><strong>{{ b.modified }}</strong></td>
+                  <td class="text-muted small">{{ b.size }}</td>
+                  <td class="text-end">
+                    <a href="{{ url_for('settings.backups_download', filename=b.name) }}" class="btn btn-sm btn-outline-secondary me-1">⬇ Download</a>
+                    <form method="post" action="{{ url_for('settings.backups_restore', filename=b.name) }}" class="d-inline"
+                          onsubmit="return confirm('Restore this backup? Your current inventory will be backed up first.')">
+                      <button type="submit" class="btn btn-sm btn-outline-primary">↩ Restore</button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Appearance Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'appearance' %}show active{% endif %}"
+       id="appearance" role="tabpanel">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">Theme Color</div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">Pick the accent color used across the app — navbar, buttons, card headers, and table headers.</p>
+            <form method="post" action="{{ url_for('settings.settings_appearance') }}">
+              <div class="mb-3">
+                <label class="form-label fw-bold">Accent Color</label>
+                <div class="d-flex align-items-center gap-3">
+                  <input type="color" name="accent_color" value="{{ accent_color }}"
+                         class="form-control form-control-color" style="width:60px;height:40px;padding:2px;">
+                  <span class="font-monospace small text-muted" id="color-hex">{{ accent_color }}</span>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold small">Presets</label>
+                <div class="d-flex flex-wrap gap-2">
+                  {% for label, hex in [('Purple', '#6B2D8B'), ('Blue', '#1A56DB'), ('Green', '#057A55'), ('Red', '#C81E1E'), ('Orange', '#B45309'), ('Teal', '#0E7490'), ('Pink', '#9D174D')] %}
+                  <button type="button" class="btn btn-sm"
+                          style="background:{{ hex }};border-color:{{ hex }};color:white;min-width:60px;"
+                          onclick="document.querySelector('input[name=accent_color]').value='{{ hex }}';document.getElementById('color-hex').textContent='{{ hex }}';">
+                    {{ label }}
+                  </button>
+                  {% endfor %}
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Apply</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">Preview</div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">A live preview will appear after you click Apply.</p>
+            <div class="d-flex flex-column gap-2">
+              <button class="btn btn-primary">Primary Button</button>
+              <button class="btn btn-outline-primary">Outline Button</button>
+              <div class="p-2 rounded text-white text-center small" style="background:var(--purple);">Navbar / Card Header</div>
+              <div class="p-2 rounded text-center small" style="background:var(--light-purple);color:var(--dark-purple);">Light Accent</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<script>
+document.querySelector('input[name=accent_color]').addEventListener('input', function() {
+  document.getElementById('color-hex').textContent = this.value;
+});
+</script>
+  </div>
+
+  <!-- ── Discord Bot Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'discord' %}show active{% endif %}"
+       id="discord" role="tabpanel">
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header">Discord Bot</div>
+          <div class="card-body">
+            <p class="text-muted small mb-3">
+              Create a bot at <strong>discord.com/developers/applications</strong>, copy the token, and paste it here.
+              The bot will connect to any server it has been invited to.
+            </p>
+            <div class="mb-2 d-flex align-items-center gap-2">
+              <span class="fw-bold small">Status:</span>
+              <span id="bot-status-badge" class="badge bg-secondary">Checking...</span>
+            </div>
+            <form method="post" action="{{ url_for('settings.settings_discord') }}" class="mt-3">
+              <div class="mb-3">
+                <label class="form-label fw-bold">Bot Token</label>
+                <input type="password" name="token" class="form-control font-monospace"
+                       placeholder="{{ 'Paste a new token to replace the saved one' if token_set else 'Paste your Discord bot token here' }}">
+                {% if token_set %}
+                <div class="form-text text-success">Token is saved — leave blank to keep it</div>
+                {% else %}
+                <div class="form-text text-danger">No token set — bot is offline</div>
+                {% endif %}
+                <div class="form-text text-muted">Your token is never included in backups.</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Low-Stock Alert Channel ID</label>
+                <input type="text" name="alert_channel" class="form-control font-monospace"
+                       placeholder="Discord channel ID (right-click channel → Copy ID)"
+                       value="{{ alert_channel }}">
+                <div class="form-text">When set, the bot will post a warning here whenever an item drops below its minimum.</div>
+              </div>
+              <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" name="action" value="save" class="btn btn-primary">Save Settings</button>
+                <button type="submit" name="action" value="save_restart" class="btn btn-success">Save &amp; Restart Bot</button>
+                {% if token_set %}
+                <button type="submit" name="action" value="restart" class="btn btn-outline-primary">Restart Bot</button>
+                <button type="submit" name="action" value="stop" class="btn btn-outline-secondary">Stop Bot</button>
+                <button type="submit" name="action" value="remove" class="btn btn-outline-danger ms-auto"
+                        onclick="return confirm('Remove the Discord token and disconnect the bot?')">Remove Connection</button>
+                {% endif %}
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header">How to Set Up Your Discord Bot</div>
+          <div class="card-body small text-muted">
+            <ol class="ps-3 mb-0">
+              <li class="mb-2">Go to <strong>discord.com/developers/applications</strong> and click <strong>New Application</strong></li>
+              <li class="mb-2">Go to the <strong>Bot</strong> tab → click <strong>Add Bot</strong></li>
+              <li class="mb-2">Under <strong>Privileged Gateway Intents</strong>, enable <strong>Message Content Intent</strong></li>
+              <li class="mb-2">Click <strong>Reset Token</strong> → copy the token → paste it above</li>
+              <li class="mb-2">Go to <strong>OAuth2 → URL Generator</strong>, select <strong>bot</strong> scope and <strong>Send Messages / Read Message History</strong> permissions</li>
+              <li class="mb-2">Use the generated URL to invite the bot to your server</li>
+              <li>For low-stock alerts: right-click the target channel → <strong>Copy Channel ID</strong> (enable Developer Mode in Discord settings first)</li>
+            </ol>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            Bot Log
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="loadBotLog()">Refresh</button>
+          </div>
+          <div class="card-body p-0">
+            <pre id="bot-log" class="mb-0 p-3 font-monospace small"
+                 style="max-height:220px;overflow-y:auto;background:#1a1a1a;color:#d4f0d4;border-radius:0 0 10px 10px;white-space:pre-wrap;word-break:break-all;">Loading…</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+fetch('{{ url_for("settings.settings_bot_status") }}')
+  .then(r => r.json())
+  .then(d => {
+    const b = document.getElementById('bot-status-badge');
+    b.className = d.running ? 'badge bg-success' : 'badge bg-danger';
+    b.textContent = d.running ? 'Online' : 'Offline';
+  });
+
+function loadBotLog() {
+  fetch('{{ url_for("settings.settings_bot_log") }}')
+    .then(r => r.json())
+    .then(d => {
+      const el = document.getElementById('bot-log');
+      el.textContent = d.log || '(no log yet)';
+      el.scrollTop = el.scrollHeight;
+    });
+}
+loadBotLog();
+
+document.querySelectorAll('.qty-display').forEach(span => {
+  span.addEventListener('click', () => {
+    span.classList.add('d-none');
+    const form = span.nextElementSibling;
+    form.classList.remove('d-none');
+    form.style.display = 'inline';
+    form.querySelector('input[type=number]').focus();
+    form.querySelector('input[type=number]').select();
+  });
+});
+document.querySelectorAll('.qty-cancel').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const form = btn.closest('form');
+    form.classList.add('d-none');
+    form.previousElementSibling.classList.remove('d-none');
+  });
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script>
+(function() {
+  var locBody = document.getElementById('locations-sortable');
+  if (locBody) {
+    Sortable.create(locBody, {
+      handle: 'td:first-child',
+      animation: 150,
+      onEnd: function() {
+        var order = Array.from(locBody.querySelectorAll('tr[data-name]'))
+                        .map(function(r){ return r.dataset.name; });
+        fetch('{{ url_for("settings.locations_reorder") }}', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({order: order})
+        });
+      }
+    });
+  }
+
+  var unitBody = document.getElementById('units-sortable');
+  if (unitBody) {
+    Sortable.create(unitBody, {
+      handle: 'td:first-child',
+      animation: 150,
+      onEnd: function() {
+        var order = Array.from(unitBody.querySelectorAll('tr[data-unit]'))
+                        .map(function(r){ return r.dataset.unit; });
+        fetch('{{ url_for("settings.units_reorder") }}', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({order: order})
+        });
+      }
+    });
+  }
+})();
+</script>
+{% endblock %}

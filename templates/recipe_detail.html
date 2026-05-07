@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mb-3 d-flex gap-2 align-items-center flex-wrap">
+  <a href="{{ url_for('recipes.recipes') }}" class="btn btn-outline-secondary btn-sm">← Back to Recipes</a>
+  <a href="{{ url_for('recipes.recipe_edit', slug=slug) }}" class="btn btn-outline-primary btn-sm">Edit Recipe</a>
+  <form method="post" action="{{ url_for('recipes.recipe_use', slug=slug) }}" class="ms-auto"
+        onsubmit="return confirm('Remove all ingredient quantities from your pantry inventory?')">
+    <button type="submit" class="btn btn-warning btn-sm">🍳 Use Recipe (Remove from Pantry)</button>
+  </form>
+  <a href="{{ url_for('recipes.recipe_delete', slug=slug) }}" class="btn btn-sm btn-outline-danger"
+     onclick="return confirm('Delete {{ recipe.name }}?')">Delete</a>
+</div>
+
+{% if used_count is defined %}
+<div class="alert mb-3" style="background:#e8f5e9;border:1px solid #a5d6a7;color:#2e7d32;">
+  ✅ Recipe used — <strong>{{ used_count }}</strong> ingredient(s) removed from pantry.
+  {% if not_found_count %}<span class="text-muted"> ({{ not_found_count }} item(s) not found in pantry.)</span>{% endif %}
+</div>
+{% endif %}
+<div class="card mb-4">
+  <div class="card-header">{{ recipe.name }}</div>
+  <div class="card-body">
+    <div class="row mb-3 align-items-center">
+      <div class="col text-muted small">
+        <strong>{{ recipe.meal_type }}</strong> &nbsp;·&nbsp;
+        Prep {{ recipe.prep_time }}{% if recipe.cook_time %} &nbsp;·&nbsp; Cook {{ recipe.cook_time }}{% endif %}
+      </div>
+      <div class="col-auto d-flex align-items-center gap-2">
+        <label class="form-label mb-0 small fw-bold">Servings:</label>
+        <input id="servings-input" type="number" min="1" value="{{ recipe.servings }}"
+               class="form-control form-control-sm" style="width:70px;"
+               oninput="scaleRecipe(this.value)">
+        <span class="text-muted small">(original: {{ recipe.servings }})</span>
+      </div>
+    </div>
+
+    {% set m = recipe.macros_per_serving %}
+    {% if m and m.calories %}
+    <div class="row g-2 mb-4" id="macro-tiles">
+      <div class="col-6 col-md-3">
+        <div class="card text-center" style="border-color:#E8D5F0;">
+          <div class="card-body py-2">
+            <div class="fw-bold macro-val" data-base="{{ m.calories }}" style="color:var(--purple);font-size:1.3em;">{{ m.calories }}</div>
+            <div class="text-muted small">Cal / serving</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-center" style="border-color:#E8D5F0;">
+          <div class="card-body py-2">
+            <div class="fw-bold macro-val" data-base="{{ m.protein_g }}" style="color:var(--purple);font-size:1.3em;">{{ m.protein_g }}g</div>
+            <div class="text-muted small">Protein / serving</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-center" style="border-color:#E8D5F0;">
+          <div class="card-body py-2">
+            <div class="fw-bold macro-val" data-base="{{ m.carbs_g }}" style="color:var(--purple);font-size:1.3em;">{{ m.carbs_g }}g</div>
+            <div class="text-muted small">Carbs / serving</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-center" style="border-color:#E8D5F0;">
+          <div class="card-body py-2">
+            <div class="fw-bold macro-val" data-base="{{ m.fat_g }}" style="color:var(--purple);font-size:1.3em;">{{ m.fat_g }}g</div>
+            <div class="text-muted small">Fat / serving</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+      <div class="col-md-5">
+        <h5 style="color:#4A1E6B;">Ingredients</h5>
+        <ul class="list-unstyled mb-0" id="ingredients-list">
+          {% for ing in recipe.ingredients %}
+          <li class="py-1 ing-row" style="border-bottom:1px solid #f0e6f8;"
+              data-amount="{{ ing.amount }}">
+            {% if have is defined and ing.item|lower in have %}✅{% else %}•{% endif %}
+            <strong class="ing-amount">{{ ing.amount }}</strong> {{ ing.item }}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="col-md-7">
+        <h5 style="color:#4A1E6B;">Instructions</h5>
+        <ol class="ps-3">
+          {% for step in recipe.instructions %}
+          <li class="mb-2">{{ step }}</li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+
+    {% if recipe.substitutions %}
+    <hr style="border-color:#E8D5F0;">
+    <h5 style="color:#4A1E6B;">Substitutions</h5>
+    <div class="row g-2">
+      {% for key, val in recipe.substitutions.items() %}
+      <div class="col-md-6">
+        <span class="fw-bold text-muted small">{{ key.replace('_', ' ').title() }}:</span>
+        <span class="small"> {{ val }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if recipe.notes %}
+    <hr style="border-color:#E8D5F0;">
+    <p class="mb-0"><strong>Notes:</strong> {{ recipe.notes }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+const origServings = {{ recipe.servings }};
+
+function scaleRecipe(newServings) {
+  const n = parseFloat(newServings);
+  if (!n || n <= 0) return;
+  const ratio = n / origServings;
+
+  // Scale ingredient amounts
+  document.querySelectorAll('.ing-row').forEach(li => {
+    const origAmount = li.dataset.amount || '';
+    const scaled = scaleAmount(origAmount, ratio);
+    li.querySelector('.ing-amount').textContent = scaled;
+  });
+
+  // Scale macros per serving (keep them per-serving — they don't change with serving count)
+  // Instead show total if scaled up
+}
+
+function scaleAmount(text, ratio) {
+  if (!text) return text;
+  // Find the leading numeric portion (digits, spaces, slashes, dots, vulgar fractions)
+  const numChars = new Set('0123456789 ./\t');
+  const vulgar   = new Set([...'½¼¾⅓⅔⅛⅜⅝⅞⅐⅑⅒⅕⅖⅗⅘⅙⅚']);
+  let i = 0;
+  while (i < text.length && (numChars.has(text[i]) || vulgar.has(text[i]))) i++;
+  if (i === 0) return text;
+  const match = text.slice(0, i);
+  const rest  = text.slice(i);
+  const num   = parseFraction(match.trim());
+  if (isNaN(num) || num === 0) return text;
+  return formatNum(num * ratio) + (rest ? ' ' + rest.trimStart() : '');
+}
+
+function parseFraction(s) {
+  const fracs = {'½':0.5,'¼':0.25,'¾':0.75,'⅓':0.333,'⅔':0.667,'⅛':0.125,'⅜':0.375,'⅝':0.625,'⅞':0.875};
+  if (fracs[s]) return fracs[s];
+  // "1 1/2" or "1/2"
+  const parts = s.split(/ +/);
+  let val = 0;
+  for (const p of parts) {
+    if (fracs[p]) { val += fracs[p]; continue; }
+    if (p.includes('/')) {
+      const [a,b] = p.split('/');
+      val += parseFloat(a) / parseFloat(b);
+    } else {
+      val += parseFloat(p) || 0;
+    }
+  }
+  return val;
+}
+
+function formatNum(n) {
+  if (n === Math.floor(n)) return String(Math.floor(n));
+  // Common fractions
+  const eighths = Math.round(n * 8) / 8;
+  const map = {0.125:'⅛',0.25:'¼',0.375:'⅜',0.5:'½',0.625:'⅝',0.75:'¾',0.875:'⅞'};
+  const whole = Math.floor(eighths);
+  const frac  = Math.round((eighths - whole) * 8) / 8;
+  const fracStr = map[frac] || '';
+  if (whole === 0) return fracStr || n.toFixed(2).replace(/[.]?0+$/, '');
+  return fracStr ? `${whole} ${fracStr}` : n.toFixed(2).replace(/[.]?0+$/, '');
+}
+</script>
+{% endblock %}
