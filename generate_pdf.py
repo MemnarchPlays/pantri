@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Generate a printable recipe binder PDF from recipe JSON files in the data/ folder."""
 
+import io
 import json
 import sys
 from pathlib import Path
@@ -314,6 +315,35 @@ def generate_binder(specific_files=None, output_name='recipe_binder.pdf'):
     doc.build(story, canvasmaker=BorderedCanvas)
     print(f'PDF saved: {out_path}')
     return str(out_path)
+
+
+def generate_binder_bytes():
+    """Generate the full recipe binder PDF in memory and return bytes."""
+    recipes = load_recipes()
+    if not recipes:
+        return None
+
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buf,
+        pagesize=letter,
+        leftMargin=0.75*inch, rightMargin=0.75*inch,
+        topMargin=0.75*inch,  bottomMargin=0.75*inch,
+    )
+
+    styles = build_styles()
+    groups = group_by_meal(recipes)
+    story  = []
+    story += cover_page(styles)
+    story += toc_page(groups, styles)
+
+    for meal in MEAL_ORDER:
+        for recipe in sorted(groups.get(meal, []), key=lambda r: r.get('name', '').lower()):
+            story += recipe_page(recipe, styles)
+
+    doc.build(story, canvasmaker=BorderedCanvas)
+    buf.seek(0)
+    return buf.read()
 
 
 if __name__ == '__main__':

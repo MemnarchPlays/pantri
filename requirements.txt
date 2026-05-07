@@ -1,0 +1,7 @@
+flask
+openpyxl
+discord.py
+python-dotenv
+requests
+beautifulsoup4
+reportlab

@@ -1,5 +1,13 @@
 output/
+backups/
 __pycache__/
 *.pyc
 *.pyo
 .env
+Food in Storage.xlsx
+shopping_list.json
+backup_state.json
+bot.pid
+bot.log
+pantry_app.log
+.claude/settings.local.json
