@@ -44,6 +44,7 @@ def settings():
     backup_every_n    = int(env.get('BACKUP_EVERY_N', '10'))
     backup_interval   = float(env.get('BACKUP_INTERVAL_HRS', '24'))
     backup_max        = int(env.get('BACKUP_MAX', '10'))
+    app_port          = int(env.get('PORT', '5000'))
     backup_last_label, backup_count = get_backup_info()
     active_tab        = request.args.get('tab', 'locations')
     return render_template('settings.html', token_set=bool(token),
@@ -59,6 +60,7 @@ def settings():
                            backup_count=backup_count,
                            exclusions=load_exclusions(),
                            units=get_unit_info(),
+                           app_port=app_port,
                            active_tab=active_tab)
 
 
@@ -268,11 +270,17 @@ def settings_bot_log():
 
 @bp.route('/settings/appearance', methods=['POST'])
 def settings_appearance():
+    env = read_env()
     color = request.form.get('accent_color', '#6B2D8B').strip()
     if re.match(r'^#[0-9A-Fa-f]{6}$', color):
-        env = read_env()
         env['ACCENT_COLOR'] = color
-        write_env(env)
+    try:
+        port = int(request.form.get('port', '5000'))
+        if 1024 <= port <= 65535:
+            env['PORT'] = str(port)
+    except ValueError:
+        pass
+    write_env(env)
     return redirect(url_for('settings.settings', tab='appearance'))
 
 

@@ -407,6 +407,12 @@ updateBackupUI();
             <p class="small text-muted mb-3">Pick the accent color used across the app — navbar, buttons, card headers, and table headers.</p>
             <form method="post" action="{{ url_for('settings.settings_appearance') }}">
               <div class="mb-3">
+                <label class="form-label fw-bold">Port</label>
+                <input type="number" name="port" class="form-control" value="{{ app_port }}"
+                       min="1024" max="65535" style="max-width:120px;">
+                <div class="form-text">Requires a restart to take effect.</div>
+              </div>
+              <div class="mb-3">
                 <label class="form-label fw-bold">Accent Color</label>
                 <div class="d-flex align-items-center gap-3">
                   <input type="color" name="accent_color" value="{{ accent_color }}"
