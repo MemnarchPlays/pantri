@@ -3,35 +3,18 @@
 
 import os
 import json
-import re
 from pathlib import Path
 
 import discord
 from dotenv import load_dotenv
 from openpyxl import load_workbook
-
-
-def to_title(s):
-    return re.sub(r"(?<!')\b\w", lambda m: m.group().upper(), s.lower())
+from pantry_utils import COLS, to_title, read_env, load_all_recipes
 
 load_dotenv(override=True)
 
 XLSX           = Path(__file__).parent / 'Food in Storage.xlsx'
 DATA_DIR       = Path(__file__).parent / 'data'
-ENV_FILE       = Path(__file__).parent / '.env'
-COLS           = ['Item', 'Quantity', 'Unit', 'Location', 'Section', 'Slot', 'Expiration', 'Notes']
 EXCLUDE_SHEETS = {'Minimums'}
-
-
-def read_env():
-    env = {}
-    if ENV_FILE.exists():
-        for line in ENV_FILE.read_text(encoding='utf-8').splitlines():
-            line = line.strip()
-            if '=' in line and not line.startswith('#'):
-                k, _, v = line.partition('=')
-                env[k.strip()] = v.strip()
-    return env
 
 
 def load_minimums():
@@ -303,14 +286,7 @@ async def send_location_picker(channel, uid):
 
 def find_recipes(term):
     """Return matching recipes using substring then word-level fallback."""
-    if not DATA_DIR.exists():
-        return []
-    all_recipes = []
-    for path in DATA_DIR.glob('*.json'):
-        try:
-            all_recipes.append(json.loads(path.read_text(encoding='utf-8')))
-        except Exception:
-            continue
+    all_recipes = load_all_recipes()
     term_lower = term.lower()
     # Exact substring match first
     matches = [r for r in all_recipes if term_lower in r.get('name', '').lower()]
@@ -383,32 +359,26 @@ def cmd_can_make(filter_term=None):
     have = {str(r.get('Item', '')).lower() for r in rows if r.get('Item')}
 
     results = []
-    if DATA_DIR.exists():
-        for path in sorted(DATA_DIR.glob('*.json')):
-            try:
-                recipe = json.loads(path.read_text(encoding='utf-8'))
-            except Exception:
-                continue
+    for recipe in load_all_recipes():
+        # Apply filter
+        if filter_term:
+            meal = recipe.get('meal_type', '').lower()
+            name = recipe.get('name', '').lower()
+            if filter_term.lower() in MEAL_TYPES:
+                if filter_term.lower() not in meal:
+                    continue
+            else:
+                if filter_term.lower() not in name:
+                    continue
 
-            # Apply filter
-            if filter_term:
-                meal = recipe.get('meal_type', '').lower()
-                name = recipe.get('name', '').lower()
-                if filter_term.lower() in MEAL_TYPES:
-                    if filter_term.lower() not in meal:
-                        continue
-                else:
-                    if filter_term.lower() not in name:
-                        continue
-
-            ingredients = recipe.get('ingredients', [])
-            needed = [(i.get('item', '') if isinstance(i, dict) else str(i)).lower() for i in ingredients]
-            if not needed:
-                continue
-            have_count = sum(1 for n in needed if any(n in h or h in n for h in have))
-            total = len(needed)
-            pct   = int(have_count / total * 100) if total else 0
-            results.append((pct, have_count, total, recipe.get('name', 'Untitled')))
+        ingredients = recipe.get('ingredients', [])
+        needed = [(i.get('item', '') if isinstance(i, dict) else str(i)).lower() for i in ingredients]
+        if not needed:
+            continue
+        have_count = sum(1 for n in needed if any(n in h or h in n for h in have))
+        total = len(needed)
+        pct   = int(have_count / total * 100) if total else 0
+        results.append((pct, have_count, total, recipe.get('name', 'Untitled')))
 
     results.sort(key=lambda x: x[0], reverse=True)
 

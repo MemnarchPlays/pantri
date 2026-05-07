@@ -6,17 +6,11 @@ import sys
 from pathlib import Path
 from collections import defaultdict
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.colors import HexColor, white
 from reportlab.lib.units import inch
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable, PageBreak
-from reportlab.pdfgen import canvas as pdfcanvas
-
-PURPLE       = HexColor('#6B2D8B')
-DARK_PURPLE  = HexColor('#4A1E6B')
-LIGHT_PURPLE = HexColor('#E8D5F0')
-NEAR_BLACK   = HexColor('#1A1A1A')
+from pdf_utils import PURPLE, DARK_PURPLE, LIGHT_PURPLE, NEAR_BLACK, WHITE, BorderedCanvas
 
 DATA_DIR   = Path(__file__).parent / 'data'
 OUTPUT_DIR = Path(__file__).parent / 'output'
@@ -36,34 +30,6 @@ SECTION_EMOJI = {
     'Beverages':       '🧃',
     'Other':           '🛒',
 }
-
-
-class BorderedCanvas(pdfcanvas.Canvas):
-    def __init__(self, *args, **kwargs):
-        pdfcanvas.Canvas.__init__(self, *args, **kwargs)
-        self._saved_page_states = []
-
-    def showPage(self):
-        self._saved_page_states.append(dict(self.__dict__))
-        self._startPage()
-
-    def save(self):
-        for state in self._saved_page_states:
-            self.__dict__.update(state)
-            self._draw_border()
-            pdfcanvas.Canvas.showPage(self)
-        pdfcanvas.Canvas.save(self)
-
-    def _draw_border(self):
-        w, h = letter
-        outer = 0.35 * inch
-        inner = 0.48 * inch
-        self.setStrokeColor(PURPLE)
-        self.setLineWidth(3)
-        self.rect(outer, outer, w - 2*outer, h - 2*outer, stroke=1, fill=0)
-        self.setStrokeColor(LIGHT_PURPLE)
-        self.setLineWidth(0.75)
-        self.rect(inner, inner, w - 2*inner, h - 2*inner, stroke=1, fill=0)
 
 
 def list_recipes():
@@ -133,7 +99,7 @@ def generate_shopping_pdf(recipes, output_name='shopping_list.pdf'):
     sub_style   = ParagraphStyle('sub', fontName='Helvetica', fontSize=11,
                                  textColor=NEAR_BLACK, alignment=TA_CENTER, spaceAfter=2)
     sect_style  = ParagraphStyle('sect', fontName='Helvetica-Bold', fontSize=13,
-                                 textColor=white, spaceAfter=0, spaceBefore=14)
+                                 textColor=WHITE, spaceAfter=0, spaceBefore=14)
     item_style  = ParagraphStyle('item', fontName='Helvetica', fontSize=10,
                                  textColor=NEAR_BLACK, spaceAfter=4, leftIndent=8)
 

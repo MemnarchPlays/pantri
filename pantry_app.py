@@ -16,6 +16,7 @@ from datetime import datetime
 from pathlib import Path
 from flask import Flask, request, redirect, url_for, render_template_string, jsonify, send_file
 from openpyxl import load_workbook
+from pantry_utils import COLS, to_title, read_env
 
 app = Flask(__name__)
 
@@ -73,27 +74,11 @@ BACKUP_STATE_FILE  = Path(__file__).parent / 'backup_state.json'
 SHOPPING_LIST_FILE = Path(__file__).parent / 'shopping_list.json'
 EXCLUSIONS_FILE    = Path(__file__).parent / 'exclusions.json'
 UNITS_FILE         = Path(__file__).parent / 'units.json'
-COLS           = ['Item', 'Quantity', 'Unit', 'Location', 'Section', 'Slot', 'Expiration', 'Notes']
 EXCLUDE_SHEETS = {'Minimums'}
 MEAL_TYPES     = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Desserts']
 
 _bot_process = None
 
-
-def to_title(s):
-    """Title-case a string without capitalizing letters after apostrophes."""
-    return re.sub(r"(?<!')\b\w", lambda m: m.group().upper(), s.lower())
-
-
-def read_env():
-    env = {}
-    if ENV_FILE.exists():
-        for line in ENV_FILE.read_text(encoding='utf-8').splitlines():
-            line = line.strip()
-            if '=' in line and not line.startswith('#'):
-                k, _, v = line.partition('=')
-                env[k.strip()] = v.strip()
-    return env
 
 
 def write_env(env: dict):

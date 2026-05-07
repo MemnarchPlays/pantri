@@ -6,9 +6,9 @@ import sys
 from pathlib import Path
 import openpyxl
 from openpyxl import load_workbook
+from pantry_utils import COLS
 
 XLSX = Path(__file__).parent / 'Food in Storage.xlsx'
-COLS = ['Item', 'Quantity', 'Unit', 'Location', 'Section', 'Slot', 'Expiration', 'Notes']
 DATA_DIR = Path(__file__).parent / 'data'
 LOCATION_SHEETS = ['Brown Cabinet', 'Pantry', 'End Hall Closet', 'Laundry Room', 'Kitchen']
 
