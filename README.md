@@ -1,0 +1,166 @@
+# Pantri
+
+A personal pantry tracker with a web UI, Discord bot, and PDF recipe binder. Track what you have, manage recipes, build shopping lists, and get low-stock alerts in Discord.
+
+---
+
+## Requirements
+
+- Python 3.10+
+- Windows, macOS, or Linux
+
+---
+
+## Setup
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/MemnarchPlays/pantri.git
+cd pantri
+```
+
+### 2. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Start the app
+
+**Windows:**
+```bash
+start.bat
+```
+
+**macOS / Linux:**
+```bash
+bash start.sh
+```
+
+**Or directly:**
+```bash
+python pantry_app.py
+```
+
+The app opens at **http://localhost:5000** automatically.
+
+> The first time you run it, the pantry file (`Food in Storage.xlsx`) is created automatically.
+
+---
+
+## Features
+
+### Inventory
+- Add, edit, and remove pantry items across multiple storage locations (Pantry, Fridge, Cabinet, etc.)
+- Bulk-add items in one paste: `Item, Qty, Unit, Location`
+- Duplicate items with the same name and unit are automatically merged
+
+### Recipes
+- Browse your recipe library, filter by meal type
+- Add recipes manually or **import directly from any recipe website** by pasting a URL
+- **Can I Make This?** — see which recipes you can make right now based on what's in your pantry, sorted by % of ingredients on hand
+- Use a recipe to automatically decrement pantry quantities
+- Export all recipes to a styled PDF binder
+
+### Shopping
+- **Restock Needs** — items currently below their set minimum quantity
+- **Missing Ingredients** — pick a recipe and see exactly what you're missing
+- Persistent shopping list — check off items as you shop, survives page reloads
+- Exclusions — mark staple items (salt, pepper, oil) so they never appear in shopping lists
+
+### Settings
+- Add, rename, and reorder storage locations
+- Set minimum stock thresholds per item for restock alerts
+- Manage units and exclusion lists
+- Automatic backups of your pantry data on a configurable schedule
+- Accent color picker — change the app's theme
+
+---
+
+## Discord Bot (optional)
+
+The bot lets you query and update your pantry from any Discord server.
+
+### Setup
+
+1. Go to [discord.com/developers/applications](https://discord.com/developers/applications)
+2. Create a new application → Bot → copy the token
+3. In Pantri, go to **Settings → Discord** and paste the token
+4. Click **Save & Start Bot**
+
+### Bot commands
+
+| Command | What it does |
+|---------|-------------|
+| `!add <item> [qty] [unit]` | Add an item (bot walks you through missing fields) |
+| `!remove <item> <qty>` | Subtract quantity from an item |
+| `!set <item> <qty>` | Set an item to an exact quantity |
+| `!stock <item>` | Check how much of something you have |
+| `!list [location]` | List all pantry items, optionally filtered by location |
+| `!recipe <name>` | Show a recipe with pantry availability checkmarks |
+| `!canmake [meal or name]` | See what you can make, filtered by meal type or keyword |
+| `!restock` | Show items below their minimum |
+| `!setmin <item> <qty>` | Set a minimum stock threshold for an item |
+| `!locations` | List all storage locations |
+| `!addlocation <name>` | Add a new storage location |
+| `!help` | Show all commands |
+
+To get low-stock alerts, set `DISCORD_ALERT_CHANNEL` to your channel ID in **Settings → Discord**.
+
+---
+
+## Configuration
+
+All config lives in a `.env` file at the project root (created automatically). You can edit it from the **Settings** page or manually:
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `DISCORD_TOKEN` | — | Bot token (required for Discord features) |
+| `DISCORD_ALERT_CHANNEL` | — | Channel ID for low-stock alerts |
+| `ACCENT_COLOR` | `#6B2D8B` | App theme color (hex) |
+| `BACKUP_MODE` | `actions` | `actions` (every N writes) or `interval` (every N hours) |
+| `BACKUP_EVERY_N` | `10` | How many pantry writes between backups |
+| `BACKUP_INTERVAL_HRS` | `24` | Hours between backups (interval mode) |
+| `BACKUP_MAX` | `10` | Max number of backups to keep |
+
+---
+
+## PDF generation
+
+```bash
+# Full recipe binder → output/recipe_binder.pdf
+python generate_pdf.py
+
+# Specific recipes only
+python generate_pdf.py data/recipe1.json data/recipe2.json
+
+# Interactive shopping list → output/shopping_list.pdf
+python shopping_list.py
+```
+
+---
+
+## CLI (quick pantry access without the web app)
+
+```bash
+python pantry_cli.py list
+python pantry_cli.py list "Brown Cabinet"
+python pantry_cli.py search chicken
+python pantry_cli.py add
+python pantry_cli.py update "black beans"
+python pantry_cli.py remove "black beans"
+python pantry_cli.py can-make
+```
+
+---
+
+## Data & privacy
+
+- `Food in Storage.xlsx` — all pantry data, lives only on your machine (gitignored)
+- `state/` — shopping list, units, exclusions, backup counter (gitignored)
+- `backups/` — timestamped zip backups (gitignored)
+- `.env` — your tokens and config (gitignored)
+- `data/*.json` — recipe files, tracked in git
+
+Nothing is sent anywhere except Discord API calls if you use the bot.
