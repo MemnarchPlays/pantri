@@ -70,10 +70,11 @@ BOT_SCRIPT         = Path(__file__).parent / 'discord_bot.py'
 BOT_PID_FILE       = Path(__file__).parent / 'bot.pid'
 BOT_LOG_FILE       = Path(__file__).parent / 'bot.log'
 BACKUP_DIR         = Path(__file__).parent / 'backups'
-BACKUP_STATE_FILE  = Path(__file__).parent / 'backup_state.json'
-SHOPPING_LIST_FILE = Path(__file__).parent / 'shopping_list.json'
-EXCLUSIONS_FILE    = Path(__file__).parent / 'exclusions.json'
-UNITS_FILE         = Path(__file__).parent / 'units.json'
+STATE_DIR          = Path(__file__).parent / 'state'
+BACKUP_STATE_FILE  = STATE_DIR / 'backup_state.json'
+SHOPPING_LIST_FILE = STATE_DIR / 'shopping_list.json'
+EXCLUSIONS_FILE    = STATE_DIR / 'exclusions.json'
+UNITS_FILE         = STATE_DIR / 'units.json'
 EXCLUDE_SHEETS = {'Minimums'}
 MEAL_TYPES     = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Desserts']
 

@@ -5,8 +5,7 @@ __pycache__/
 *.pyo
 .env
 Food in Storage.xlsx
-shopping_list.json
-backup_state.json
+state/
 bot.pid
 bot.log
 pantry_app.log
