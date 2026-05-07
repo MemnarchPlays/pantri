@@ -1,0 +1,297 @@
+[
+  {
+    "name": "Salt",
+    "container": "1 shaker",
+    "in_stock": false
+  },
+  {
+    "name": "Black pepper",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Garlic powder",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Onion powder",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Paprika",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Smoked paprika",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Cayenne pepper",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Cumin",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Chili powder",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Cinnamon",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Nutmeg",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Dried rosemary",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Dried thyme",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Dried oregano",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Red pepper flakes",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Italian seasoning",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Cajun seasoning",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Garam masala",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Everything bagel seasoning",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Sesame seeds",
+    "container": "1 shaker",
+    "in_stock": true
+  },
+  {
+    "name": "Olive oil",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Vegetable oil",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Coconut oil",
+    "container": "1 jar",
+    "in_stock": true
+  },
+  {
+    "name": "Sesame oil",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Vanilla extract",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Baking powder",
+    "container": "1 canister",
+    "in_stock": true
+  },
+  {
+    "name": "Baking soda",
+    "container": "1 box",
+    "in_stock": true
+  },
+  {
+    "name": "All-purpose flour",
+    "container": "1 5lb bag",
+    "in_stock": true
+  },
+  {
+    "name": "Granulated sugar",
+    "container": "1 5lb bag",
+    "in_stock": true
+  },
+  {
+    "name": "Brown sugar",
+    "container": "1 2lb bag",
+    "in_stock": true
+  },
+  {
+    "name": "Powdered sugar",
+    "container": "1 2lb bag",
+    "in_stock": true
+  },
+  {
+    "name": "Unsweetened cocoa powder",
+    "container": "1 canister",
+    "in_stock": true
+  },
+  {
+    "name": "Cornstarch",
+    "container": "1 box",
+    "in_stock": true
+  },
+  {
+    "name": "Panko breadcrumbs",
+    "container": "1 canister",
+    "in_stock": true
+  },
+  {
+    "name": "Chocolate chips",
+    "container": "1 bag",
+    "in_stock": true
+  },
+  {
+    "name": "Rolled oats",
+    "container": "1 canister",
+    "in_stock": true
+  },
+  {
+    "name": "Honey",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Maple syrup",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Peanut butter",
+    "container": "1 jar",
+    "in_stock": true
+  },
+  {
+    "name": "Chia seeds",
+    "container": "1 bag",
+    "in_stock": true
+  },
+  {
+    "name": "Soy sauce",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Worcestershire sauce",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Oyster sauce",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Fish sauce",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Mirin",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Apple cider vinegar",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Red wine vinegar",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Rice vinegar",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "White vinegar",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Mayonnaise",
+    "container": "1 jar",
+    "in_stock": true
+  },
+  {
+    "name": "Dijon mustard",
+    "container": "1 jar",
+    "in_stock": true
+  },
+  {
+    "name": "Yellow mustard",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Ketchup",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "BBQ sauce",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Sriracha",
+    "container": "1 bottle",
+    "in_stock": true
+  },
+  {
+    "name": "Tahini",
+    "container": "1 jar",
+    "in_stock": true
+  },
+  {
+    "name": "Red curry paste",
+    "container": "1 jar",
+    "in_stock": true
+  },
+  {
+    "name": "Beef broth",
+    "container": "4 cartons",
+    "in_stock": true
+  },
+  {
+    "name": "Red food coloring",
+    "container": "1 bottle",
+    "in_stock": true
+  }
+]

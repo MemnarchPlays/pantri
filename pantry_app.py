@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Flask web app for the pantry tracker. Run this file then open http://localhost:5000"""
 
+import colorsys
 import io
 import json
+import zipfile
 import re
 import shutil
 import socket
@@ -17,6 +19,49 @@ from openpyxl import load_workbook
 
 app = Flask(__name__)
 
+
+def compute_theme(hex_color):
+    try:
+        h = hex_color.lstrip('#')
+        r, g, b = int(h[0:2], 16)/255, int(h[2:4], 16)/255, int(h[4:6], 16)/255
+    except Exception:
+        r, g, b = 0.42, 0.18, 0.55
+    hue, lum, sat = colorsys.rgb_to_hls(r, g, b)
+    def to_hex(r, g, b):
+        return '#{:02X}{:02X}{:02X}'.format(int(r*255), int(g*255), int(b*255))
+    dark  = colorsys.hls_to_rgb(hue, max(0, lum * 0.70), sat)
+    light = colorsys.hls_to_rgb(hue, min(1, lum + (1 - lum) * 0.75), sat * 0.4)
+    return hex_color, to_hex(*dark), to_hex(*light)
+
+
+@app.context_processor
+def inject_theme():
+    color = read_env().get('ACCENT_COLOR', '#6B2D8B')
+    main, dark, light = compute_theme(color)
+    css = f':root {{ --purple: {main}; --dark-purple: {dark}; --light-purple: {light}; }}'
+    return {'theme_css': css, 'accent_color': color}
+
+
+def _pluralize_unit(unit, qty):
+    try:
+        n = float(qty)
+    except (TypeError, ValueError):
+        return unit
+    if not unit or n == 1:
+        return unit
+    irregulars = {'loaf': 'loaves', 'bunch': 'bunches', 'box': 'boxes'}
+    low = unit.lower()
+    if low in irregulars:
+        return irregulars[low]
+    if low.startswith('can '):
+        return 'cans ' + unit[4:]
+    if low in ('count', 'lb', 'lbs'):
+        return unit
+    return unit + 's'
+
+
+app.jinja_env.filters['pluralize_unit'] = _pluralize_unit
+
 XLSX               = Path(__file__).parent / 'Food in Storage.xlsx'
 DATA_DIR           = Path(__file__).parent / 'data'
 ENV_FILE           = Path(__file__).parent / '.env'
@@ -27,6 +72,7 @@ BACKUP_DIR         = Path(__file__).parent / 'backups'
 BACKUP_STATE_FILE  = Path(__file__).parent / 'backup_state.json'
 SHOPPING_LIST_FILE = Path(__file__).parent / 'shopping_list.json'
 EXCLUSIONS_FILE    = Path(__file__).parent / 'exclusions.json'
+UNITS_FILE         = Path(__file__).parent / 'units.json'
 COLS           = ['Item', 'Quantity', 'Unit', 'Location', 'Section', 'Slot', 'Expiration', 'Notes']
 EXCLUDE_SHEETS = {'Minimums'}
 MEAL_TYPES     = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Desserts']
@@ -145,12 +191,26 @@ def save_backup_state(state):
 
 
 def _do_backup(env):
-    """Write the timestamped file and trim to max. Does not touch state."""
+    """Write a timestamped zip and trim to max. Does not touch state."""
     BACKUP_DIR.mkdir(exist_ok=True)
-    ts = datetime.now().strftime('%Y%m%d_%H%M%S')
-    shutil.copy2(XLSX, BACKUP_DIR / f'Food_in_Storage_{ts}.xlsx')
+    ts   = datetime.now().strftime('%Y%m%d_%H%M%S')
+    dest = BACKUP_DIR / f'pantry_backup_{ts}.zip'
+    with zipfile.ZipFile(dest, 'w', zipfile.ZIP_DEFLATED) as zf:
+        if XLSX.exists():
+            zf.write(XLSX, XLSX.name)
+        if UNITS_FILE.exists():
+            zf.write(UNITS_FILE, UNITS_FILE.name)
+        if EXCLUSIONS_FILE.exists():
+            zf.write(EXCLUSIONS_FILE, EXCLUSIONS_FILE.name)
+        if DATA_DIR.exists():
+            for jf in DATA_DIR.glob('*.json'):
+                zf.write(jf, f'data/{jf.name}')
     max_backups = max(1, int(env.get('BACKUP_MAX', '10')))
-    for old in sorted(BACKUP_DIR.glob('*.xlsx'))[:-max_backups]:
+    all_files = sorted(
+        list(BACKUP_DIR.glob('*.zip')) + list(BACKUP_DIR.glob('*.xlsx')),
+        key=lambda p: p.stat().st_mtime
+    )
+    for old in all_files[:-max_backups]:
         old.unlink(missing_ok=True)
 
 
@@ -184,8 +244,9 @@ def backup_wb(force=False):
 def get_backups():
     if not BACKUP_DIR.exists():
         return []
+    files = list(BACKUP_DIR.glob('*.zip')) + list(BACKUP_DIR.glob('*.xlsx'))
     result = []
-    for p in sorted(BACKUP_DIR.glob('*.xlsx'), reverse=True):
+    for p in sorted(files, key=lambda p: p.stat().st_mtime, reverse=True):
         stat = p.stat()
         kb   = stat.st_size / 1024
         result.append({
@@ -346,6 +407,36 @@ def save_exclusions(items):
     EXCLUSIONS_FILE.write_text(json.dumps(items, indent=2), encoding='utf-8')
 
 
+def load_units():
+    if not UNITS_FILE.exists():
+        return []
+    try:
+        return json.loads(UNITS_FILE.read_text(encoding='utf-8'))
+    except Exception:
+        return []
+
+
+def save_units(units):
+    UNITS_FILE.write_text(json.dumps(sorted(units, key=str.lower), indent=2), encoding='utf-8')
+
+
+def get_unit_info():
+    units = load_units()
+    if not XLSX.exists():
+        return [(u, 0) for u in units]
+    wb = load_wb()
+    counts = {u.lower(): 0 for u in units}
+    for sheet_name in [s for s in wb.sheetnames if s not in EXCLUDE_SHEETS]:
+        ws = wb[sheet_name]
+        for r in range(2, ws.max_row + 1):
+            cell_val = ws.cell(row=r, column=3).value
+            if cell_val:
+                key = str(cell_val).strip().lower()
+                if key in counts:
+                    counts[key] += 1
+    return [(u, counts[u.lower()]) for u in units]
+
+
 def is_excluded(item_name):
     name = item_name.strip().lower()
     for ex in load_exclusions():
@@ -361,10 +452,11 @@ BASE_HTML = """
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pantry Tracker</title>
+<title>Pantri</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥘</text></svg>">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <style>
-  :root { --purple: #6B2D8B; --dark-purple: #4A1E6B; --light-purple: #E8D5F0; }
+  {{ theme_css }}
   body { background: #f9f6fc; font-family: 'Segoe UI', sans-serif; }
   .navbar { background: var(--purple) !important; }
   .navbar-brand, .navbar .nav-link { color: white !important; font-weight: 600; }
@@ -395,7 +487,7 @@ BASE_HTML = """
 <body>
 <nav class="navbar navbar-expand-lg mb-4">
   <div class="container">
-    <a class="navbar-brand" href="/">Pantry Tracker</a>
+    <a class="navbar-brand" href="/">Pantri</a>
     <div class="navbar-nav ms-auto">
       <a class="nav-link" href="/">Inventory</a>
       <a class="nav-link" href="/recipes">Recipes</a>
@@ -471,7 +563,7 @@ INDEX_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
           <tr>
             <td><strong>{{ row.Item }}</strong></td>
             <td>{{ row.Quantity or '' }}</td>
-            <td>{{ row.Unit or '' }}</td>
+            <td>{{ row.Unit | pluralize_unit(row.Quantity) }}</td>
             <td>{{ row.Location or '' }}</td>
             <td>
               <a href="/edit/{{ i }}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
@@ -519,7 +611,12 @@ INDEX_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
             </div>
             <div class="mb-3">
               <label class="form-label fw-bold">Unit</label>
-              <input name="Unit" class="form-control" placeholder="e.g. 15oz can, bag, 1lb">
+              <select name="Unit" class="form-select">
+                <option value="">— none —</option>
+                {% for u in units %}
+                <option>{{ u }}</option>
+                {% endfor %}
+              </select>
             </div>
             <div class="mb-3">
               <label class="form-label fw-bold">Location</label>
@@ -596,7 +693,15 @@ EDIT_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
       </div>
       <div class="mb-3">
         <label class="form-label fw-bold">Unit</label>
-        <input name="Unit" class="form-control" placeholder="e.g. 15oz can, 28oz can, bag, 1lb" value="{{ values.get('Unit', '') }}">
+        <select name="Unit" class="form-select">
+          <option value="">— none —</option>
+          {% for u in units %}
+          <option {% if values.get('Unit', '') == u %}selected{% endif %}>{{ u }}</option>
+          {% endfor %}
+          {% if values.get('Unit') and values.get('Unit') not in units %}
+          <option selected>{{ values.get('Unit') }}</option>
+          {% endif %}
+        </select>
       </div>
       <div class="mb-3">
         <label class="form-label fw-bold">Location</label>
@@ -615,232 +720,7 @@ EDIT_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
 </div>
 """)
 
-ADD_PAGE_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
-<h1 class="mb-4">Add Items</h1>
-<div class="row g-4 align-items-start">
 
-  <!-- ── Single Item ── -->
-  <div class="col-md-6">
-    <div class="card h-100">
-      <div class="card-header">Add Single Item</div>
-      <div class="card-body">
-        <form method="post" action="/add">
-          <div class="mb-3">
-            <label class="form-label fw-bold">Item</label>
-            <input name="Item" class="form-control" placeholder="e.g. Black Beans" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-bold">Quantity</label>
-            <input name="Quantity" class="form-control" placeholder="e.g. 3">
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-bold">Unit</label>
-            <input name="Unit" class="form-control" placeholder="e.g. 15oz can, bag, 1lb">
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-bold">Location</label>
-            <select name="Location" class="form-select">
-              {% for l in locations %}
-              <option>{{ l }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Add Item</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Bulk Add ── -->
-  <div class="col-md-6">
-    <div class="card h-100">
-      <div class="card-header">Bulk Add</div>
-      <div class="card-body d-flex flex-column">
-        <p class="small text-muted mb-2">
-          One item per line: <code>Item, Qty, Unit, Location</code><br>
-          Qty / Unit / Location are optional. Examples:<br>
-          <code>Black Beans, 3, 15oz can, Pantry</code><br>
-          <code>Olive Oil, 1, bottle</code><br>
-          <code>Salt</code>
-        </p>
-        <form method="post" action="/add/bulk" class="d-flex flex-column flex-grow-1">
-          <div class="mb-3 flex-grow-1">
-            <textarea name="bulk" class="form-control font-monospace h-100" rows="10"
-                      style="min-height:200px"
-                      placeholder="Black Beans, 3, 15oz can, Pantry&#10;Olive Oil, 1, bottle&#10;Salt"></textarea>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-bold">Default Location</label>
-            <select name="default_location" class="form-select">
-              {% for l in locations %}
-              <option>{{ l }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Add All</button>
-        </form>
-        {% if results %}
-        <hr>
-        <h6>Results:</h6>
-        <ul class="small mb-0">
-          {% for msg in results %}
-          <li>{{ msg }}</li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-
-</div>
-""")
-
-CAN_MAKE_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h1>Can I Make This? <small>{{ recipes|length }} recipe{{ 's' if recipes|length != 1 else '' }}</small></h1>
-</div>
-
-<div class="card mb-4">
-  <div class="card-body">
-    <form method="get" class="row g-2 align-items-end">
-
-      <!-- Meal type pills -->
-      <div class="col-12 mb-1">
-        <span class="fw-bold small me-2">Meal Type:</span>
-        <a href="?ingredient={{ ingredient }}"
-           class="btn btn-sm me-1 {% if not meal %}btn-primary{% else %}btn-outline-primary{% endif %}">All</a>
-        {% for m in meal_types %}
-        <a href="?meal={{ m }}&ingredient={{ ingredient }}"
-           class="btn btn-sm me-1 {% if meal == m %}btn-primary{% else %}btn-outline-primary{% endif %}">{{ m }}</a>
-        {% endfor %}
-      </div>
-
-      <!-- Ingredient search -->
-      <div class="col-md-6">
-        <label class="form-label fw-bold small mb-1">Contains Ingredient</label>
-        <div class="d-flex gap-2">
-          <input name="ingredient" class="form-control search-bar"
-                 placeholder="e.g. tuna, chicken, oats…"
-                 value="{{ ingredient }}">
-          {% if meal %}<input type="hidden" name="meal" value="{{ meal }}">{% endif %}
-          <button type="submit" class="btn btn-primary px-3">Filter</button>
-          {% if meal or ingredient %}
-          <a href="/can-make" class="btn btn-outline-secondary px-3">Clear</a>
-          {% endif %}
-        </div>
-      </div>
-
-    </form>
-  </div>
-</div>
-
-<div class="row row-cols-1 row-cols-md-2 g-4">
-  {% for recipe in recipes %}
-  <div class="col">
-    <div class="card h-100">
-      <div class="card-header">{{ recipe.name }}</div>
-      <div class="card-body">
-        <div class="mb-2">
-          <span class="{{ recipe.status_class }}">{{ recipe.status_label }}</span>
-          <span class="text-muted ms-2 small">{{ recipe.meal_type }} · {{ recipe.prep_time }}</span>
-        </div>
-        {% if recipe.missing %}
-        <p class="small text-muted mb-1">Missing:</p>
-        <ul class="small mb-0">
-          {% for m in recipe.missing %}<li>{{ m }}</li>{% endfor %}
-        </ul>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-  {% endfor %}
-  {% if not recipes %}
-  <div class="col-12">
-    <p class="text-muted">No recipes match those filters.</p>
-  </div>
-  {% endif %}
-</div>
-""")
-
-MINIMUMS_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h1>Minimums</h1>
-</div>
-<div class="row g-4">
-  <div class="col-md-8">
-    <div class="card">
-      <div class="card-header">Current Minimums <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">click a number to edit</small></div>
-      <div class="table-responsive">
-        <table class="table table-hover mb-0">
-          <thead><tr><th>Item</th><th>Min Qty</th><th></th></tr></thead>
-          <tbody>
-            {% for item, qty, _ in minimums %}
-            <tr>
-              <td><strong>{{ item }}</strong></td>
-              <td>
-                <span class="qty-display" data-item="{{ item }}" title="Click to edit"
-                      style="cursor:pointer;border-bottom:1px dashed #6B2D8B;padding-bottom:1px;">{{ qty }}</span>
-                <form class="qty-form d-none" method="post" action="/minimums/set" style="display:inline;">
-                  <input type="hidden" name="item" value="{{ item }}">
-                  <input type="number" name="qty" step="0.1" min="0" value="{{ qty }}"
-                         class="form-control form-control-sm d-inline-block" style="width:80px;">
-                  <button type="submit" class="btn btn-sm btn-primary ms-1">✓</button>
-                  <button type="button" class="btn btn-sm btn-outline-secondary ms-1 qty-cancel">✕</button>
-                </form>
-              </td>
-              <td>
-                <a href="/minimums/delete/{{ item }}" class="btn btn-sm btn-outline-danger"
-                   onclick="return confirm('Delete minimum for {{ item }}?')">Del</a>
-              </td>
-            </tr>
-            {% endfor %}
-            {% if not minimums %}
-            <tr><td colspan="3" class="text-center text-muted py-4">No minimums set.</td></tr>
-            {% endif %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card">
-      <div class="card-header">Add New Minimum</div>
-      <div class="card-body">
-        <form method="post" action="/minimums/set">
-          <div class="mb-3">
-            <label class="form-label fw-bold">Item</label>
-            <input name="item" class="form-control" placeholder="e.g. Black Beans" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-bold">Min Qty</label>
-            <input name="qty" type="number" step="0.1" min="0" class="form-control" required>
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Save</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-<script>
-document.querySelectorAll('.qty-display').forEach(span => {
-  span.addEventListener('click', () => {
-    span.classList.add('d-none');
-    const form = span.nextElementSibling;
-    form.classList.remove('d-none');
-    form.style.display = 'inline';
-    form.querySelector('input[type=number]').focus();
-    form.querySelector('input[type=number]').select();
-  });
-});
-document.querySelectorAll('.qty-cancel').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const form = btn.closest('form');
-    form.classList.add('d-none');
-    form.previousElementSibling.classList.remove('d-none');
-  });
-});
-</script>
-""")
 
 RECIPES_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -973,7 +853,7 @@ ADD_RECIPE_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
 <h1>{{ page_title }}</h1>
 
 {% if not edit_mode %}
-<div class="card mb-3" style="border-color:#6B2D8B;">
+<div class="card mb-3" style="border-color:var(--purple);">
   <div class="card-body">
     <label class="form-label fw-bold mb-1">Import from URL</label>
     <p class="text-muted small mb-2">Paste any recipe URL (AllRecipes, Food Network, most food blogs, etc.) and we'll fill in the form automatically.</p>
@@ -1210,9 +1090,14 @@ SETTINGS_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
 
 <ul class="nav nav-tabs mb-4" id="settingsTabs" role="tablist">
   <li class="nav-item" role="presentation">
-    <button class="nav-link {% if active_tab not in ('minimums', 'locations', 'backups', 'exclusions') %}active{% endif %}"
-            id="discord-tab" data-bs-toggle="tab" data-bs-target="#discord"
-            type="button" role="tab">Discord Bot</button>
+    <button class="nav-link {% if active_tab == 'locations' or active_tab not in ('units', 'minimums', 'exclusions', 'backups', 'appearance', 'discord') %}active{% endif %}"
+            id="locations-tab" data-bs-toggle="tab" data-bs-target="#locations"
+            type="button" role="tab">Locations</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link {% if active_tab == 'units' %}active{% endif %}"
+            id="units-tab" data-bs-toggle="tab" data-bs-target="#units"
+            type="button" role="tab">Units</button>
   </li>
   <li class="nav-item" role="presentation">
     <button class="nav-link {% if active_tab == 'minimums' %}active{% endif %}"
@@ -1220,9 +1105,9 @@ SETTINGS_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
             type="button" role="tab">Minimums</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link {% if active_tab == 'locations' %}active{% endif %}"
-            id="locations-tab" data-bs-toggle="tab" data-bs-target="#locations"
-            type="button" role="tab">Locations</button>
+    <button class="nav-link {% if active_tab == 'exclusions' %}active{% endif %}"
+            id="exclusions-tab" data-bs-toggle="tab" data-bs-target="#exclusions"
+            type="button" role="tab">Exclusions</button>
   </li>
   <li class="nav-item" role="presentation">
     <button class="nav-link {% if active_tab == 'backups' %}active{% endif %}"
@@ -1230,85 +1115,113 @@ SETTINGS_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
             type="button" role="tab">Backups</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link {% if active_tab == 'exclusions' %}active{% endif %}"
-            id="exclusions-tab" data-bs-toggle="tab" data-bs-target="#exclusions"
-            type="button" role="tab">Exclusions</button>
+    <button class="nav-link {% if active_tab == 'appearance' %}active{% endif %}"
+            id="appearance-tab" data-bs-toggle="tab" data-bs-target="#appearance"
+            type="button" role="tab">Appearance</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link {% if active_tab == 'discord' %}active{% endif %}"
+            id="discord-tab" data-bs-toggle="tab" data-bs-target="#discord"
+            type="button" role="tab">Discord Bot</button>
   </li>
 </ul>
 
 <div class="tab-content">
 
-  <!-- ── Discord Bot Tab ── -->
-  <div class="tab-pane fade {% if active_tab not in ('minimums', 'locations', 'backups', 'exclusions') %}show active{% endif %}"
-       id="discord" role="tabpanel">
+  <!-- ── Locations Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'locations' or active_tab not in ('units', 'minimums', 'exclusions', 'backups', 'appearance', 'discord') %}show active{% endif %}"
+       id="locations" role="tabpanel">
     <div class="row g-4">
-      <div class="col-md-6">
-        <div class="card mb-4">
-          <div class="card-header">Discord Bot</div>
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">Storage Locations <small class="fw-normal ms-2" style="font-size:.8em;opacity:.7">drag to reorder</small></div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead><tr><th style="width:2rem"></th><th>Name</th><th>Items</th><th></th></tr></thead>
+              <tbody id="locations-sortable">
+                {% for name, count in locations %}
+                <tr data-name="{{ name }}">
+                  <td class="text-muted" style="cursor:grab;user-select:none;font-size:1.1rem">&#9776;</td>
+                  <td><strong>{{ name }}</strong></td>
+                  <td>{{ count }}</td>
+                  <td>
+                    {% if count == 0 %}
+                    <a href="/locations/delete/{{ name }}" class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Delete location {{ name }}?')">Delete</a>
+                    {% else %}
+                    <span class="text-muted small">{{ count }} item{{ 's' if count != 1 else '' }} — clear first to delete</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">Add Location</div>
           <div class="card-body">
-            <p class="text-muted small mb-3">
-              Create a bot at <strong>discord.com/developers/applications</strong>, copy the token, and paste it here.
-              The bot will connect to any server it has been invited to.
-            </p>
-            <div class="mb-2 d-flex align-items-center gap-2">
-              <span class="fw-bold small">Status:</span>
-              <span id="bot-status-badge" class="badge bg-secondary">Checking...</span>
-            </div>
-            <form method="post" action="/settings/discord" class="mt-3">
+            <form method="post" action="/locations/add">
               <div class="mb-3">
-                <label class="form-label fw-bold">Bot Token</label>
-                <input type="password" name="token" class="form-control font-monospace"
-                       placeholder="{{ 'Paste a new token to replace the saved one' if token_set else 'Paste your Discord bot token here' }}">
-                {% if token_set %}
-                <div class="form-text text-success">Token is saved — leave blank to keep it</div>
-                {% else %}
-                <div class="form-text text-danger">No token set — bot is offline</div>
-                {% endif %}
+                <label class="form-label fw-bold">Name</label>
+                <input name="name" class="form-control" placeholder="e.g. Garage Shelf" required>
               </div>
-              <div class="mb-3">
-                <label class="form-label fw-bold">Low-Stock Alert Channel ID</label>
-                <input type="text" name="alert_channel" class="form-control font-monospace"
-                       placeholder="Discord channel ID (right-click channel → Copy ID)"
-                       value="{{ alert_channel }}">
-                <div class="form-text">When set, the bot will post a warning here whenever an item drops below its minimum.</div>
-              </div>
-              <div class="d-flex gap-2 flex-wrap">
-                <button type="submit" name="action" value="save" class="btn btn-primary">Save Settings</button>
-                <button type="submit" name="action" value="save_restart" class="btn btn-success">Save &amp; Restart Bot</button>
-                {% if token_set %}
-                <button type="submit" name="action" value="restart" class="btn btn-outline-primary">Restart Bot</button>
-                <button type="submit" name="action" value="stop" class="btn btn-outline-secondary">Stop Bot</button>
-                <button type="submit" name="action" value="remove" class="btn btn-outline-danger ms-auto"
-                        onclick="return confirm('Remove the Discord token and disconnect the bot?')">Remove Connection</button>
-                {% endif %}
-              </div>
+              <button type="submit" class="btn btn-primary w-100">Add</button>
             </form>
           </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="card mb-4">
-          <div class="card-header">How to Set Up Your Discord Bot</div>
-          <div class="card-body small text-muted">
-            <ol class="ps-3 mb-0">
-              <li class="mb-2">Go to <strong>discord.com/developers/applications</strong> and click <strong>New Application</strong></li>
-              <li class="mb-2">Go to the <strong>Bot</strong> tab → click <strong>Add Bot</strong></li>
-              <li class="mb-2">Under <strong>Privileged Gateway Intents</strong>, enable <strong>Message Content Intent</strong></li>
-              <li class="mb-2">Click <strong>Reset Token</strong> → copy the token → paste it above</li>
-              <li class="mb-2">Go to <strong>OAuth2 → URL Generator</strong>, select <strong>bot</strong> scope and <strong>Send Messages / Read Message History</strong> permissions</li>
-              <li class="mb-2">Use the generated URL to invite the bot to your server</li>
-              <li>For low-stock alerts: right-click the target channel → <strong>Copy Channel ID</strong> (enable Developer Mode in Discord settings first)</li>
-            </ol>
+    </div>
+  </div>
+
+  <!-- ── Units Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'units' %}show active{% endif %}"
+       id="units" role="tabpanel">
+    <div class="row g-4">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">Unit List <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">used in add / edit dropdowns &nbsp;·&nbsp; drag to reorder</small></div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead><tr><th style="width:2rem"></th><th>Unit</th><th>Items using it</th><th></th></tr></thead>
+              <tbody id="units-sortable">
+                {% for unit, count in units %}
+                <tr data-unit="{{ unit }}">
+                  <td class="text-muted" style="cursor:grab;user-select:none;font-size:1.1rem">&#9776;</td>
+                  <td><strong>{{ unit }}</strong></td>
+                  <td>{{ count }}</td>
+                  <td class="text-end">
+                    {% if count == 0 %}
+                    <a href="/units/delete/{{ unit | urlencode }}" class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Delete unit {{ unit }}?')">Delete</a>
+                    {% else %}
+                    <span class="text-muted small">{{ count }} item{{ 's' if count != 1 else '' }} — in use</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+                {% if not units %}
+                <tr><td colspan="4" class="text-center text-muted py-4">No units defined yet.</td></tr>
+                {% endif %}
+              </tbody>
+            </table>
           </div>
         </div>
+      </div>
+      <div class="col-md-4">
         <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            Bot Log
-            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="loadBotLog()">Refresh</button>
-          </div>
-          <div class="card-body p-0">
-            <pre id="bot-log" class="mb-0 p-3 font-monospace small"
-                 style="max-height:220px;overflow-y:auto;background:#1a1a1a;color:#d4f0d4;border-radius:0 0 10px 10px;white-space:pre-wrap;word-break:break-all;">Loading…</pre>
+          <div class="card-header">Add Unit</div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">Add standardized unit names (e.g. can, bag, lb). These appear in the add/edit dropdowns so unit spelling stays consistent.</p>
+            <form method="post" action="/units/add">
+              <div class="mb-3">
+                <label class="form-label fw-bold">Unit Name</label>
+                <input name="unit" class="form-control" placeholder="e.g. can, bag, lb" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Add</button>
+            </form>
           </div>
         </div>
       </div>
@@ -1331,7 +1244,7 @@ SETTINGS_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
                   <td><strong>{{ item }}</strong></td>
                   <td>
                     <span class="qty-display" data-item="{{ item }}" title="Click to edit"
-                          style="cursor:pointer;border-bottom:1px dashed #6B2D8B;padding-bottom:1px;">{{ qty }}</span>
+                          style="cursor:pointer;border-bottom:1px dashed var(--purple);padding-bottom:1px;">{{ qty }}</span>
                     <form class="qty-form d-none" method="post" action="/minimums/set" style="display:inline;">
                       <input type="hidden" name="item" value="{{ item }}">
                       <input type="number" name="qty" step="0.1" min="0" value="{{ qty }}"
@@ -1372,175 +1285,6 @@ SETTINGS_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
           </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- ── Locations Tab ── -->
-  <div class="tab-pane fade {% if active_tab == 'locations' %}show active{% endif %}"
-       id="locations" role="tabpanel">
-    <div class="row g-4">
-      <div class="col-md-8">
-        <div class="card">
-          <div class="card-header">Storage Locations</div>
-          <div class="table-responsive">
-            <table class="table table-hover mb-0">
-              <thead><tr><th>Name</th><th>Items</th><th></th></tr></thead>
-              <tbody>
-                {% for name, count in locations %}
-                <tr>
-                  <td><strong>{{ name }}</strong></td>
-                  <td>{{ count }}</td>
-                  <td>
-                    {% if count == 0 %}
-                    <a href="/locations/delete/{{ name }}" class="btn btn-sm btn-outline-danger"
-                       onclick="return confirm('Delete location {{ name }}?')">Delete</a>
-                    {% else %}
-                    <span class="text-muted small">{{ count }} item{{ 's' if count != 1 else '' }} — clear first to delete</span>
-                    {% endif %}
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-header">Add Location</div>
-          <div class="card-body">
-            <form method="post" action="/locations/add">
-              <div class="mb-3">
-                <label class="form-label fw-bold">Name</label>
-                <input name="name" class="form-control" placeholder="e.g. Garage Shelf" required>
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Add</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Backups Tab ── -->
-  <div class="tab-pane fade {% if active_tab == 'backups' %}show active{% endif %}"
-       id="backups" role="tabpanel">
-    <div class="row g-4">
-
-      <div class="col-md-4">
-        <div class="card mb-4">
-          <div class="card-header">Backup Settings</div>
-          <div class="card-body">
-            <form method="post" action="/settings/backups" id="backup-cfg-form">
-
-              <div class="mb-3">
-                <label class="form-label fw-bold">When to back up</label>
-                <div class="d-flex flex-column gap-2">
-                  <label class="d-flex align-items-center gap-2" style="cursor:pointer">
-                    <input type="radio" name="backup_mode" value="actions"
-                           {% if backup_mode == 'actions' %}checked{% endif %}
-                           onchange="updateBackupUI()">
-                    Every X saves
-                  </label>
-                  <label class="d-flex align-items-center gap-2" style="cursor:pointer">
-                    <input type="radio" name="backup_mode" value="interval"
-                           {% if backup_mode == 'interval' %}checked{% endif %}
-                           onchange="updateBackupUI()">
-                    Every X hours
-                  </label>
-                  <label class="d-flex align-items-center gap-2" style="cursor:pointer">
-                    <input type="radio" name="backup_mode" value="manual"
-                           {% if backup_mode == 'manual' %}checked{% endif %}
-                           onchange="updateBackupUI()">
-                    Manual only
-                  </label>
-                </div>
-              </div>
-
-              <div id="cfg-actions" class="mb-3">
-                <label class="form-label fw-bold">Saves between backups</label>
-                <input type="number" name="backup_every_n" min="1" max="500"
-                       class="form-control" value="{{ backup_every_n }}">
-              </div>
-
-              <div id="cfg-interval" class="mb-3">
-                <label class="form-label fw-bold">Hours between backups</label>
-                <input type="number" name="backup_interval_hrs" min="0.25" step="0.25"
-                       class="form-control" value="{{ backup_interval }}">
-                <div class="form-text">Use decimals for less than an hour (e.g. 0.5 = 30 min).</div>
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label fw-bold">Backups to keep</label>
-                <input type="number" name="max_backups" min="1" max="50"
-                       class="form-control" value="{{ backup_max }}">
-              </div>
-
-              <button type="submit" class="btn btn-primary w-100">Save</button>
-            </form>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header">Status &amp; Manual Backup</div>
-          <div class="card-body">
-            <p class="small text-muted mb-3">
-              {{ backup_last_label }}<br>
-              <span id="status-actions">{{ backup_count }} of {{ backup_every_n }} saves since last backup</span>
-              <span id="status-interval">Backing up every {{ backup_interval }}h</span>
-              <span id="status-manual">Manual mode — use Backup Now to create a backup</span>
-            </p>
-            <form method="post" action="/backups/now">
-              <button type="submit" class="btn btn-outline-primary w-100">Backup Now</button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-<script>
-function updateBackupUI() {
-  const mode = document.querySelector('input[name=backup_mode]:checked').value;
-  document.getElementById('cfg-actions').style.display   = mode === 'actions'  ? '' : 'none';
-  document.getElementById('cfg-interval').style.display  = mode === 'interval' ? '' : 'none';
-  document.getElementById('status-actions').style.display  = mode === 'actions'  ? '' : 'none';
-  document.getElementById('status-interval').style.display = mode === 'interval' ? '' : 'none';
-  document.getElementById('status-manual').style.display   = mode === 'manual'   ? '' : 'none';
-}
-updateBackupUI();
-</script>
-
-      <div class="col-md-8">
-        <div class="card">
-          <div class="card-header">
-            Saved Backups
-            <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">{{ backups|length }} file{{ 's' if backups|length != 1 else '' }}</small>
-          </div>
-          {% if not backups %}
-          <div class="card-body text-muted">No backups yet — one will be created the next time you save an item.</div>
-          {% else %}
-          <div class="table-responsive">
-            <table class="table table-hover mb-0">
-              <thead><tr><th>Date</th><th>Size</th><th></th></tr></thead>
-              <tbody>
-                {% for b in backups %}
-                <tr>
-                  <td><strong>{{ b.modified }}</strong></td>
-                  <td class="text-muted small">{{ b.size }}</td>
-                  <td class="text-end">
-                    <a href="/backups/download/{{ b.name }}" class="btn btn-sm btn-outline-secondary me-1">⬇ Download</a>
-                    <form method="post" action="/backups/restore/{{ b.name }}" class="d-inline"
-                          onsubmit="return confirm('Restore this backup? Your current inventory will be backed up first.')">
-                      <button type="submit" class="btn btn-sm btn-outline-primary">↩ Restore</button>
-                    </form>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          {% endif %}
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -1604,6 +1348,275 @@ updateBackupUI();
     </div>
   </div>
 
+  <!-- ── Backups Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'backups' %}show active{% endif %}"
+       id="backups" role="tabpanel">
+    <div class="row g-4">
+
+      <div class="col-md-4">
+        <div class="card mb-4">
+          <div class="card-header">Backup Settings</div>
+          <div class="card-body">
+            <form method="post" action="/settings/backups" id="backup-cfg-form">
+
+              <div class="mb-3">
+                <label class="form-label fw-bold">When to back up</label>
+                <div class="d-flex flex-column gap-2">
+                  <label class="d-flex align-items-center gap-2" style="cursor:pointer">
+                    <input type="radio" name="backup_mode" value="actions"
+                           {% if backup_mode == 'actions' %}checked{% endif %}
+                           onchange="updateBackupUI()">
+                    Every X updates
+                  </label>
+                  <label class="d-flex align-items-center gap-2" style="cursor:pointer">
+                    <input type="radio" name="backup_mode" value="interval"
+                           {% if backup_mode == 'interval' %}checked{% endif %}
+                           onchange="updateBackupUI()">
+                    Every X hours
+                  </label>
+                  <label class="d-flex align-items-center gap-2" style="cursor:pointer">
+                    <input type="radio" name="backup_mode" value="manual"
+                           {% if backup_mode == 'manual' %}checked{% endif %}
+                           onchange="updateBackupUI()">
+                    Manual only
+                  </label>
+                </div>
+              </div>
+
+              <div id="cfg-actions" class="mb-3">
+                <label class="form-label fw-bold">Updates between backups</label>
+                <input type="number" name="backup_every_n" min="1" max="500"
+                       class="form-control" value="{{ backup_every_n }}">
+              </div>
+
+              <div id="cfg-interval" class="mb-3">
+                <label class="form-label fw-bold">Hours between backups</label>
+                <input type="number" name="backup_interval_hrs" min="0.25" step="0.25"
+                       class="form-control" value="{{ backup_interval }}">
+                <div class="form-text">Use decimals for less than an hour (e.g. 0.5 = 30 min).</div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-bold">Backups to keep</label>
+                <input type="number" name="max_backups" min="1" max="50"
+                       class="form-control" value="{{ backup_max }}">
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100">Save</button>
+            </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">Status &amp; Manual Backup</div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">
+              {{ backup_last_label }}<br>
+              <span id="status-actions">{{ backup_count }} of {{ backup_every_n }} updates since last backup</span>
+              <span id="status-interval">Backing up every {{ backup_interval }}h</span>
+              <span id="status-manual">Manual mode — use Backup Now to create a backup</span>
+            </p>
+            <form method="post" action="/backups/now">
+              <button type="submit" class="btn btn-outline-primary w-100">Backup Now</button>
+            </form>
+          </div>
+        </div>
+        <div class="card mt-4">
+          <div class="card-header">Upload Backup</div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">Upload an xlsx backup from your computer. It will appear in the list and can be restored from there.</p>
+            <form method="post" action="/backups/upload" enctype="multipart/form-data">
+              <div class="mb-3">
+                <input type="file" name="backup_file" accept=".zip,.xlsx" class="form-control" required>
+              </div>
+              <button type="submit" class="btn btn-outline-secondary w-100">⬆ Upload</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+<script>
+function updateBackupUI() {
+  const mode = document.querySelector('input[name=backup_mode]:checked').value;
+  document.getElementById('cfg-actions').style.display   = mode === 'actions'  ? '' : 'none';
+  document.getElementById('cfg-interval').style.display  = mode === 'interval' ? '' : 'none';
+  document.getElementById('status-actions').style.display  = mode === 'actions'  ? '' : 'none';
+  document.getElementById('status-interval').style.display = mode === 'interval' ? '' : 'none';
+  document.getElementById('status-manual').style.display   = mode === 'manual'   ? '' : 'none';
+}
+updateBackupUI();
+</script>
+
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            Saved Backups
+            <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">{{ backups|length }} file{{ 's' if backups|length != 1 else '' }}</small>
+          </div>
+          {% if not backups %}
+          <div class="card-body text-muted">No backups yet — one will be created the next time you save an item.</div>
+          {% else %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead><tr><th>Date</th><th>Size</th><th></th></tr></thead>
+              <tbody>
+                {% for b in backups %}
+                <tr>
+                  <td><strong>{{ b.modified }}</strong></td>
+                  <td class="text-muted small">{{ b.size }}</td>
+                  <td class="text-end">
+                    <a href="/backups/download/{{ b.name }}" class="btn btn-sm btn-outline-secondary me-1">⬇ Download</a>
+                    <form method="post" action="/backups/restore/{{ b.name }}" class="d-inline"
+                          onsubmit="return confirm('Restore this backup? Your current inventory will be backed up first.')">
+                      <button type="submit" class="btn btn-sm btn-outline-primary">↩ Restore</button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Appearance Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'appearance' %}show active{% endif %}"
+       id="appearance" role="tabpanel">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">Theme Color</div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">Pick the accent color used across the app — navbar, buttons, card headers, and table headers.</p>
+            <form method="post" action="/settings/appearance">
+              <div class="mb-3">
+                <label class="form-label fw-bold">Accent Color</label>
+                <div class="d-flex align-items-center gap-3">
+                  <input type="color" name="accent_color" value="{{ accent_color }}"
+                         class="form-control form-control-color" style="width:60px;height:40px;padding:2px;">
+                  <span class="font-monospace small text-muted" id="color-hex">{{ accent_color }}</span>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold small">Presets</label>
+                <div class="d-flex flex-wrap gap-2">
+                  {% for label, hex in [('Purple', '#6B2D8B'), ('Blue', '#1A56DB'), ('Green', '#057A55'), ('Red', '#C81E1E'), ('Orange', '#B45309'), ('Teal', '#0E7490'), ('Pink', '#9D174D')] %}
+                  <button type="button" class="btn btn-sm"
+                          style="background:{{ hex }};border-color:{{ hex }};color:white;min-width:60px;"
+                          onclick="document.querySelector('input[name=accent_color]').value='{{ hex }}';document.getElementById('color-hex').textContent='{{ hex }}';">
+                    {{ label }}
+                  </button>
+                  {% endfor %}
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Apply</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">Preview</div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">A live preview will appear after you click Apply.</p>
+            <div class="d-flex flex-column gap-2">
+              <button class="btn btn-primary">Primary Button</button>
+              <button class="btn btn-outline-primary">Outline Button</button>
+              <div class="p-2 rounded text-white text-center small" style="background:var(--purple);">Navbar / Card Header</div>
+              <div class="p-2 rounded text-center small" style="background:var(--light-purple);color:var(--dark-purple);">Light Accent</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<script>
+document.querySelector('input[name=accent_color]').addEventListener('input', function() {
+  document.getElementById('color-hex').textContent = this.value;
+});
+</script>
+  </div>
+
+  <!-- ── Discord Bot Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'discord' %}show active{% endif %}"
+       id="discord" role="tabpanel">
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header">Discord Bot</div>
+          <div class="card-body">
+            <p class="text-muted small mb-3">
+              Create a bot at <strong>discord.com/developers/applications</strong>, copy the token, and paste it here.
+              The bot will connect to any server it has been invited to.
+            </p>
+            <div class="mb-2 d-flex align-items-center gap-2">
+              <span class="fw-bold small">Status:</span>
+              <span id="bot-status-badge" class="badge bg-secondary">Checking...</span>
+            </div>
+            <form method="post" action="/settings/discord" class="mt-3">
+              <div class="mb-3">
+                <label class="form-label fw-bold">Bot Token</label>
+                <input type="password" name="token" class="form-control font-monospace"
+                       placeholder="{{ 'Paste a new token to replace the saved one' if token_set else 'Paste your Discord bot token here' }}">
+                {% if token_set %}
+                <div class="form-text text-success">Token is saved — leave blank to keep it</div>
+                {% else %}
+                <div class="form-text text-danger">No token set — bot is offline</div>
+                {% endif %}
+                <div class="form-text text-muted">Your token is never included in backups.</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Low-Stock Alert Channel ID</label>
+                <input type="text" name="alert_channel" class="form-control font-monospace"
+                       placeholder="Discord channel ID (right-click channel → Copy ID)"
+                       value="{{ alert_channel }}">
+                <div class="form-text">When set, the bot will post a warning here whenever an item drops below its minimum.</div>
+              </div>
+              <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" name="action" value="save" class="btn btn-primary">Save Settings</button>
+                <button type="submit" name="action" value="save_restart" class="btn btn-success">Save &amp; Restart Bot</button>
+                {% if token_set %}
+                <button type="submit" name="action" value="restart" class="btn btn-outline-primary">Restart Bot</button>
+                <button type="submit" name="action" value="stop" class="btn btn-outline-secondary">Stop Bot</button>
+                <button type="submit" name="action" value="remove" class="btn btn-outline-danger ms-auto"
+                        onclick="return confirm('Remove the Discord token and disconnect the bot?')">Remove Connection</button>
+                {% endif %}
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header">How to Set Up Your Discord Bot</div>
+          <div class="card-body small text-muted">
+            <ol class="ps-3 mb-0">
+              <li class="mb-2">Go to <strong>discord.com/developers/applications</strong> and click <strong>New Application</strong></li>
+              <li class="mb-2">Go to the <strong>Bot</strong> tab → click <strong>Add Bot</strong></li>
+              <li class="mb-2">Under <strong>Privileged Gateway Intents</strong>, enable <strong>Message Content Intent</strong></li>
+              <li class="mb-2">Click <strong>Reset Token</strong> → copy the token → paste it above</li>
+              <li class="mb-2">Go to <strong>OAuth2 → URL Generator</strong>, select <strong>bot</strong> scope and <strong>Send Messages / Read Message History</strong> permissions</li>
+              <li class="mb-2">Use the generated URL to invite the bot to your server</li>
+              <li>For low-stock alerts: right-click the target channel → <strong>Copy Channel ID</strong> (enable Developer Mode in Discord settings first)</li>
+            </ol>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            Bot Log
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="loadBotLog()">Refresh</button>
+          </div>
+          <div class="card-body p-0">
+            <pre id="bot-log" class="mb-0 p-3 font-monospace small"
+                 style="max-height:220px;overflow-y:auto;background:#1a1a1a;color:#d4f0d4;border-radius:0 0 10px 10px;white-space:pre-wrap;word-break:break-all;">Loading…</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -1643,6 +1656,44 @@ document.querySelectorAll('.qty-cancel').forEach(btn => {
     form.previousElementSibling.classList.remove('d-none');
   });
 });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script>
+(function() {
+  var locBody = document.getElementById('locations-sortable');
+  if (locBody) {
+    Sortable.create(locBody, {
+      handle: 'td:first-child',
+      animation: 150,
+      onEnd: function() {
+        var order = Array.from(locBody.querySelectorAll('tr[data-name]'))
+                        .map(function(r){ return r.dataset.name; });
+        fetch('/locations/reorder', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({order: order})
+        });
+      }
+    });
+  }
+
+  var unitBody = document.getElementById('units-sortable');
+  if (unitBody) {
+    Sortable.create(unitBody, {
+      handle: 'td:first-child',
+      animation: 150,
+      onEnd: function() {
+        var order = Array.from(unitBody.querySelectorAll('tr[data-unit]'))
+                        .map(function(r){ return r.dataset.unit; });
+        fetch('/units/reorder', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({order: order})
+        });
+      }
+    });
+  }
+})();
 </script>
 """)
 
@@ -1687,7 +1738,7 @@ RECIPE_DETAIL_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
       <div class="col-6 col-md-3">
         <div class="card text-center" style="border-color:#E8D5F0;">
           <div class="card-body py-2">
-            <div class="fw-bold macro-val" data-base="{{ m.calories }}" style="color:#6B2D8B;font-size:1.3em;">{{ m.calories }}</div>
+            <div class="fw-bold macro-val" data-base="{{ m.calories }}" style="color:var(--purple);font-size:1.3em;">{{ m.calories }}</div>
             <div class="text-muted small">Cal / serving</div>
           </div>
         </div>
@@ -1695,7 +1746,7 @@ RECIPE_DETAIL_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
       <div class="col-6 col-md-3">
         <div class="card text-center" style="border-color:#E8D5F0;">
           <div class="card-body py-2">
-            <div class="fw-bold macro-val" data-base="{{ m.protein_g }}" style="color:#6B2D8B;font-size:1.3em;">{{ m.protein_g }}g</div>
+            <div class="fw-bold macro-val" data-base="{{ m.protein_g }}" style="color:var(--purple);font-size:1.3em;">{{ m.protein_g }}g</div>
             <div class="text-muted small">Protein / serving</div>
           </div>
         </div>
@@ -1703,7 +1754,7 @@ RECIPE_DETAIL_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
       <div class="col-6 col-md-3">
         <div class="card text-center" style="border-color:#E8D5F0;">
           <div class="card-body py-2">
-            <div class="fw-bold macro-val" data-base="{{ m.carbs_g }}" style="color:#6B2D8B;font-size:1.3em;">{{ m.carbs_g }}g</div>
+            <div class="fw-bold macro-val" data-base="{{ m.carbs_g }}" style="color:var(--purple);font-size:1.3em;">{{ m.carbs_g }}g</div>
             <div class="text-muted small">Carbs / serving</div>
           </div>
         </div>
@@ -1711,7 +1762,7 @@ RECIPE_DETAIL_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
       <div class="col-6 col-md-3">
         <div class="card text-center" style="border-color:#E8D5F0;">
           <div class="card-body py-2">
-            <div class="fw-bold macro-val" data-base="{{ m.fat_g }}" style="color:#6B2D8B;font-size:1.3em;">{{ m.fat_g }}g</div>
+            <div class="fw-bold macro-val" data-base="{{ m.fat_g }}" style="color:var(--purple);font-size:1.3em;">{{ m.fat_g }}g</div>
             <div class="text-muted small">Fat / serving</div>
           </div>
         </div>
@@ -1829,37 +1880,6 @@ function formatNum(n) {
 """)
 
 
-RESTOCK_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h1>Restock List <small>{{ low|length }} item(s) below minimum</small></h1>
-  <a href="/minimums" class="btn btn-outline-primary btn-sm">Edit Minimums</a>
-</div>
-{% if not low %}
-<div class="alert" style="background:#e8f5e9;border:1px solid #a5d6a7;color:#2e7d32;">
-  ✅ Everything is stocked up — nothing below minimum.
-</div>
-{% else %}
-<div class="card">
-  <div class="card-header">Items to Restock</div>
-  <div class="table-responsive">
-    <table class="table table-hover mb-0">
-      <thead><tr><th>Item</th><th>Current</th><th>Minimum</th><th>Need</th><th>Unit</th></tr></thead>
-      <tbody>
-        {% for item, current, minimum, unit in low %}
-        <tr>
-          <td><strong>{{ item }}</strong></td>
-          <td class="text-danger">{{ current }}</td>
-          <td>{{ minimum }}</td>
-          <td class="fw-bold">{{ (minimum - current)|round(1) }}</td>
-          <td class="text-muted">{{ unit }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-{% endif %}
-""")
 
 SHOPPING_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -1881,7 +1901,7 @@ SHOPPING_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
               <td><strong>{{ item }}</strong></td>
               <td>{{ current }}</td>
               <td class="fw-bold text-danger">{{ (minimum - current)|round(1) }}</td>
-              <td class="text-muted">{{ unit }}</td>
+              <td class="text-muted">{{ unit | pluralize_unit(current) }}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -1959,9 +1979,15 @@ SHOPPING_HTML = BASE_HTML.replace('{% block content %}{% endblock %}', """
       {% endif %}
     </span>
     {% if shopping_list %}
-    <form method="post" action="/shopping/list/clear-checked" class="d-inline">
-      <button type="submit" class="btn btn-outline-secondary btn-sm">Remove checked</button>
-    </form>
+    <div class="d-flex gap-2">
+      <form method="post" action="/shopping/list/clear-checked" class="d-inline">
+        <button type="submit" class="btn btn-outline-secondary btn-sm">Remove checked</button>
+      </form>
+      <form method="post" action="/shopping/list/clear-all" class="d-inline"
+            onsubmit="return confirm('Clear the entire shopping list?')">
+        <button type="submit" class="btn btn-outline-danger btn-sm">Clear all</button>
+      </form>
+    </div>
     {% endif %}
   </div>
   {% if not shopping_list %}
@@ -2060,7 +2086,7 @@ def index():
         rows = [(i, r) for i, r in rows if str(r.get('Location', '')) == loc or i.startswith(loc + ':')]
     return render_template_string(INDEX_HTML, items=rows, total=len(rows),
                                   locations=locations, q=q, loc=loc,
-                                  tab=tab, bulk_results=[])
+                                  tab=tab, bulk_results=[], units=load_units())
 
 
 @app.route('/add', methods=['GET', 'POST'])
@@ -2160,7 +2186,7 @@ def edit(row_key):
     values = {field: ws.cell(row=row_idx, column=col).value or ''
               for col, field in enumerate(COLS, 1)}
     return render_template_string(EDIT_HTML, title=f'Edit: {values.get("Item", "")}',
-                                  values=values, locations=location_sheets)
+                                  values=values, locations=location_sheets, units=load_units())
 
 
 @app.route('/delete/<path:row_key>')
@@ -2755,6 +2781,12 @@ def shopping_list_remove(item_id):
     return redirect(url_for('shopping'))
 
 
+@app.route('/shopping/list/clear-all', methods=['POST'])
+def shopping_list_clear_all():
+    save_shopping_list([])
+    return redirect(url_for('shopping'))
+
+
 @app.route('/shopping/list/clear-checked', methods=['POST'])
 def shopping_list_clear_checked():
     items = [i for i in load_shopping_list() if not i['checked']]
@@ -2815,7 +2847,7 @@ def bulk_add():
         rows    = [(f'{s}:{r}', d) for s, r, d in all_raw]
         return render_template_string(INDEX_HTML, items=rows, total=len(rows),
                                       locations=location_sheets, q='', loc='',
-                                      tab='add', bulk_results=results)
+                                      tab='add', bulk_results=results, units=load_units())
 
     return redirect(url_for('index', tab='add'))
 
@@ -2830,7 +2862,7 @@ def settings():
     backup_interval   = float(env.get('BACKUP_INTERVAL_HRS', '24'))
     backup_max        = int(env.get('BACKUP_MAX', '10'))
     backup_last_label, backup_count = get_backup_info()
-    active_tab        = request.args.get('tab', 'discord')
+    active_tab        = request.args.get('tab', 'locations')
     return render_template_string(SETTINGS_HTML, token_set=bool(token),
                                   alert_channel=alert_channel,
                                   minimums=get_minimums(),
@@ -2843,6 +2875,7 @@ def settings():
                                   backup_last_label=backup_last_label,
                                   backup_count=backup_count,
                                   exclusions=load_exclusions(),
+                                  units=get_unit_info(),
                                   active_tab=active_tab)
 
 
@@ -2906,6 +2939,55 @@ def exclusions_toggle(name):
     return redirect(referer)
 
 
+@app.route('/units/add', methods=['POST'])
+def units_add():
+    unit = request.form.get('unit', '').strip()
+    if unit:
+        units = load_units()
+        if unit.lower() not in [u.lower() for u in units]:
+            units.append(unit)
+            save_units(units)
+    return redirect(url_for('settings', tab='units'))
+
+
+@app.route('/units/delete/<unit>')
+def units_delete(unit):
+    _, count = next(((u, c) for u, c in get_unit_info() if u.lower() == unit.lower()), (None, 0))
+    if count == 0:
+        units = [u for u in load_units() if u.lower() != unit.lower()]
+        save_units(units)
+    return redirect(url_for('settings', tab='units'))
+
+
+@app.route('/units/reorder', methods=['POST'])
+def units_reorder():
+    data = request.get_json(silent=True) or {}
+    new_order = data.get('order', [])
+    current = load_units()
+    current_lower = [u.lower() for u in current]
+    ordered = [u for u in new_order if u.lower() in current_lower]
+    rest = [u for u in current if u.lower() not in [x.lower() for x in ordered]]
+    save_units(ordered + rest)
+    return ('', 204)
+
+
+@app.route('/locations/reorder', methods=['POST'])
+def locations_reorder():
+    data = request.get_json(silent=True) or {}
+    new_order = data.get('order', [])
+    wb = load_wb()
+    valid = [s for s in wb.sheetnames if s not in EXCLUDE_SHEETS]
+    new_order = [n for n in new_order if n in valid]
+    excluded = [s for s in wb.sheetnames if s in EXCLUDE_SHEETS]
+    full_order = new_order + excluded
+    for target_idx, name in enumerate(full_order):
+        cur_idx = wb.sheetnames.index(name)
+        if cur_idx != target_idx:
+            wb.move_sheet(name, offset=target_idx - cur_idx)
+    wb.save(XLSX)
+    return ('', 204)
+
+
 @app.route('/settings/discord', methods=['POST'])
 def settings_discord():
     action = request.form.get('action', 'save')
@@ -2929,7 +3011,7 @@ def settings_discord():
         env.pop('DISCORD_TOKEN', None)
         write_env(env)
 
-    return redirect(url_for('settings'))
+    return redirect(url_for('settings', tab='discord'))
 
 
 @app.route('/settings/bot-status')
@@ -2967,6 +3049,16 @@ def settings_bot_log():
     idx = text.rfind(marker)
     session = text[idx:] if idx != -1 else text
     return jsonify({'log': session.strip()})
+
+
+@app.route('/settings/appearance', methods=['POST'])
+def settings_appearance():
+    color = request.form.get('accent_color', '#6B2D8B').strip()
+    if re.match(r'^#[0-9A-Fa-f]{6}$', color):
+        env = read_env()
+        env['ACCENT_COLOR'] = color
+        write_env(env)
+    return redirect(url_for('settings', tab='appearance'))
 
 
 @app.route('/settings/backups', methods=['POST'])
@@ -3014,7 +3106,45 @@ def backups_restore(filename):
     path = BACKUP_DIR / Path(filename).name
     if path.exists() and path.parent.resolve() == BACKUP_DIR.resolve():
         backup_wb(force=True)
-        shutil.copy2(path, XLSX)
+        if path.suffix.lower() == '.zip':
+            with zipfile.ZipFile(path, 'r') as zf:
+                names = zf.namelist()
+                if XLSX.name in names:
+                    zf.extract(XLSX.name, XLSX.parent)
+                if UNITS_FILE.name in names:
+                    zf.extract(UNITS_FILE.name, UNITS_FILE.parent)
+                if EXCLUSIONS_FILE.name in names:
+                    zf.extract(EXCLUSIONS_FILE.name, EXCLUSIONS_FILE.parent)
+                DATA_DIR.mkdir(exist_ok=True)
+                for name in names:
+                    if name.startswith('data/') and name.endswith('.json'):
+                        zf.extract(name, Path(__file__).parent)
+        else:
+            shutil.copy2(path, XLSX)
+    return redirect(url_for('settings', tab='backups'))
+
+
+@app.route('/backups/upload', methods=['POST'])
+def backups_upload():
+    f = request.files.get('backup_file')
+    if not f:
+        return redirect(url_for('settings', tab='backups'))
+    fname = f.filename.lower()
+    if not (fname.endswith('.zip') or fname.endswith('.xlsx')):
+        return redirect(url_for('settings', tab='backups'))
+    BACKUP_DIR.mkdir(exist_ok=True)
+    ts   = datetime.now().strftime('%Y%m%d_%H%M%S')
+    ext  = '.zip' if fname.endswith('.zip') else '.xlsx'
+    dest = BACKUP_DIR / f'pantry_backup_upload_{ts}{ext}'
+    f.save(str(dest))
+    env = read_env()
+    max_backups = max(1, int(env.get('BACKUP_MAX', '10')))
+    all_files = sorted(
+        list(BACKUP_DIR.glob('*.zip')) + list(BACKUP_DIR.glob('*.xlsx')),
+        key=lambda p: p.stat().st_mtime
+    )
+    for old in all_files[:-max_backups]:
+        old.unlink(missing_ok=True)
     return redirect(url_for('settings', tab='backups'))
 
 
@@ -3043,7 +3173,7 @@ def download_pdf():
 
 if __name__ == '__main__':
     _kill_stale_bot()
-    print('Starting Pantry Tracker at http://localhost:5000')
+    print('Starting Pantri at http://localhost:5000')
 
     def _port_open(port):
         try:

@@ -97,6 +97,9 @@ pending_adds = {}
 # Tracks location-picker messages: {message_id: user_id}
 location_pickers = {}
 
+# Tracks recipe-picker messages: {message_id: {'uid': user_id, 'recipes': [...]}}
+recipe_pickers = {}
+
 NUMBER_EMOJIS = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟']
 
 KNOWN_UNITS = {
@@ -298,55 +301,58 @@ async def send_location_picker(channel, uid):
     location_pickers[msg.id] = uid
 
 
-def cmd_recipe(term):
+def find_recipes(term):
+    """Return matching recipes using substring then word-level fallback."""
     if not DATA_DIR.exists():
-        return ['No recipes found.']
-    matches = []
+        return []
+    all_recipes = []
     for path in DATA_DIR.glob('*.json'):
         try:
-            recipe = json.loads(path.read_text(encoding='utf-8'))
+            all_recipes.append(json.loads(path.read_text(encoding='utf-8')))
         except Exception:
             continue
-        if term.lower() in recipe.get('name', '').lower():
-            matches.append(recipe)
-
+    term_lower = term.lower()
+    # Exact substring match first
+    matches = [r for r in all_recipes if term_lower in r.get('name', '').lower()]
     if not matches:
-        return [f'No recipe found matching **{term}**.']
-    if len(matches) > 1:
-        names = '\n'.join(f"• {r['name']}" for r in matches)
-        return [f'Multiple matches — be more specific:\n{names}']
+        # Word-level: all words in term must appear somewhere in the name
+        words = term_lower.split()
+        matches = [r for r in all_recipes if all(w in r.get('name', '').lower() for w in words)]
+    return matches
 
-    r = matches[0]
+
+async def send_recipe_picker(channel, uid, matches):
+    lines = ['**Which recipe?**']
+    for i, r in enumerate(matches[:10]):
+        lines.append(f"{NUMBER_EMOJIS[i]} {r['name']}")
+    msg = await channel.send('\n'.join(lines))
+    for i in range(min(len(matches), 10)):
+        await msg.add_reaction(NUMBER_EMOJIS[i])
+    recipe_pickers[msg.id] = {'uid': uid, 'recipes': matches[:10]}
+
+
+def build_recipe_chunks(r):
     macros = r.get('macros_per_serving', {})
-
-    have = {str(row.get('Item', '')).lower() for row in get_all_rows() if row.get('Item')}
-
-    lines = [
+    have   = {str(row.get('Item', '')).lower() for row in get_all_rows() if row.get('Item')}
+    lines  = [
         f"**{r['name']}** — {r.get('meal_type', '')} | Serves {r.get('servings', '?')} | Prep {r.get('prep_time', '?')} | Cook {r.get('cook_time', '?')}",
         f"*Calories: {macros.get('calories','?')} | Protein: {macros.get('protein_g','?')}g | Carbs: {macros.get('carbs_g','?')}g | Fat: {macros.get('fat_g','?')}g*",
-        '',
-        '**Ingredients**',
+        '', '**Ingredients**',
     ]
     for ing in r.get('ingredients', []):
         name = ing.get('item', '')
-        in_pantry = any(name.lower() in h or h in name.lower() for h in have)
-        icon = '✅' if in_pantry else '•'
+        icon = '✅' if any(name.lower() in h or h in name.lower() for h in have) else '•'
         lines.append(f"{icon} {ing.get('amount', '')} {name}".strip())
-
     lines += ['', '**Instructions**']
     for i, step in enumerate(r.get('instructions', []), 1):
         lines.append(f"{i}. {step}")
-
     subs = r.get('substitutions', {})
     if subs:
         lines += ['', '**Substitutions**']
         for key, val in subs.items():
             lines.append(f"*{key.replace('_', ' ').title()}:* {val}")
-
     if r.get('notes'):
         lines += ['', f"**Notes:** {r['notes']}"]
-
-    # Split into chunks under 2000 chars
     chunks, current = [], ''
     for line in lines:
         if len(current) + len(line) + 1 > 1900:
@@ -357,6 +363,17 @@ def cmd_recipe(term):
     if current:
         chunks.append(current)
     return chunks
+
+
+def cmd_recipe(term):
+    matches = find_recipes(term)
+    if not matches:
+        return [f'No recipe found matching **{term}**.'], None
+    if len(matches) > 1:
+        return None, matches
+
+    r = matches[0]
+    return build_recipe_chunks(r), None
 
 
 MEAL_TYPES = {'breakfast', 'lunch', 'dinner', 'snack', 'dessert'}
@@ -421,7 +438,7 @@ def cmd_can_make(filter_term=None):
     return '\n'.join(lines)
 
 
-HELP_TEXT = """**Pantry Bot Commands**
+HELP_TEXT = """**Pantri Bot Commands**
 
 **Recipes**
 `!recipe <name>` — show a recipe (partial name ok)
@@ -430,7 +447,8 @@ HELP_TEXT = """**Pantry Bot Commands**
 **Inventory**
 `!add <item> [qty] [unit]` — add an item (bot asks for missing fields) · `!cancel` to abort
 `!stock <item>` — check quantity · `!list [location]` — list all items
-`!set <item> <qty>` — set exact qty · `!remove <item> <qty>` — subtract qty
+`!set <item> <qty>` — set exact quantity
+`!remove <item> <qty>` — subtract quantity from an item (e.g. `!remove black beans 2`)
 `!restock` — items below minimum · `!setmin <item> <qty>` — set a minimum
 
 **Locations**
@@ -503,8 +521,12 @@ async def on_message(message):
 
     if content.startswith('!recipe '):
         term = content[8:].strip()
-        for chunk in cmd_recipe(term):
-            await message.channel.send(chunk)
+        chunks, matches = cmd_recipe(term)
+        if matches:
+            await send_recipe_picker(message.channel, uid, matches)
+        else:
+            for chunk in chunks:
+                await message.channel.send(chunk)
 
     elif content.startswith('!stock '):
         term = content[7:].strip()
@@ -713,6 +735,23 @@ async def on_reaction_add(reaction, user):
     if user == client.user:
         return
     msg_id = reaction.message.id
+
+    if msg_id in recipe_pickers:
+        picker = recipe_pickers[msg_id]
+        if user.id != picker['uid']:
+            return
+        emoji = str(reaction.emoji)
+        if emoji not in NUMBER_EMOJIS:
+            return
+        idx = NUMBER_EMOJIS.index(emoji)
+        if idx >= len(picker['recipes']):
+            return
+        del recipe_pickers[msg_id]
+        await reaction.message.delete()
+        for chunk in build_recipe_chunks(picker['recipes'][idx]):
+            await reaction.message.channel.send(chunk)
+        return
+
     if msg_id not in location_pickers:
         return
     uid = location_pickers[msg_id]

@@ -108,7 +108,7 @@ def cover_page(styles):
     now = datetime.now().strftime('%B %Y')
     return [
         Spacer(1, 2.2 * inch),
-        Paragraph('Recipe Binder', styles['cover_title']),
+        Paragraph('Pantri', styles['cover_title']),
         Spacer(1, 0.2 * inch),
         HRFlowable(width='60%', thickness=2, color=PURPLE, spaceAfter=10),
         Paragraph('Personal Collection', styles['cover_sub']),
