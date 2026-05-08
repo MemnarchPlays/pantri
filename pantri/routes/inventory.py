@@ -1,6 +1,6 @@
 """Inventory blueprint — /, /add, /edit/<row_key>, /delete/<row_key>, /add/bulk"""
 
-from flask import Blueprint, request, redirect, url_for, render_template
+from flask import Blueprint, request, redirect, url_for, render_template, jsonify
 from pantry_utils import COLS, to_title
 from pantri.db import load_wb, save_wb, get_all_rows, get_location_sheets
 from pantri.state import load_units
@@ -136,6 +136,59 @@ def delete(row_key):
         ws.cell(row=row_idx, column=col).value = None
     save_wb(wb)
     return redirect(url_for('inventory.index'))
+
+
+@bp.route('/items.json')
+def items_json():
+    from pantri import _pluralize_unit
+    q   = request.args.get('q', '').lower()
+    loc = request.args.get('loc', '')
+    wb      = load_wb()
+    all_raw = get_all_rows(wb)
+    rows = []
+    for s, r, d in all_raw:
+        key = f'{s}:{r}'
+        if q and q not in str(d.get('Item', '')).lower():
+            continue
+        if loc and str(d.get('Location', '')) != loc and not key.startswith(loc + ':'):
+            continue
+        rows.append({
+            'key':      key,
+            'item':     d.get('Item') or '',
+            'qty':      d.get('Quantity', 0),
+            'unit':     _pluralize_unit(d.get('Unit'), d.get('Quantity')) or '',
+            'location': d.get('Location') or '',
+            'edit_url': url_for('inventory.edit', row_key=key),
+            'del_url':  url_for('inventory.delete', row_key=key),
+        })
+    return jsonify({'items': rows, 'total': len(rows)})
+
+
+@bp.route('/item/adjust', methods=['POST'])
+def adjust():
+    row_key = request.form.get('row_key', '')
+    try:
+        delta = float(request.form.get('delta', '0'))
+    except ValueError:
+        return jsonify({'ok': False}), 400
+    try:
+        sheet_name, row_idx = row_key.rsplit(':', 1)
+        row_idx = int(row_idx)
+    except (ValueError, AttributeError):
+        return jsonify({'ok': False}), 400
+    wb = load_wb()
+    if sheet_name not in wb.sheetnames:
+        return jsonify({'ok': False}), 404
+    ws = wb[sheet_name]
+    try:
+        current = float(str(ws.cell(row=row_idx, column=2).value or 0))
+    except (ValueError, TypeError):
+        current = 0
+    new_qty = max(0, current + delta)
+    new_qty = int(new_qty) if new_qty == int(new_qty) else new_qty
+    ws.cell(row=row_idx, column=2).value = new_qty
+    save_wb(wb)
+    return jsonify({'ok': True, 'qty': new_qty})
 
 
 @bp.route('/add/bulk', methods=['GET', 'POST'])

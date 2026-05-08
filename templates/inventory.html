@@ -184,17 +184,80 @@
 {% endblock %}
 {% block scripts %}
 <script>
-document.querySelectorAll('.adj-btn').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    var key = this.dataset.key;
-    var delta = this.dataset.delta;
+(function () {
+  // adj-btn via event delegation so clicks still work after table refresh
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.adj-btn');
+    if (!btn) return;
+    var key   = btn.dataset.key;
+    var delta = btn.dataset.delta;
     var domId = 'qty-' + key.replace(/:/g, '-').replace(/ /g, '_');
     var display = document.getElementById(domId);
     var body = 'row_key=' + encodeURIComponent(key) + '&delta=' + encodeURIComponent(delta);
     fetch('/item/adjust', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: body})
-      .then(function(r) { return r.json(); })
-      .then(function(data) { if (data.ok && display) display.textContent = data.qty; });
+      .then(function (r) { return r.json(); })
+      .then(function (data) { if (data.ok && display) display.textContent = data.qty; });
   });
-});
+
+  // Auto-refresh — only runs on the Items tab (table is absent on Add tab)
+  var tbody = document.querySelector('table tbody');
+  if (!tbody) return;
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function buildRows(items) {
+    if (!items.length) return '<tr><td colspan="4" class="text-center text-muted py-4">No items found.</td></tr>';
+    var html = '', prevLoc = '__unset__';
+    for (var i = 0; i < items.length; i++) {
+      var r = items[i];
+      if (r.location !== prevLoc) {
+        prevLoc = r.location;
+        html += '<tr><td colspan="4" class="fw-bold small text-uppercase py-1"' +
+          ' style="letter-spacing:.05em;background:var(--purple);color:white;">' +
+          esc(r.location || 'Unknown') + '</td></tr>';
+      }
+      var id = 'qty-' + r.key.replace(/:/g, '-').replace(/ /g, '_');
+      html += '<tr>' +
+        '<td class="align-middle"><strong>' + esc(r.item) + '</strong></td>' +
+        '<td class="align-middle"><div class="d-flex align-items-center gap-1">' +
+          '<button class="btn btn-sm btn-outline-secondary adj-btn"' +
+            ' style="line-height:1;padding:.15rem .4rem;"' +
+            ' data-key="' + esc(r.key) + '" data-delta="-1">−</button>' +
+          '<span class="qty-val" id="' + id + '"' +
+            ' style="min-width:1.8rem;text-align:center;display:inline-block;">' +
+            esc(r.qty == null ? 0 : r.qty) + '</span>' +
+          '<button class="btn btn-sm btn-outline-secondary adj-btn"' +
+            ' style="line-height:1;padding:.15rem .4rem;"' +
+            ' data-key="' + esc(r.key) + '" data-delta="1">+</button>' +
+        '</div></td>' +
+        '<td class="align-middle text-muted">' + esc(r.unit) + '</td>' +
+        '<td class="align-middle text-end">' +
+          '<a href="' + esc(r.edit_url) + '" class="btn btn-sm btn-outline-primary me-1">Edit</a>' +
+          '<a href="' + esc(r.del_url) + '" class="btn btn-sm btn-outline-danger"' +
+            ' onclick="return confirm(\'Remove this item?\')">Del</a>' +
+        '</td></tr>';
+    }
+    return html;
+  }
+
+  function poll() {
+    var params = new URLSearchParams(window.location.search);
+    var q   = params.get('q')   || '';
+    var loc = params.get('loc') || '';
+    fetch('/items.json?q=' + encodeURIComponent(q) + '&loc=' + encodeURIComponent(loc))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        tbody.innerHTML = buildRows(data.items);
+        var badge = document.querySelector('.nav-tabs .badge');
+        if (badge) badge.textContent = data.total;
+      })
+      .catch(function () {});
+  }
+
+  setInterval(poll, 30000);
+})();
 </script>
 {% endblock %}
