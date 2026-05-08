@@ -21,7 +21,7 @@
       <div style="font-size:3rem;margin-bottom:1rem;">📦</div>
       <h4 style="color:var(--dark-purple);">No storage locations set up yet</h4>
       <p class="text-muted mb-4">Add your first location (e.g. Pantry, Fridge, Garage Shelf) before tracking inventory.</p>
-      <a href="{{ url_for('settings.settings', tab='locations') }}" class="btn btn-primary px-4">Go to Settings → Locations</a>
+      <a href="{{ url_for('settings.settings', tab='lists') }}" class="btn btn-primary px-4">Go to Settings → Locations</a>
     </div>
   </div>
   {% else %}
@@ -29,38 +29,49 @@
   <div class="card mb-4">
     <div class="card-body">
       <form method="get" class="row g-2">
-        <div class="col-md-5">
+        <div class="col-md-9">
           <input name="q" class="form-control search-bar" placeholder="Search items..." value="{{ q }}">
         </div>
-        <div class="col-md-4">
-          <select name="loc" class="form-select search-bar">
-            <option value="">All Locations</option>
-            {% for l in locations %}
-            <option value="{{ l }}" {% if loc == l %}selected{% endif %}>{{ l }}</option>
-            {% endfor %}
-          </select>
-        </div>
         <div class="col-md-3">
-          <button type="submit" class="btn btn-primary w-100">Filter</button>
+          <button type="submit" class="btn btn-primary w-100">Search</button>
         </div>
       </form>
     </div>
   </div>
   <div class="card">
-    <div class="card-header">Items</div>
     <div class="table-responsive">
-      <table class="table table-hover mb-0">
+      <table class="table table-hover table-sm mb-0">
         <thead>
-          <tr><th>Item</th><th>Qty</th><th>Unit</th><th>Location</th><th></th></tr>
+          <tr><th>Item</th><th>Quantity</th><th>Unit</th><th></th></tr>
         </thead>
         <tbody>
+          {% set ns = namespace(prev_loc='__unset__') %}
           {% for i, row in items %}
+          {% if row.Location != ns.prev_loc %}
+          {% set ns.prev_loc = row.Location %}
           <tr>
-            <td><strong>{{ row.Item }}</strong></td>
-            <td>{{ row.Quantity or '' }}</td>
-            <td>{{ row.Unit | pluralize_unit(row.Quantity) }}</td>
-            <td>{{ row.Location or '' }}</td>
-            <td>
+            <td colspan="4" class="fw-bold small text-uppercase py-1"
+                style="letter-spacing:.05em;background:var(--purple);color:white;">
+              {{ row.Location or 'Unknown' }}
+            </td>
+          </tr>
+          {% endif %}
+          <tr>
+            <td class="align-middle"><strong>{{ row.Item }}</strong></td>
+            <td class="align-middle">
+              <div class="d-flex align-items-center gap-1">
+                <button class="btn btn-sm btn-outline-secondary adj-btn"
+                        style="line-height:1;padding:.15rem .4rem;"
+                        data-key="{{ i }}" data-delta="-1">−</button>
+                <span class="qty-val" id="qty-{{ i | replace(':', '-') | replace(' ', '_') }}"
+                      style="min-width:1.8rem;text-align:center;display:inline-block;">{{ row.Quantity or 0 }}</span>
+                <button class="btn btn-sm btn-outline-secondary adj-btn"
+                        style="line-height:1;padding:.15rem .4rem;"
+                        data-key="{{ i }}" data-delta="1">+</button>
+              </div>
+            </td>
+            <td class="align-middle text-muted">{{ row.Unit | pluralize_unit(row.Quantity) }}</td>
+            <td class="align-middle text-end">
               <a href="{{ url_for('inventory.edit', row_key=i) }}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
               <a href="{{ url_for('inventory.delete', row_key=i) }}" class="btn btn-sm btn-outline-danger"
                  onclick="return confirm('Remove this item?')">Del</a>
@@ -68,7 +79,7 @@
           </tr>
           {% endfor %}
           {% if not items %}
-          <tr><td colspan="5" class="text-center text-muted py-4">No items found.</td></tr>
+          <tr><td colspan="4" class="text-center text-muted py-4">No items found.</td></tr>
           {% endif %}
         </tbody>
       </table>
@@ -85,7 +96,7 @@
       <div style="font-size:3rem;margin-bottom:1rem;">📦</div>
       <h4 style="color:var(--dark-purple);">Add a location first</h4>
       <p class="text-muted mb-4">You need at least one storage location before you can add items.</p>
-      <a href="{{ url_for('settings.settings', tab='locations') }}" class="btn btn-primary px-4">Go to Settings → Locations</a>
+      <a href="{{ url_for('settings.settings', tab='lists') }}" class="btn btn-primary px-4">Go to Settings → Locations</a>
     </div>
   </div>
   {% else %}
@@ -98,7 +109,7 @@
           <form method="post" action="{{ url_for('inventory.add') }}">
             <div class="mb-3">
               <label class="form-label fw-bold">Item</label>
-              <input name="Item" class="form-control" placeholder="e.g. Black Beans" required>
+              <input name="Item" class="form-control" placeholder="e.g. Black Beans" maxlength="60" required>
             </div>
             <div class="mb-3">
               <label class="form-label fw-bold">Quantity</label>
@@ -170,4 +181,20 @@
   {% endif %}
 
 {% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelectorAll('.adj-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var key = this.dataset.key;
+    var delta = this.dataset.delta;
+    var domId = 'qty-' + key.replace(/:/g, '-').replace(/ /g, '_');
+    var display = document.getElementById(domId);
+    var body = 'row_key=' + encodeURIComponent(key) + '&delta=' + encodeURIComponent(delta);
+    fetch('/item/adjust', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: body})
+      .then(function(r) { return r.json(); })
+      .then(function(data) { if (data.ok && display) display.textContent = data.qty; });
+  });
+});
+</script>
 {% endblock %}

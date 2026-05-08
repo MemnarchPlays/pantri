@@ -25,7 +25,7 @@
       <div class="row g-3 mb-3">
         <div class="col-md-6">
           <label class="form-label fw-bold">Recipe Name</label>
-          <input name="name" class="form-control" required value="{{ rv.name }}">
+          <input name="name" class="form-control" required maxlength="60" value="{{ rv.name }}">
         </div>
         <div class="col-md-3">
           <label class="form-label fw-bold">Meal Type</label>
@@ -44,11 +44,11 @@
       <div class="row g-3 mb-3">
         <div class="col-md-4">
           <label class="form-label fw-bold">Prep Time</label>
-          <input name="prep_time" class="form-control" placeholder="e.g. 15 minutes" value="{{ rv.prep_time }}">
+          <input name="prep_time" class="form-control" placeholder="e.g. 15 minutes" maxlength="60" value="{{ rv.prep_time }}">
         </div>
         <div class="col-md-4">
           <label class="form-label fw-bold">Cook Time</label>
-          <input name="cook_time" class="form-control" placeholder="e.g. 30 minutes" value="{{ rv.cook_time }}">
+          <input name="cook_time" class="form-control" placeholder="e.g. 30 minutes" maxlength="60" value="{{ rv.cook_time }}">
         </div>
       </div>
 
@@ -81,14 +81,14 @@
         <div id="ingredients">
           {% for ing in rv.ingredients %}
           <div class="ingredient-row">
-            <input class="form-control amount-input" name="amount[]" placeholder="Amount (e.g. 1.5 lbs)" value="{{ ing.amount }}">
-            <input class="form-control" name="ingredient[]" placeholder="Ingredient name" value="{{ ing.item }}">
+            <input class="form-control amount-input" name="amount[]" placeholder="Amount (e.g. 1.5 lbs)" maxlength="60" value="{{ ing.amount }}">
+            <input class="form-control" name="ingredient[]" placeholder="Ingredient name" maxlength="60" value="{{ ing.item }}">
             <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeRow(this)">✕</button>
           </div>
           {% else %}
           <div class="ingredient-row">
-            <input class="form-control amount-input" name="amount[]" placeholder="Amount (e.g. 1.5 lbs)">
-            <input class="form-control" name="ingredient[]" placeholder="Ingredient name">
+            <input class="form-control amount-input" name="amount[]" placeholder="Amount (e.g. 1.5 lbs)" maxlength="60">
+            <input class="form-control" name="ingredient[]" placeholder="Ingredient name" maxlength="60">
             <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeRow(this)">✕</button>
           </div>
           {% endfor %}
@@ -122,23 +122,23 @@
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">Dairy-Free</label>
-              <input name="sub_dairy_free" class="form-control" placeholder="e.g. Use oat milk" value="{{ rv.sub_dairy_free }}">
+              <input name="sub_dairy_free" class="form-control" placeholder="e.g. Use oat milk" maxlength="60" value="{{ rv.sub_dairy_free }}">
             </div>
             <div class="col-md-6">
               <label class="form-label">Gluten-Free</label>
-              <input name="sub_gluten_free" class="form-control" placeholder="e.g. Use GF flour" value="{{ rv.sub_gluten_free }}">
+              <input name="sub_gluten_free" class="form-control" placeholder="e.g. Use GF flour" maxlength="60" value="{{ rv.sub_gluten_free }}">
             </div>
             <div class="col-md-6">
               <label class="form-label">Vegan</label>
-              <input name="sub_vegan" class="form-control" placeholder="e.g. Use flax eggs" value="{{ rv.sub_vegan }}">
+              <input name="sub_vegan" class="form-control" placeholder="e.g. Use flax eggs" maxlength="60" value="{{ rv.sub_vegan }}">
             </div>
             <div class="col-md-6">
               <label class="form-label">Vegetarian</label>
-              <input name="sub_vegetarian" class="form-control" placeholder="e.g. Skip bacon" value="{{ rv.sub_vegetarian }}">
+              <input name="sub_vegetarian" class="form-control" placeholder="e.g. Skip bacon" maxlength="60" value="{{ rv.sub_vegetarian }}">
             </div>
             <div class="col-md-6">
               <label class="form-label">Low-Carb</label>
-              <input name="sub_low_carb" class="form-control" placeholder="e.g. Use cauliflower" value="{{ rv.sub_low_carb }}">
+              <input name="sub_low_carb" class="form-control" placeholder="e.g. Use cauliflower" maxlength="60" value="{{ rv.sub_low_carb }}">
             </div>
           </div>
         </div>
@@ -163,8 +163,8 @@ function addIngredient(amount='', item='') {
   const row = document.createElement('div');
   row.className = 'ingredient-row';
   row.innerHTML = `
-    <input class="form-control amount-input" name="amount[]" placeholder="Amount (e.g. 1.5 lbs)" value="${amount.replace(/"/g,'&quot;')}">
-    <input class="form-control" name="ingredient[]" placeholder="Ingredient name" value="${item.replace(/"/g,'&quot;')}">
+    <input class="form-control amount-input" name="amount[]" placeholder="Amount (e.g. 1.5 lbs)" maxlength="60" value="${amount.replace(/"/g,'&quot;')}">
+    <input class="form-control" name="ingredient[]" placeholder="Ingredient name" maxlength="60" value="${item.replace(/"/g,'&quot;')}">
     <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeRow(this)">✕</button>`;
   container.appendChild(row);
 }

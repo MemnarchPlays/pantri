@@ -4,50 +4,42 @@
 
 <ul class="nav nav-tabs mb-4" id="settingsTabs" role="tablist">
   <li class="nav-item" role="presentation">
-    <button class="nav-link {% if active_tab == 'locations' or active_tab not in ('units', 'minimums', 'exclusions', 'backups', 'appearance', 'discord') %}active{% endif %}"
-            id="locations-tab" data-bs-toggle="tab" data-bs-target="#locations"
-            type="button" role="tab">Locations</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link {% if active_tab == 'units' %}active{% endif %}"
-            id="units-tab" data-bs-toggle="tab" data-bs-target="#units"
-            type="button" role="tab">Units</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link {% if active_tab == 'minimums' %}active{% endif %}"
+    <button class="nav-link {% if active_tab == 'minimums' or active_tab not in ('lists', 'backups', 'interface', 'discord') %}active{% endif %}"
             id="minimums-tab" data-bs-toggle="tab" data-bs-target="#minimums"
             type="button" role="tab">Minimums</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link {% if active_tab == 'exclusions' %}active{% endif %}"
-            id="exclusions-tab" data-bs-toggle="tab" data-bs-target="#exclusions"
-            type="button" role="tab">Exclusions</button>
+    <button class="nav-link {% if active_tab == 'lists' %}active{% endif %}"
+            id="lists-tab" data-bs-toggle="tab" data-bs-target="#lists"
+            type="button" role="tab">Lists</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link {% if active_tab == 'backups' %}active{% endif %}"
-            id="backups-tab" data-bs-toggle="tab" data-bs-target="#backups"
-            type="button" role="tab">Backups</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link {% if active_tab == 'appearance' %}active{% endif %}"
-            id="appearance-tab" data-bs-toggle="tab" data-bs-target="#appearance"
-            type="button" role="tab">Appearance</button>
+    <button class="nav-link {% if active_tab == 'interface' %}active{% endif %}"
+            id="interface-tab" data-bs-toggle="tab" data-bs-target="#interface"
+            type="button" role="tab">Interface</button>
   </li>
   <li class="nav-item" role="presentation">
     <button class="nav-link {% if active_tab == 'discord' %}active{% endif %}"
             id="discord-tab" data-bs-toggle="tab" data-bs-target="#discord"
             type="button" role="tab">Discord Bot</button>
   </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link {% if active_tab == 'backups' %}active{% endif %}"
+            id="backups-tab" data-bs-toggle="tab" data-bs-target="#backups"
+            type="button" role="tab">Backups</button>
+  </li>
 </ul>
 
 <div class="tab-content">
 
-  <!-- ── Locations Tab ── -->
-  <div class="tab-pane fade {% if active_tab == 'locations' or active_tab not in ('units', 'minimums', 'exclusions', 'backups', 'appearance', 'discord') %}show active{% endif %}"
-       id="locations" role="tabpanel">
+  <!-- ── Lists Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'lists' %}show active{% endif %}"
+       id="lists" role="tabpanel">
     <div class="row g-4">
-      <div class="col-md-8">
-        <div class="card">
+
+      <!-- Locations -->
+      <div class="col-md-4">
+        <div class="card h-100">
           <div class="card-header">Storage Locations <small class="fw-normal ms-2" style="font-size:.8em;opacity:.7">drag to reorder</small></div>
           <div class="table-responsive">
             <table class="table table-hover mb-0">
@@ -61,9 +53,9 @@
                   <td>
                     {% if count == 0 %}
                     <a href="{{ url_for('settings.locations_delete', name=name) }}" class="btn btn-sm btn-outline-danger"
-                       onclick="return confirm('Delete location {{ name }}?')">Delete</a>
+                       onclick="return confirm('Delete location {{ name }}?')">Del</a>
                     {% else %}
-                    <span class="text-muted small">{{ count }} item{{ 's' if count != 1 else '' }} — clear first to delete</span>
+                    <span class="text-muted small">in use</span>
                     {% endif %}
                   </td>
                 </tr>
@@ -71,110 +63,148 @@
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-header">Add Location</div>
-          <div class="card-body">
+          <div class="card-footer">
             <form method="post" action="{{ url_for('settings.locations_add') }}">
-              <div class="mb-3">
-                <label class="form-label fw-bold">Name</label>
-                <input name="name" class="form-control" placeholder="e.g. Garage Shelf" required>
+              <div class="input-group">
+                <input name="name" class="form-control form-control-sm" placeholder="New location…" maxlength="60" required>
+                <button type="submit" class="btn btn-sm btn-primary">Add</button>
               </div>
-              <button type="submit" class="btn btn-primary w-100">Add</button>
             </form>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- ── Units Tab ── -->
-  <div class="tab-pane fade {% if active_tab == 'units' %}show active{% endif %}"
-       id="units" role="tabpanel">
-    <div class="row g-4">
-      <div class="col-md-8">
-        <div class="card">
-          <div class="card-header">Unit List <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">used in add / edit dropdowns &nbsp;·&nbsp; drag to reorder</small></div>
+      <!-- Units -->
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-header">Units <small class="fw-normal ms-2" style="font-size:.8em;opacity:.7">drag to reorder</small></div>
           <div class="table-responsive">
             <table class="table table-hover mb-0">
-              <thead><tr><th style="width:2rem"></th><th>Unit</th><th>Items using it</th><th></th></tr></thead>
+              <thead><tr><th style="width:2rem"></th><th>Unit</th><th>Used</th><th></th></tr></thead>
               <tbody id="units-sortable">
                 {% for unit, count in units %}
                 <tr data-unit="{{ unit }}">
                   <td class="text-muted" style="cursor:grab;user-select:none;font-size:1.1rem">&#9776;</td>
                   <td><strong>{{ unit }}</strong></td>
                   <td>{{ count }}</td>
-                  <td class="text-end">
+                  <td>
                     {% if count == 0 %}
                     <a href="{{ url_for('settings.units_delete', unit=unit) | replace('%7C', '|') }}" class="btn btn-sm btn-outline-danger"
-                       onclick="return confirm('Delete unit {{ unit }}?')">Delete</a>
+                       onclick="return confirm('Delete unit {{ unit }}?')">Del</a>
                     {% else %}
-                    <span class="text-muted small">{{ count }} item{{ 's' if count != 1 else '' }} — in use</span>
+                    <span class="text-muted small">in use</span>
                     {% endif %}
                   </td>
                 </tr>
                 {% endfor %}
                 {% if not units %}
-                <tr><td colspan="4" class="text-center text-muted py-4">No units defined yet.</td></tr>
+                <tr><td colspan="4" class="text-center text-muted py-3 small">No units yet.</td></tr>
                 {% endif %}
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-header">Add Unit</div>
-          <div class="card-body">
-            <p class="small text-muted mb-3">Add standardized unit names (e.g. can, bag, lb). These appear in the add/edit dropdowns so unit spelling stays consistent.</p>
+          <div class="card-footer">
             <form method="post" action="{{ url_for('settings.units_add') }}">
-              <div class="mb-3">
-                <label class="form-label fw-bold">Unit Name</label>
-                <input name="unit" class="form-control" placeholder="e.g. can, bag, lb" required>
+              <div class="input-group">
+                <input name="unit" class="form-control form-control-sm" placeholder="e.g. can, bag, lb…" maxlength="60" required>
+                <button type="submit" class="btn btn-sm btn-primary">Add</button>
               </div>
-              <button type="submit" class="btn btn-primary w-100">Add</button>
             </form>
           </div>
         </div>
       </div>
+
+      <!-- Types -->
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-header">Minimum Types <small class="fw-normal ms-2" style="font-size:.8em;opacity:.7">drag to reorder</small></div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead><tr><th style="width:2rem"></th><th>Type</th><th></th></tr></thead>
+              <tbody id="types-sortable">
+                {% for t in types %}
+                <tr data-type="{{ t }}">
+                  <td class="text-muted" style="cursor:grab;user-select:none;font-size:1.1rem">&#9776;</td>
+                  <td><strong>{{ t }}</strong></td>
+                  <td>
+                    <a href="{{ url_for('settings.types_delete', type_name=t) }}" class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Delete type {{ t }}?')">Del</a>
+                  </td>
+                </tr>
+                {% endfor %}
+                {% if not types %}
+                <tr><td colspan="3" class="text-center text-muted py-3 small">No types yet.</td></tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer">
+            <form method="post" action="{{ url_for('settings.types_add') }}">
+              <div class="input-group">
+                <input name="type_name" class="form-control form-control-sm" placeholder="e.g. Spices, Oils…" maxlength="60" required>
+                <button type="submit" class="btn btn-sm btn-primary">Add</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <!-- ── Minimums Tab ── -->
-  <div class="tab-pane fade {% if active_tab == 'minimums' %}show active{% endif %}"
+  <div class="tab-pane fade {% if active_tab == 'minimums' or active_tab not in ('lists', 'backups', 'interface', 'discord') %}show active{% endif %}"
        id="minimums" role="tabpanel">
     <div class="row g-4">
       <div class="col-md-8">
         <div class="card">
-          <div class="card-header">Current Minimums <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">click a number to edit</small></div>
+          <div class="card-header">Current Minimums <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">click a number to edit · grouped by type</small></div>
+          {% set excluded_names = exclusions | map(attribute='name') | map('lower') | list %}
           <div class="table-responsive">
             <table class="table table-hover mb-0">
-              <thead><tr><th>Item</th><th>Min Qty</th><th></th></tr></thead>
+              <thead><tr><th>Item</th><th>Min Qty</th><th>Type</th>
+                <th>
+                  In Stock <span style="opacity:.5;font-size:.8em;cursor:default;" data-bs-toggle="tooltip" data-bs-placement="top" title="Items marked In Stock are always assumed to be on hand — recipes won't deduct them or list them as missing">(?)</span>
+                </th><th></th></tr></thead>
               <tbody>
-                {% for item, qty, _ in minimums %}
+                {% for type_label, type_group in minimums | groupby('type') %}
+                <tr class="table-secondary">
+                  <td colspan="5" class="fw-bold small text-uppercase py-1" style="letter-spacing:.05em;">
+                    {{ type_label or 'Uncategorized' }}
+                  </td>
+                </tr>
+                {% for m in type_group %}
                 <tr>
-                  <td><strong>{{ item }}</strong></td>
+                  <td><strong>{{ m.item }}</strong></td>
                   <td>
-                    <span class="qty-display" data-item="{{ item }}" title="Click to edit"
-                          style="cursor:pointer;border-bottom:1px dashed var(--purple);padding-bottom:1px;">{{ qty }}</span>
+                    <span class="qty-display" data-item="{{ m.item }}" title="Click to edit"
+                          style="cursor:pointer;border-bottom:1px dashed var(--purple);padding-bottom:1px;">{{ m.qty }}</span>
                     <form class="qty-form d-none" method="post" action="{{ url_for('settings.minimums_set') }}" style="display:inline;">
-                      <input type="hidden" name="item" value="{{ item }}">
-                      <input type="number" name="qty" step="0.1" min="0" value="{{ qty }}"
+                      <input type="hidden" name="item" value="{{ m.item }}">
+                      <input type="hidden" name="item_type" value="{{ m.type }}">
+                      <input type="number" name="qty" step="0.1" min="0" value="{{ m.qty }}"
                              class="form-control form-control-sm d-inline-block" style="width:80px;">
                       <button type="submit" class="btn btn-sm btn-primary ms-1">✓</button>
                       <button type="button" class="btn btn-sm btn-outline-secondary ms-1 qty-cancel">✕</button>
                     </form>
                   </td>
+                  <td class="text-muted small">{{ m.type or '—' }}</td>
                   <td>
-                    <a href="{{ url_for('settings.minimums_delete', item=item) }}" class="btn btn-sm btn-outline-danger"
-                       onclick="return confirm('Delete minimum for {{ item }}?')">Del</a>
+                    <button class="btn btn-sm exclude-btn {% if m.item | lower in excluded_names %}btn-success{% else %}btn-outline-secondary{% endif %}"
+                            data-item="{{ m.item }}"
+                            data-excluded="{{ 'true' if m.item | lower in excluded_names else 'false' }}">
+                      {% if m.item | lower in excluded_names %}✓ In Stock{% else %}In Stock{% endif %}
+                    </button>
+                  </td>
+                  <td>
+                    <a href="{{ url_for('settings.minimums_delete', item=m.item) }}" class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Delete minimum for {{ m.item }}?')">Del</a>
                   </td>
                 </tr>
                 {% endfor %}
+                {% endfor %}
                 {% if not minimums %}
-                <tr><td colspan="3" class="text-center text-muted py-4">No minimums set.</td></tr>
+                <tr><td colspan="5" class="text-center text-muted py-4">No minimums set.</td></tr>
                 {% endif %}
               </tbody>
             </table>
@@ -188,73 +218,22 @@
             <form method="post" action="{{ url_for('settings.minimums_set') }}">
               <div class="mb-3">
                 <label class="form-label fw-bold">Item</label>
-                <input name="item" class="form-control" placeholder="e.g. Black Beans" required>
+                <input name="item" class="form-control" placeholder="e.g. Black Beans" maxlength="60" required>
               </div>
               <div class="mb-3">
                 <label class="form-label fw-bold">Min Qty</label>
                 <input name="qty" type="number" step="0.1" min="0" class="form-control" required>
               </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Type</label>
+                <select name="item_type" class="form-select">
+                  <option value="">— Uncategorized —</option>
+                  {% for t in types %}
+                  <option value="{{ t }}">{{ t }}</option>
+                  {% endfor %}
+                </select>
+              </div>
               <button type="submit" class="btn btn-primary w-100">Save</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Exclusions Tab ── -->
-  <div class="tab-pane fade {% if active_tab == 'exclusions' %}show active{% endif %}"
-       id="exclusions" role="tabpanel">
-    <div class="row g-4">
-      <div class="col-md-8">
-        <div class="card">
-          <div class="card-header">Excluded Items <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">never auto-decremented from pantry</small></div>
-          <div class="table-responsive">
-            <table class="table table-hover mb-0">
-              <thead><tr><th>Item</th><th>Container</th><th>Status</th><th></th></tr></thead>
-              <tbody>
-                {% for ex in exclusions %}
-                <tr>
-                  <td><strong>{{ ex.name }}</strong></td>
-                  <td class="text-muted">{{ ex.container }}</td>
-                  <td>
-                    <form method="post" action="{{ url_for('settings.exclusions_toggle', name=ex.name) }}" class="d-inline">
-                      {% if ex.in_stock %}
-                      <button type="submit" class="btn btn-sm btn-outline-secondary">In Stock</button>
-                      {% else %}
-                      <button type="submit" class="btn btn-sm btn-danger">Out of Stock</button>
-                      {% endif %}
-                    </form>
-                  </td>
-                  <td class="text-end">
-                    <a href="{{ url_for('settings.exclusions_delete', name=ex.name) }}" class="btn btn-sm btn-outline-danger"
-                       onclick="return confirm('Remove {{ ex.name }} from exclusions?')">Del</a>
-                  </td>
-                </tr>
-                {% endfor %}
-                {% if not exclusions %}
-                <tr><td colspan="4" class="text-center text-muted py-4">No exclusions yet.</td></tr>
-                {% endif %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-header">Add Exclusion</div>
-          <div class="card-body">
-            <p class="small text-muted mb-3">Staples you always have on hand. Recipes won't decrement these automatically.</p>
-            <form method="post" action="{{ url_for('settings.exclusions_add') }}">
-              <div class="mb-3">
-                <label class="form-label fw-bold">Item Name</label>
-                <input name="name" class="form-control" placeholder="e.g. Salt" required>
-              </div>
-              <div class="mb-3">
-                <label class="form-label fw-bold">Container</label>
-                <input name="container" class="form-control" placeholder="e.g. 1 shaker, 1 5lb bag">
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Add</button>
             </form>
           </div>
         </div>
@@ -349,6 +328,11 @@
       </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+    new bootstrap.Tooltip(el);
+  });
+});
 function updateBackupUI() {
   const mode = document.querySelector('input[name=backup_mode]:checked').value;
   document.getElementById('cfg-actions').style.display   = mode === 'actions'  ? '' : 'none';
@@ -396,44 +380,50 @@ updateBackupUI();
     </div>
   </div>
 
-  <!-- ── Appearance Tab ── -->
-  <div class="tab-pane fade {% if active_tab == 'appearance' %}show active{% endif %}"
-       id="appearance" role="tabpanel">
+  <!-- ── Interface Tab ── -->
+  <div class="tab-pane fade {% if active_tab == 'interface' %}show active{% endif %}"
+       id="interface" role="tabpanel">
     <div class="row g-4">
       <div class="col-md-4">
         <div class="card">
           <div class="card-header">Theme Color</div>
           <div class="card-body">
             <p class="small text-muted mb-3">Pick the accent color used across the app — navbar, buttons, card headers, and table headers.</p>
-            <form method="post" action="{{ url_for('settings.settings_appearance') }}">
-              <div class="mb-3">
-                <label class="form-label fw-bold">Port</label>
-                <input type="number" name="port" class="form-control" value="{{ app_port }}"
-                       min="1024" max="65535" style="max-width:120px;">
-                <div class="form-text">Requires a restart to take effect.</div>
+            <p class="small text-muted mb-3">Saved in your browser — each person can set their own.</p>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Font</label>
+              <select id="font-select" class="form-select" onchange="document.getElementById('font-preview').style.fontFamily=this.value;">
+                {% for value, label in font_options %}
+                <option value="{{ value }}" style="font-family:{{ value }};">{{ label }}</option>
+                {% endfor %}
+              </select>
+              <div id="font-preview" class="mt-2 p-2 rounded small text-muted"
+                   style="border:1px solid var(--light-purple);">
+                The quick brown fox jumps over the lazy dog.
               </div>
-              <div class="mb-3">
-                <label class="form-label fw-bold">Accent Color</label>
-                <div class="d-flex align-items-center gap-3">
-                  <input type="color" name="accent_color" value="{{ accent_color }}"
-                         class="form-control form-control-color" style="width:60px;height:40px;padding:2px;">
-                  <span class="font-monospace small text-muted" id="color-hex">{{ accent_color }}</span>
-                </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Accent Color</label>
+              <div class="d-flex align-items-center gap-3">
+                <input type="color" id="color-pick"
+                       class="form-control form-control-color" style="width:60px;height:40px;padding:2px;">
+                <span class="font-monospace small text-muted" id="color-hex"></span>
               </div>
-              <div class="mb-3">
-                <label class="form-label fw-bold small">Presets</label>
-                <div class="d-flex flex-wrap gap-2">
-                  {% for label, hex in [('Purple', '#6B2D8B'), ('Blue', '#1A56DB'), ('Green', '#057A55'), ('Red', '#C81E1E'), ('Orange', '#B45309'), ('Teal', '#0E7490'), ('Pink', '#9D174D')] %}
-                  <button type="button" class="btn btn-sm"
-                          style="background:{{ hex }};border-color:{{ hex }};color:white;min-width:60px;"
-                          onclick="document.querySelector('input[name=accent_color]').value='{{ hex }}';document.getElementById('color-hex').textContent='{{ hex }}';">
-                    {{ label }}
-                  </button>
-                  {% endfor %}
-                </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold small">Presets</label>
+              <div class="d-flex flex-wrap gap-2">
+                {% for label, hex in [('Purple', '#6B2D8B'), ('Blue', '#1A56DB'), ('Green', '#057A55'), ('Red', '#C81E1E'), ('Orange', '#B45309'), ('Teal', '#0E7490'), ('Pink', '#9D174D')] %}
+                <button type="button" class="btn btn-sm"
+                        style="background:{{ hex }};border-color:{{ hex }};color:white;min-width:60px;"
+                        onclick="setPreset('{{ hex }}')">{{ label }}</button>
+                {% endfor %}
               </div>
-              <button type="submit" class="btn btn-primary w-100">Apply</button>
-            </form>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="button" id="apply-theme-btn" class="btn btn-primary flex-grow-1" onclick="applyAndSave()">Apply</button>
+              <button type="button" class="btn btn-outline-secondary" onclick="resetTheme()">Reset</button>
+            </div>
           </div>
         </div>
       </div>
@@ -451,11 +441,63 @@ updateBackupUI();
           </div>
         </div>
       </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">Server</div>
+          <div class="card-body">
+            <p class="small text-muted mb-3">Change the port the web app listens on. Requires a restart to take effect.</p>
+            <form method="post" action="{{ url_for('settings.settings_appearance') }}">
+              <input type="hidden" name="accent_color" value="{{ accent_color }}">
+              <div class="mb-3">
+                <label class="form-label fw-bold">Port</label>
+                <input type="number" name="port" class="form-control" value="{{ app_port }}"
+                       min="1024" max="65535" style="max-width:140px;">
+              </div>
+              <button type="submit" class="btn btn-primary">Save Port</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
 <script>
-document.querySelector('input[name=accent_color]').addEventListener('input', function() {
-  document.getElementById('color-hex').textContent = this.value;
-});
+(function() {
+  var p = window._pantri;
+  var pick = document.getElementById('color-pick');
+  var hex  = document.getElementById('color-hex');
+  var fontSel = document.getElementById('font-select');
+  var preview = document.getElementById('font-preview');
+
+  pick.value = p.color;
+  hex.textContent = p.color;
+  fontSel.value = p.font;
+  preview.style.fontFamily = p.font;
+
+  pick.addEventListener('input', function() { hex.textContent = this.value; });
+})();
+
+function setPreset(color) {
+  document.getElementById('color-pick').value = color;
+  document.getElementById('color-hex').textContent = color;
+}
+
+function applyAndSave() {
+  var color = document.getElementById('color-pick').value;
+  var font  = document.getElementById('font-select').value;
+  localStorage.setItem('pantri_accent', color);
+  localStorage.setItem('pantri_font', font);
+  window._pantri.applyColor(color);
+  document.body.style.fontFamily = font;
+  document.getElementById('font-preview').style.fontFamily = font;
+  var btn = document.getElementById('apply-theme-btn');
+  btn.textContent = 'Saved!';
+  setTimeout(function() { btn.textContent = 'Apply'; }, 1500);
+}
+
+function resetTheme() {
+  localStorage.removeItem('pantri_accent');
+  localStorage.removeItem('pantri_font');
+  location.reload();
+}
 </script>
   </div>
 
@@ -559,6 +601,25 @@ function loadBotLog() {
 }
 loadBotLog();
 
+document.querySelectorAll('.exclude-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var item = this.dataset.item;
+    fetch('{{ url_for("settings.exclusions_toggle", name="__ITEM__") }}'.replace('__ITEM__', encodeURIComponent(item)), {method: 'POST'})
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.excluded) {
+          btn.className = 'btn btn-sm btn-success exclude-btn';
+          btn.textContent = '✓ In Stock';
+          btn.dataset.excluded = 'true';
+        } else {
+          btn.className = 'btn btn-sm btn-outline-secondary exclude-btn';
+          btn.textContent = 'In Stock';
+          btn.dataset.excluded = 'false';
+        }
+      });
+  });
+});
+
 document.querySelectorAll('.qty-display').forEach(span => {
   span.addEventListener('click', () => {
     span.classList.add('d-none');
@@ -606,6 +667,23 @@ document.querySelectorAll('.qty-cancel').forEach(btn => {
         var order = Array.from(unitBody.querySelectorAll('tr[data-unit]'))
                         .map(function(r){ return r.dataset.unit; });
         fetch('{{ url_for("settings.units_reorder") }}', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({order: order})
+        });
+      }
+    });
+  }
+
+  var typeBody = document.getElementById('types-sortable');
+  if (typeBody) {
+    Sortable.create(typeBody, {
+      handle: 'td:first-child',
+      animation: 150,
+      onEnd: function() {
+        var order = Array.from(typeBody.querySelectorAll('tr[data-type]'))
+                        .map(function(r){ return r.dataset.type; });
+        fetch('{{ url_for("settings.types_reorder") }}', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({order: order})
