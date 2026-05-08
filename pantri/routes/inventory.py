@@ -1,7 +1,7 @@
 """Inventory blueprint — /, /add, /edit/<row_key>, /delete/<row_key>, /add/bulk"""
 
 from flask import Blueprint, request, redirect, url_for, render_template, jsonify
-from pantry_utils import COLS, to_title
+from pantry_utils import COLS, to_title, read_env
 from pantri.db import load_wb, save_wb, get_all_rows, get_location_sheets
 from pantri.state import load_units
 
@@ -21,9 +21,13 @@ def index():
         rows = [(i, r) for i, r in rows if q in str(r.get('Item', '')).lower()]
     if loc:
         rows = [(i, r) for i, r in rows if str(r.get('Location', '')) == loc or i.startswith(loc + ':')]
+    env = read_env()
+    default_location = env.get('DEFAULT_LOCATION', '')
+    default_unit     = env.get('DEFAULT_UNIT', '')
     return render_template('inventory.html', items=rows, total=len(rows),
                            locations=locations, q=q, loc=loc,
-                           tab=tab, bulk_results=[], units=load_units())
+                           tab=tab, bulk_results=[], units=load_units(),
+                           default_location=default_location, default_unit=default_unit)
 
 
 @bp.route('/add', methods=['GET', 'POST'])
@@ -242,8 +246,12 @@ def bulk_add():
         wb2     = load_wb()
         all_raw = get_all_rows(wb2)
         rows    = [(f'{s}:{r}', d) for s, r, d in all_raw]
+        env = read_env()
+        default_location = env.get('DEFAULT_LOCATION', '')
+        default_unit     = env.get('DEFAULT_UNIT', '')
         return render_template('inventory.html', items=rows, total=len(rows),
                                locations=location_sheets, q='', loc='',
-                               tab='add', bulk_results=results, units=load_units())
+                               tab='add', bulk_results=results, units=load_units(),
+                               default_location=default_location, default_unit=default_unit)
 
     return redirect(url_for('inventory.index', tab='add'))

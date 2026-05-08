@@ -10,7 +10,7 @@ from reportlab.lib.units import inch
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable, PageBreak
-from pdf_utils import PURPLE, DARK_PURPLE, LIGHT_PURPLE, NEAR_BLACK, WHITE, BorderedCanvas
+from pdf_utils import PURPLE, DARK_PURPLE, LIGHT_PURPLE, NEAR_BLACK, WHITE, BorderedCanvas, PDF_FONT, PDF_FONT_BOLD, PDF_FONT_ITALIC
 
 DATA_DIR   = Path(__file__).parent / 'data'
 OUTPUT_DIR = Path(__file__).parent / 'output'
@@ -94,13 +94,13 @@ def generate_shopping_pdf(recipes, output_name='shopping_list.pdf'):
     sections = build_shopping_list(recipes)
     out_path = OUTPUT_DIR / output_name
 
-    title_style = ParagraphStyle('title', fontName='Helvetica-Bold', fontSize=26,
+    title_style = ParagraphStyle('title', fontName=PDF_FONT_BOLD, fontSize=26,
                                  textColor=PURPLE, alignment=TA_CENTER, spaceAfter=4)
-    sub_style   = ParagraphStyle('sub', fontName='Helvetica', fontSize=11,
+    sub_style   = ParagraphStyle('sub', fontName=PDF_FONT, fontSize=11,
                                  textColor=NEAR_BLACK, alignment=TA_CENTER, spaceAfter=2)
-    sect_style  = ParagraphStyle('sect', fontName='Helvetica-Bold', fontSize=13,
+    sect_style  = ParagraphStyle('sect', fontName=PDF_FONT_BOLD, fontSize=13,
                                  textColor=WHITE, spaceAfter=0, spaceBefore=14)
-    item_style  = ParagraphStyle('item', fontName='Helvetica', fontSize=10,
+    item_style  = ParagraphStyle('item', fontName=PDF_FONT, fontSize=10,
                                  textColor=NEAR_BLACK, spaceAfter=4, leftIndent=8)
 
     doc = SimpleDocTemplate(

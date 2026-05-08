@@ -8,7 +8,7 @@ from pathlib import Path
 from flask import Blueprint, request, redirect, url_for, render_template, jsonify, send_file
 from pantry_utils import XLSX, DATA_DIR, COLS, EXCLUDE_SHEETS, to_title, read_env
 from pantri.db import load_wb, get_location_sheets, get_location_info, get_minimums, set_minimum, delete_minimum
-from pantri.state import load_exclusions, save_exclusions, load_units, save_units, get_unit_info
+from pantri.state import load_exclusions, save_exclusions, load_units, save_units, get_unit_info, load_types, save_types
 from pantri.backup import backup_wb, get_backups, get_backup_info, _do_backup, BACKUP_DIR
 from pantri.bot import bot_running, start_bot, stop_bot, BOT_LOG_FILE
 from pantri import write_env
@@ -44,13 +44,21 @@ def settings():
     backup_every_n    = int(env.get('BACKUP_EVERY_N', '10'))
     backup_interval   = float(env.get('BACKUP_INTERVAL_HRS', '24'))
     backup_max        = int(env.get('BACKUP_MAX', '10'))
-    app_port          = int(env.get('PORT', '5000'))
+    app_port               = int(env.get('PORT', '5000'))
+    input_max_length       = int(env.get('INPUT_MAX_LENGTH', '60'))
+    inventory_refresh_secs = int(env.get('INVENTORY_REFRESH_SECS', '30'))
+    low_stock_threshold    = float(env.get('LOW_STOCK_THRESHOLD', '0'))
+    pdf_accent_color       = env.get('PDF_ACCENT_COLOR', '#6B2D8B')
+    pdf_font               = env.get('PDF_FONT', 'Helvetica')
+    default_location       = env.get('DEFAULT_LOCATION', '')
+    default_unit           = env.get('DEFAULT_UNIT', '')
     backup_last_label, backup_count = get_backup_info()
-    active_tab        = request.args.get('tab', 'locations')
+    active_tab             = request.args.get('tab', 'minimums')
     return render_template('settings.html', token_set=bool(token),
                            alert_channel=alert_channel,
                            minimums=get_minimums(),
                            locations=get_location_info(),
+                           location_sheets=get_location_sheets(),
                            backups=get_backups(),
                            backup_mode=backup_mode,
                            backup_every_n=backup_every_n,
@@ -60,7 +68,17 @@ def settings():
                            backup_count=backup_count,
                            exclusions=load_exclusions(),
                            units=get_unit_info(),
+                           units_list=load_units(),
+                           types=load_types(),
                            app_port=app_port,
+                           font_options=FONT_OPTIONS,
+                           input_max_length=input_max_length,
+                           inventory_refresh_secs=inventory_refresh_secs,
+                           low_stock_threshold=low_stock_threshold,
+                           pdf_accent_color=pdf_accent_color,
+                           pdf_font=pdf_font,
+                           default_location=default_location,
+                           default_unit=default_unit,
                            active_tab=active_tab)
 
 
@@ -77,13 +95,13 @@ def locations_add():
             for col, header in enumerate(COLS, 1):
                 ws.cell(row=1, column=col).value = header
             wb.save(XLSX)
-    return redirect(url_for('settings.settings', tab='locations'))
+    return redirect(url_for('settings.settings', tab='lists'))
 
 
 @bp.route('/locations/delete/<name>')
 def locations_delete(name):
     if name in EXCLUDE_SHEETS:
-        return redirect(url_for('settings.settings', tab='locations'))
+        return redirect(url_for('settings.settings', tab='lists'))
     wb = load_wb()
     if name in wb.sheetnames:
         ws = wb[name]
@@ -91,7 +109,7 @@ def locations_delete(name):
         if count == 0:
             del wb[name]
             wb.save(XLSX)
-    return redirect(url_for('settings.settings', tab='locations'))
+    return redirect(url_for('settings.settings', tab='lists'))
 
 
 @bp.route('/locations/reorder', methods=['POST'])
@@ -115,34 +133,35 @@ def locations_reorder():
 
 @bp.route('/exclusions/add', methods=['POST'])
 def exclusions_add():
-    name      = to_title(request.form.get('name', '').strip())
-    container = request.form.get('container', '').strip()
+    name     = to_title(request.form.get('name', '').strip())
+    next_tab = request.form.get('next_tab', 'minimums')
     if not name:
-        return redirect(url_for('settings.settings', tab='exclusions'))
+        return redirect(url_for('settings.settings', tab=next_tab))
     items = load_exclusions()
     if not any(ex.get('name', '').lower() == name.lower() for ex in items):
-        items.append({'name': name, 'container': container, 'in_stock': True})
+        items.append({'name': name, 'container': '', 'in_stock': True})
         save_exclusions(items)
-    return redirect(url_for('settings.settings', tab='exclusions'))
+    return redirect(url_for('settings.settings', tab=next_tab))
 
 
 @bp.route('/exclusions/delete/<path:name>')
 def exclusions_delete(name):
     items = [ex for ex in load_exclusions() if ex.get('name', '').lower() != name.lower()]
     save_exclusions(items)
-    return redirect(url_for('settings.settings', tab='exclusions'))
+    next_tab = request.args.get('next_tab', 'minimums')
+    return redirect(url_for('settings.settings', tab=next_tab))
 
 
 @bp.route('/exclusions/toggle/<path:name>', methods=['POST'])
 def exclusions_toggle(name):
     items = load_exclusions()
-    for ex in items:
-        if ex.get('name', '').lower() == name.lower():
-            ex['in_stock'] = not ex.get('in_stock', True)
-            break
+    is_excluded = any(ex.get('name', '').lower() == name.lower() for ex in items)
+    if is_excluded:
+        items = [ex for ex in items if ex.get('name', '').lower() != name.lower()]
+    else:
+        items.append({'name': name, 'container': '', 'in_stock': True})
     save_exclusions(items)
-    referer = request.referrer or url_for('settings.settings', tab='exclusions')
-    return redirect(referer)
+    return jsonify({'excluded': not is_excluded})
 
 
 # ── Units ────────────────────────────────────────────────────────────────────
@@ -155,7 +174,7 @@ def units_add():
         if unit.lower() not in [u.lower() for u in units]:
             units.append(unit)
             save_units(units)
-    return redirect(url_for('settings.settings', tab='units'))
+    return redirect(url_for('settings.settings', tab='lists'))
 
 
 @bp.route('/units/delete/<unit>')
@@ -164,7 +183,7 @@ def units_delete(unit):
     if count == 0:
         units = [u for u in load_units() if u.lower() != unit.lower()]
         save_units(units)
-    return redirect(url_for('settings.settings', tab='units'))
+    return redirect(url_for('settings.settings', tab='lists'))
 
 
 @bp.route('/units/reorder', methods=['POST'])
@@ -179,19 +198,52 @@ def units_reorder():
     return ('', 204)
 
 
+# ── Types ────────────────────────────────────────────────────────────────────
+
+@bp.route('/types/add', methods=['POST'])
+def types_add():
+    type_name = request.form.get('type_name', '').strip()
+    if type_name:
+        types = load_types()
+        if type_name.lower() not in [t.lower() for t in types]:
+            types.append(type_name)
+            save_types(types)
+    return redirect(url_for('settings.settings', tab='lists'))
+
+
+@bp.route('/types/delete/<type_name>')
+def types_delete(type_name):
+    types = [t for t in load_types() if t.lower() != type_name.lower()]
+    save_types(types)
+    return redirect(url_for('settings.settings', tab='lists'))
+
+
+@bp.route('/types/reorder', methods=['POST'])
+def types_reorder():
+    data = request.get_json(silent=True) or {}
+    new_order = data.get('order', [])
+    current = load_types()
+    current_lower = [t.lower() for t in current]
+    ordered = [t for t in new_order if t.lower() in current_lower]
+    rest = [t for t in current if t.lower() not in [x.lower() for x in ordered]]
+    save_types(ordered + rest)
+    return ('', 204)
+
+
 # ── Minimums ─────────────────────────────────────────────────────────────────
 
 @bp.route('/minimums/set', methods=['POST'])
 def minimums_set():
-    item = to_title((request.form.get('item', '') or '').strip())
-    qty_raw = request.form.get('qty', '0')
+    item      = to_title((request.form.get('item', '') or '').strip())
+    qty_raw   = request.form.get('qty', '0')
+    item_type = request.form.get('item_type', '').strip()
     try:
         qty = float(qty_raw)
         qty = int(qty) if qty == int(qty) else qty
     except ValueError:
         qty = 0
     if item and qty > 0:
-        set_minimum(item, qty)
+        set_minimum(item, qty, item_type)
     return redirect(url_for('settings.settings', tab='minimums'))
 
 
@@ -268,12 +320,26 @@ def settings_bot_log():
 
 # ── Appearance ────────────────────────────────────────────────────────────────
 
+FONT_OPTIONS = [
+    ('Verdana, Geneva, sans-serif',          'Verdana'),
+    ('\'Segoe UI\', Tahoma, sans-serif',     'Segoe UI'),
+    ('Arial, Helvetica, sans-serif',         'Arial'),
+    ('\'Trebuchet MS\', sans-serif',         'Trebuchet MS'),
+    ('Georgia, \'Times New Roman\', serif',  'Georgia'),
+    ('\'Courier New\', Courier, monospace',  'Courier New'),
+    ('system-ui, sans-serif',                'System Default'),
+]
+
 @bp.route('/settings/appearance', methods=['POST'])
 def settings_appearance():
     env = read_env()
     color = request.form.get('accent_color', '#6B2D8B').strip()
     if re.match(r'^#[0-9A-Fa-f]{6}$', color):
         env['ACCENT_COLOR'] = color
+    font = request.form.get('font_family', '').strip()
+    valid_fonts = [f for f, _ in FONT_OPTIONS]
+    if font in valid_fonts:
+        env['FONT_FAMILY'] = font
     try:
         port = int(request.form.get('port', '5000'))
         if 1024 <= port <= 65535:
@@ -281,7 +347,7 @@ def settings_appearance():
     except ValueError:
         pass
     write_env(env)
-    return redirect(url_for('settings.settings', tab='appearance'))
+    return redirect(url_for('settings.settings', tab='interface'))
 
 
 # ── Backups ───────────────────────────────────────────────────────────────────

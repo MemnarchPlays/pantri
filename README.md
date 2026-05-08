@@ -109,12 +109,20 @@ To get low-stock alerts, enter your channel ID in the **Alert Channel** field on
 
 ## Configuration
 
-All config lives in a `.env` file at the project root. You can edit everything from the **Settings** page — you don't need to touch the file directly.
+All config lives in a `.env` file at the project root. All settings can be configured from the **Settings** page in the web UI — you don't need to edit `.env` directly.
 
 | Key | Default | Description |
 |-----|---------|-------------|
 | `PORT` | `5000` | Port the web app listens on (requires restart) |
-| `ACCENT_COLOR` | `#6B2D8B` | App theme color (hex) |
+| `ACCENT_COLOR` | `#6B2D8B` | Web UI theme color (hex) |
+| `FONT_FAMILY` | `Verdana, Geneva, sans-serif` | Web UI font |
+| `INPUT_MAX_LENGTH` | `60` | Max characters allowed in text input fields |
+| `INVENTORY_REFRESH_SECS` | `30` | How often the inventory page silently refreshes (seconds) |
+| `LOW_STOCK_THRESHOLD` | `0` | Global fallback minimum stock level — used when an item has no individual minimum set; 0 disables it |
+| `PDF_ACCENT_COLOR` | `#6B2D8B` | Accent color used in generated PDFs |
+| `PDF_FONT` | `Helvetica` | Font used in generated PDFs (`Helvetica`, `Times-Roman`, or `Courier`) |
+| `DEFAULT_LOCATION` | — | Pre-selected location in the Add Item form |
+| `DEFAULT_UNIT` | — | Pre-selected unit in the Add Item form |
 | `DISCORD_TOKEN` | — | Bot token (required for Discord features) |
 | `DISCORD_ALERT_CHANNEL` | — | Channel ID for low-stock alerts |
 | `BACKUP_MODE` | `actions` | `actions` (every N writes) or `interval` (every N hours) |

@@ -15,7 +15,7 @@ from reportlab.platypus import (
 )
 from reportlab.lib.colors import HexColor
 from datetime import datetime
-from pdf_utils import PURPLE, DARK_PURPLE, LIGHT_PURPLE, NEAR_BLACK, WHITE, GRAY, BorderedCanvas
+from pdf_utils import PURPLE, DARK_PURPLE, LIGHT_PURPLE, NEAR_BLACK, WHITE, GRAY, BorderedCanvas, PDF_FONT, PDF_FONT_BOLD, PDF_FONT_ITALIC
 
 DATA_DIR   = Path(__file__).parent / 'data'
 OUTPUT_DIR = Path(__file__).parent / 'output'
@@ -31,29 +31,29 @@ MEAL_ORDER = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Desserts', 'Other']
 def build_styles():
     base = getSampleStyleSheet()
     return {
-        'cover_title': ParagraphStyle('cover_title', fontName='Helvetica-Bold',
+        'cover_title': ParagraphStyle('cover_title', fontName=PDF_FONT_BOLD,
                                       fontSize=36, textColor=PURPLE, alignment=TA_CENTER,
                                       spaceAfter=8),
-        'cover_sub':   ParagraphStyle('cover_sub', fontName='Helvetica',
+        'cover_sub':   ParagraphStyle('cover_sub', fontName=PDF_FONT,
                                       fontSize=14, textColor=NEAR_BLACK, alignment=TA_CENTER,
                                       spaceAfter=4),
-        'toc_header':  ParagraphStyle('toc_header', fontName='Helvetica-Bold',
+        'toc_header':  ParagraphStyle('toc_header', fontName=PDF_FONT_BOLD,
                                       fontSize=18, textColor=PURPLE, spaceAfter=12),
-        'toc_meal':    ParagraphStyle('toc_meal', fontName='Helvetica-Bold',
+        'toc_meal':    ParagraphStyle('toc_meal', fontName=PDF_FONT_BOLD,
                                       fontSize=12, textColor=DARK_PURPLE, spaceBefore=10, spaceAfter=4),
-        'toc_item':    ParagraphStyle('toc_item', fontName='Helvetica',
+        'toc_item':    ParagraphStyle('toc_item', fontName=PDF_FONT,
                                       fontSize=10, textColor=NEAR_BLACK, leftIndent=16, spaceAfter=2),
-        'recipe_name': ParagraphStyle('recipe_name', fontName='Helvetica-Bold',
+        'recipe_name': ParagraphStyle('recipe_name', fontName=PDF_FONT_BOLD,
                                       fontSize=22, textColor=WHITE, alignment=TA_LEFT,
                                       spaceAfter=0),
-        'section_hdr': ParagraphStyle('section_hdr', fontName='Helvetica-Bold',
+        'section_hdr': ParagraphStyle('section_hdr', fontName=PDF_FONT_BOLD,
                                       fontSize=11, textColor=DARK_PURPLE, spaceBefore=10, spaceAfter=4),
-        'body':        ParagraphStyle('body', fontName='Helvetica',
+        'body':        ParagraphStyle('body', fontName=PDF_FONT,
                                       fontSize=10, textColor=NEAR_BLACK, spaceAfter=3),
-        'step':        ParagraphStyle('step', fontName='Helvetica',
+        'step':        ParagraphStyle('step', fontName=PDF_FONT,
                                       fontSize=10, textColor=NEAR_BLACK, spaceAfter=5,
                                       leftIndent=8, firstLineIndent=-8),
-        'note':        ParagraphStyle('note', fontName='Helvetica-Oblique',
+        'note':        ParagraphStyle('note', fontName=PDF_FONT_ITALIC,
                                       fontSize=9, textColor=HexColor('#555555'), spaceAfter=3),
     }
 
@@ -101,11 +101,11 @@ def macro_table(recipe, styles):
     t.setStyle(TableStyle([
         ('BACKGROUND',   (0, 0), (-1, 0), PURPLE),
         ('TEXTCOLOR',    (0, 0), (-1, 0), WHITE),
-        ('FONTNAME',     (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME',     (0, 0), (-1, 0), PDF_FONT_BOLD),
         ('FONTSIZE',     (0, 0), (-1, 0), 10),
         ('BACKGROUND',   (0, 1), (-1, 1), LIGHT_PURPLE),
         ('TEXTCOLOR',    (0, 1), (-1, 1), NEAR_BLACK),
-        ('FONTNAME',     (0, 1), (-1, 1), 'Helvetica-Bold'),
+        ('FONTNAME',     (0, 1), (-1, 1), PDF_FONT_BOLD),
         ('FONTSIZE',     (0, 1), (-1, 1), 11),
         ('ALIGN',        (0, 0), (-1, -1), 'CENTER'),
         ('VALIGN',       (0, 0), (-1, -1), 'MIDDLE'),
@@ -133,7 +133,7 @@ def recipe_header_table(recipe):
     t.setStyle(TableStyle([
         ('BACKGROUND',    (0, 0), (-1, -1), GRAY),
         ('TEXTCOLOR',     (0, 0), (-1, -1), DARK_PURPLE),
-        ('FONTNAME',      (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FONTNAME',      (0, 0), (-1, -1), PDF_FONT_BOLD),
         ('FONTSIZE',      (0, 0), (-1, -1), 9),
         ('ALIGN',         (0, 0), (-1, -1), 'CENTER'),
         ('VALIGN',        (0, 0), (-1, -1), 'MIDDLE'),
@@ -147,7 +147,7 @@ def recipe_header_table(recipe):
 
 def recipe_name_banner(name):
     data = [[Paragraph(name, ParagraphStyle(
-        'rn', fontName='Helvetica-Bold', fontSize=20, textColor=WHITE))]]
+        'rn', fontName=PDF_FONT_BOLD, fontSize=20, textColor=WHITE))]]
     t = Table(data, colWidths=[6*inch])
     t.setStyle(TableStyle([
         ('BACKGROUND',    (0, 0), (-1, -1), PURPLE),

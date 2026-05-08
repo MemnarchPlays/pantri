@@ -47,10 +47,27 @@ def create_app():
 
     @app.context_processor
     def inject_theme():
-        color = read_env().get('ACCENT_COLOR', '#6B2D8B')
+        env   = read_env()
+        color = env.get('ACCENT_COLOR', '#6B2D8B')
+        font  = env.get('FONT_FAMILY', 'Verdana, Geneva, sans-serif')
         main, dark, light = compute_theme(color)
-        css = f':root {{ --purple: {main}; --dark-purple: {dark}; --light-purple: {light}; }}'
-        return {'theme_css': css, 'accent_color': color}
+        css = (f':root {{ --purple: {main}; --dark-purple: {dark}; --light-purple: {light}; }}'
+               f' body {{ font-family: {font}; }}')
+        try:
+            input_max_length = max(10, int(env.get('INPUT_MAX_LENGTH', '60')))
+        except ValueError:
+            input_max_length = 60
+        try:
+            inventory_refresh_secs = max(10, int(env.get('INVENTORY_REFRESH_SECS', '30')))
+        except ValueError:
+            inventory_refresh_secs = 30
+        return {
+            'theme_css': css,
+            'accent_color': color,
+            'font_family': font,
+            'input_max_length': input_max_length,
+            'inventory_refresh_secs': inventory_refresh_secs,
+        }
 
     app.jinja_env.filters['pluralize_unit'] = _pluralize_unit
 

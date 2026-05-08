@@ -116,7 +116,7 @@ def get_all_rows():
     for sheet_name in sheets:
         ws = wb[sheet_name]
         for r in range(2, ws.max_row + 1):
-            vals = [ws.cell(row=r, column=c).value for c in range(1, 9)]
+            vals = [ws.cell(row=r, column=c).value for c in range(1, 5)]
             item = vals[0]
             if any(v for v in vals) and item and not str(item).startswith('='):
                 rows.append(dict(zip(COLS, vals)))
@@ -144,7 +144,7 @@ def find_item(name):
             continue
         ws = wb[sheet_name]
         for r in range(2, ws.max_row + 1):
-            vals = [ws.cell(row=r, column=c).value for c in range(1, 9)]
+            vals = [ws.cell(row=r, column=c).value for c in range(1, 5)]
             if any(vals) and str(vals[0] or '').lower() == name.lower():
                 return wb, ws, r, dict(zip(COLS, vals))
     return None
@@ -185,7 +185,15 @@ async def maybe_alert_low_stock(item_name, new_qty, unit=''):
         return
     mins = load_minimums()
     min_qty = mins.get(item_name.lower())
-    if min_qty is None or new_qty >= min_qty:
+    if min_qty is None:
+        try:
+            threshold = float(read_env().get('LOW_STOCK_THRESHOLD', '0'))
+        except ValueError:
+            threshold = 0
+        if threshold <= 0:
+            return
+        min_qty = threshold
+    if new_qty >= min_qty:
         return
     try:
         channel = client.get_channel(int(channel_id))
@@ -238,14 +246,10 @@ def cmd_add_save(data):
     ws = wb[sheet_name]
     row = next((r for r in range(2, ws.max_row + 2) if not ws.cell(row=r, column=1).value), ws.max_row + 1)
     save_data = {
-        'Item':       data.get('Item'),
-        'Quantity':   data.get('Quantity'),
-        'Unit':       data.get('Unit'),
-        'Location':   sheet_name,
-        'Section':    data.get('Section'),
-        'Slot':       None,
-        'Expiration': data.get('Expiration'),
-        'Notes':      data.get('Notes'),
+        'Item':     data.get('Item'),
+        'Quantity': data.get('Quantity'),
+        'Unit':     data.get('Unit'),
+        'Location': sheet_name,
     }
     for col, field in enumerate(COLS, 1):
         ws.cell(row=row, column=col).value = save_data.get(field) or None
