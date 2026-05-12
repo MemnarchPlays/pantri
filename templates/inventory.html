@@ -2,6 +2,57 @@
 {% block content %}
 <h1 class="mb-3">Inventory</h1>
 
+<div id="onboarding-card" class="card mb-4" style="display:none;border:2px solid var(--purple);">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start mb-2">
+      <h5 class="mb-0" style="color:var(--dark-purple);">Welcome to Pantri!</h5>
+      <button type="button" class="btn-close" onclick="dismissOnboarding()" aria-label="Dismiss"></button>
+    </div>
+    <p class="text-muted mb-3">Here's how to get started in 3 steps:</p>
+    <div class="row g-3 mb-3">
+      <div class="col-md-4">
+        <div class="d-flex gap-2 align-items-start">
+          <span class="badge rounded-pill flex-shrink-0 mt-1" style="background:var(--purple);">1</span>
+          <div>
+            <div class="fw-bold">Add your items</div>
+            <div class="text-muted small">Use the <a href="{{ url_for('inventory.index', tab='add') }}">Add Items tab</a> to stock your pantry. Bulk add works great for a first fill.</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="d-flex gap-2 align-items-start">
+          <span class="badge rounded-pill flex-shrink-0 mt-1" style="background:var(--purple);">2</span>
+          <div>
+            <div class="fw-bold">Load some recipes</div>
+            <div class="text-muted small">Visit <a href="{{ url_for('recipes.recipes') }}">Recipes</a> to load the starter collection or import from any recipe website.</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="d-flex gap-2 align-items-start">
+          <span class="badge rounded-pill flex-shrink-0 mt-1" style="background:var(--purple);">3</span>
+          <div>
+            <div class="fw-bold">Plan your meals</div>
+            <div class="text-muted small">Use <a href="{{ url_for('recipes.recipes') }}">Can I Make This?</a> to see what you can cook, and <a href="{{ url_for('shopping.shopping') }}">Shopping</a> to plan your week.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="dismissOnboarding()">Got it, don't show again</button>
+  </div>
+</div>
+<script>
+(function () {
+  if (!localStorage.getItem('pantri_onboarding_done')) {
+    document.getElementById('onboarding-card').style.display = '';
+  }
+})();
+function dismissOnboarding() {
+  localStorage.setItem('pantri_onboarding_done', '1');
+  document.getElementById('onboarding-card').style.display = 'none';
+}
+</script>
+
 <ul class="nav nav-tabs mb-4">
   <li class="nav-item">
     <a class="nav-link {% if tab != 'add' %}active{% endif %}" href="{{ url_for('inventory.index') }}">
