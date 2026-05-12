@@ -42,6 +42,15 @@ Open bugs and tech debt. Use `/t` to investigate and fix a bug, `/w` to review t
 
 ---
 
+### [BUG-009] Timestamps displayed in server local time instead of user's timezone
+- **What breaks:** On a Linux home server whose system timezone differs from the user's local time, backup timestamps and "last backup X ago" labels show the wrong time.
+- **Root cause (likely):** `pantri/backup.py:get_backups()` and `get_backup_info()` use `datetime.fromtimestamp()` and `datetime.now()` with no timezone argument — both read server local time.
+- **Criterion violated:** `docs/timezone.feature.md` — all timestamps should render in the user-configured timezone.
+- **Fix:** Add `DISPLAY_TZ` setting to `.env`; use `zoneinfo` (Python 3.9+) or `pytz` to convert timestamps before display. Add timezone dropdown to Settings → Interface.
+- **Flow doc:** None — flag for `/t`.
+
+---
+
 ## Tech Debt
 
 _(none recorded yet)_
