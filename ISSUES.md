@@ -43,6 +43,12 @@ Open bugs and tech debt. Use `/t` to investigate and fix a bug, `/w` to review t
 ---
 
 ### ~~[BUG-009] Timestamps displayed in server local time instead of user's timezone~~ FIXED
+
+### [BUG-010] Port values below 1024 blocked by UI and server-side validation
+- **What breaks:** Entering port 80 in Settings → Interface shows browser error "Value must be greater than or equal to 1024." Even if bypassed, the server-side check (`if 1024 <= port <= 65535`) silently discards it.
+- **Criterion violated:** `docs/server-settings.feature.md` — port field must accept any valid TCP port (1–65535).
+- **Look first:** `templates/settings.html` port `<input min="1024">` and `pantri/routes/settings.py:settings_appearance()` range guard.
+- **Flow doc:** `docs/settings.flow.md` covers other tabs but not the Interface/Server card — flag for `/t`.
 - **What breaks:** On a Linux home server whose system timezone differs from the user's local time, backup timestamps and "last backup X ago" labels show the wrong time.
 - **Root cause (likely):** `pantri/backup.py:get_backups()` and `get_backup_info()` use `datetime.fromtimestamp()` and `datetime.now()` with no timezone argument — both read server local time.
 - **Criterion violated:** `docs/timezone.feature.md` — all timestamps should render in the user-configured timezone.
