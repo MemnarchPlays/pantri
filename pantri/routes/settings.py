@@ -7,7 +7,9 @@ import sys
 import threading
 import zipfile
 import shutil
+from collections import defaultdict
 from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError, available_timezones
 from flask import Blueprint, request, redirect, url_for, render_template, jsonify, send_file
 from pantry_utils import XLSX, DATA_DIR, COLS, EXCLUDE_SHEETS, to_title, read_env
 from pantri.db import load_wb, get_location_sheets, get_location_info, get_minimums, set_minimum, delete_minimum
@@ -55,6 +57,11 @@ def settings():
     pdf_font               = env.get('PDF_FONT', 'Helvetica')
     default_location       = env.get('DEFAULT_LOCATION', '')
     default_unit           = env.get('DEFAULT_UNIT', '')
+    display_tz             = env.get('DISPLAY_TZ', 'UTC')
+    tz_groups = defaultdict(list)
+    for name in sorted(available_timezones()):
+        tz_groups[name.split('/')[0]].append(name)
+    tz_options = [(g, sorted(z)) for g, z in sorted(tz_groups.items())]
     backup_last_label, backup_count = get_backup_info()
     active_tab             = request.args.get('tab', 'minimums')
     return render_template('settings.html', token_set=bool(token),
@@ -82,6 +89,8 @@ def settings():
                            pdf_font=pdf_font,
                            default_location=default_location,
                            default_unit=default_unit,
+                           display_tz=display_tz,
+                           tz_options=tz_options,
                            active_tab=active_tab)
 
 
@@ -369,6 +378,13 @@ def settings_appearance():
             env['PORT'] = str(port)
     except ValueError:
         pass
+    tz_name = request.form.get('display_tz', '').strip()
+    if tz_name:
+        try:
+            ZoneInfo(tz_name)
+            env['DISPLAY_TZ'] = tz_name
+        except (ZoneInfoNotFoundError, KeyError):
+            pass
     write_env(env)
     return redirect(url_for('settings.settings', tab='interface'))
 

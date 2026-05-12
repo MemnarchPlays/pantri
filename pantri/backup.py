@@ -5,7 +5,16 @@ import zipfile
 import shutil
 from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from pantry_utils import XLSX, DATA_DIR, read_env
+
+
+def _display_tz():
+    name = read_env().get('DISPLAY_TZ', 'UTC')
+    try:
+        return ZoneInfo(name)
+    except (ZoneInfoNotFoundError, KeyError):
+        return ZoneInfo('UTC')
 
 import os as _os
 _data               = Path(_os.environ['PANTRI_DATA']) if 'PANTRI_DATA' in _os.environ else Path(__file__).parent.parent
@@ -116,7 +125,7 @@ def get_backups():
         result.append({
             'name':       p.name,
             'size':       f'{kb:.0f} KB' if kb >= 1 else f'{stat.st_size} B',
-            'modified':   datetime.fromtimestamp(stat.st_mtime).strftime('%b %d %Y, %I:%M %p'),
+            'modified':   datetime.fromtimestamp(stat.st_mtime, tz=_display_tz()).strftime('%b %d %Y, %I:%M %p'),
             'is_default': p.name == DEFAULT_BACKUP_NAME,
         })
     result.sort(key=lambda b: (not b['is_default']))

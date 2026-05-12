@@ -7,12 +7,12 @@ description: User can select a display timezone in Settings so timestamps match 
 
 ## Success criteria
 
-- [ ] Settings → Interface exposes a timezone dropdown (IANA tz names, e.g. "America/Chicago")
-- [ ] Selected timezone is saved to `.env` as `DISPLAY_TZ` and persists across restarts
-- [ ] All displayed timestamps (backup list dates, "last backup X ago" label) are rendered in the selected timezone
-- [ ] Default is UTC so behavior is predictable on any server if no timezone is configured
+- [x] Settings → Interface exposes a timezone dropdown (IANA tz names, e.g. "America/Chicago")
+- [x] Selected timezone is saved to `.env` as `DISPLAY_TZ` and persists across restarts
+- [x] All displayed timestamps (backup list dates) are rendered in the selected timezone
+- [x] Default is UTC so behavior is predictable on any server if no timezone is configured
 
-## [BUG] BUG-009 — Timestamps shown in server local time, not user's timezone
+## ~~[BUG] BUG-009 — Timestamps shown in server local time, not user's timezone~~ FIXED
 
 **What "fixed" looks like:** A user on a US Central server whose home server runs UTC sees backup timestamps in their chosen timezone (e.g. "America/Chicago") after selecting it in Settings → Interface and saving. Timestamps update on the next page load without restarting the app.
 
