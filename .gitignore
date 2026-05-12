@@ -1,5 +1,6 @@
 output/
-backups/
+backups/*
+!backups/default-config.zip
 __pycache__/
 *.pyc
 *.pyo

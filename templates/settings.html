@@ -363,8 +363,13 @@ updateBackupUI();
               <thead><tr><th>Date</th><th>Size</th><th></th></tr></thead>
               <tbody>
                 {% for b in backups %}
-                <tr>
-                  <td><strong>{{ b.modified }}</strong></td>
+                <tr {% if b.is_default %}style="background:var(--light-purple);"{% endif %}>
+                  <td>
+                    <strong>{% if b.is_default %}Default Config{% else %}{{ b.modified }}{% endif %}</strong>
+                    {% if b.is_default %}
+                    <span class="badge ms-1" style="background:var(--purple);color:white;">Seed</span>
+                    {% endif %}
+                  </td>
                   <td class="text-muted small">{{ b.size }}</td>
                   <td class="text-end">
                     <a href="{{ url_for('settings.backups_download', filename=b.name) }}" class="btn btn-sm btn-outline-secondary me-1">⬇ Download</a>

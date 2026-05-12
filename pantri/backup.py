@@ -7,15 +7,17 @@ from datetime import datetime
 from pathlib import Path
 from pantry_utils import XLSX, DATA_DIR, read_env
 
-STATE_DIR         = Path(__file__).parent.parent / 'state'
+STATE_DIR           = Path(__file__).parent.parent / 'state'
 STATE_DIR.mkdir(parents=True, exist_ok=True)
-BACKUP_STATE_FILE = STATE_DIR / 'backup_state.json'
-BACKUP_DIR        = Path(__file__).parent.parent / 'backups'
+BACKUP_STATE_FILE   = STATE_DIR / 'backup_state.json'
+BACKUP_DIR          = Path(__file__).parent.parent / 'backups'
 BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+DEFAULT_BACKUP_NAME = 'default-config.zip'
 
 # These mirror state.py paths — used in zip backup
 UNITS_FILE      = STATE_DIR / 'units.json'
 EXCLUSIONS_FILE = STATE_DIR / 'exclusions.json'
+TYPES_FILE      = STATE_DIR / 'types.json'
 
 
 def load_backup_state():
@@ -80,6 +82,24 @@ def backup_wb(force=False):
     save_backup_state(state)
 
 
+def restore_default_if_needed():
+    """On first run (no xlsx), silently restore from default-config.zip if present."""
+    default_zip = BACKUP_DIR / DEFAULT_BACKUP_NAME
+    if XLSX.exists() or not default_zip.exists():
+        return
+    print('First run — restoring default configuration from default-config.zip')
+    try:
+        with zipfile.ZipFile(default_zip, 'r') as zf:
+            names = zf.namelist()
+            if XLSX.name in names:
+                zf.extract(XLSX.name, XLSX.parent)
+            for state_file in (UNITS_FILE, EXCLUSIONS_FILE, TYPES_FILE):
+                if state_file.name in names:
+                    zf.extract(state_file.name, STATE_DIR)
+    except Exception as e:
+        print(f'Warning: could not restore default config: {e}')
+
+
 def get_backups():
     if not BACKUP_DIR.exists():
         return []
@@ -89,10 +109,12 @@ def get_backups():
         stat = p.stat()
         kb   = stat.st_size / 1024
         result.append({
-            'name':     p.name,
-            'size':     f'{kb:.0f} KB' if kb >= 1 else f'{stat.st_size} B',
-            'modified': datetime.fromtimestamp(stat.st_mtime).strftime('%b %d %Y, %I:%M %p'),
+            'name':       p.name,
+            'size':       f'{kb:.0f} KB' if kb >= 1 else f'{stat.st_size} B',
+            'modified':   datetime.fromtimestamp(stat.st_mtime).strftime('%b %d %Y, %I:%M %p'),
+            'is_default': p.name == DEFAULT_BACKUP_NAME,
         })
+    result.sort(key=lambda b: (not b['is_default']))
     return result
 
 

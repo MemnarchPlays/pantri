@@ -5,10 +5,12 @@ import socket
 import threading
 import webbrowser
 from pantri import create_app
+from pantri.backup import restore_default_if_needed
 from pantri.bot import _kill_stale_bot, start_bot
 from pantry_utils import read_env
 
 app = create_app()
+restore_default_if_needed()
 
 if __name__ == '__main__':
     _kill_stale_bot()
