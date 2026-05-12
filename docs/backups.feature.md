@@ -21,6 +21,12 @@ Every pantry mutation triggers a backup check. Three modes: every N saves (actio
 8. Clicking "Restore" on a backup first creates a safety backup of the current xlsx, then replaces it with the chosen backup.
 9. Path traversal is blocked: only files inside `backups/` can be downloaded or restored.
 
+## [BUG] BUG-008 — Interval mode does not trigger backups on schedule
+
+**What "fixed" looks like:** When `BACKUP_MODE=interval` and `BACKUP_INTERVAL_HRS=2`, a backup is written the first time `backup_wb()` is called after 2 hours have elapsed since the last backup. Setting the interval to 2 hours and waiting 2+ hours (or manipulating `last_backup_ts` in `backup_state.json` to simulate elapsed time) results in a new timestamped zip being created.
+
+**File to look at first:** `pantri/backup.py` → `backup_wb()` interval branch; `pantri/routes/settings.py` → the POST handler that writes `BACKUP_INTERVAL_HRS` to `.env`.
+
 ## Status
 
 COMPLETE

@@ -34,6 +34,14 @@ Open bugs and tech debt. Use `/t` to investigate and fix a bug, `/w` to review t
 
 ---
 
+### [BUG-008] Interval backup mode does not fire on schedule
+- **What breaks:** With `BACKUP_MODE=interval` set to e.g. 2 hours, backups are not written after the configured time elapses.
+- **Criterion violated:** `docs/backups.feature.md` criterion 2 — "a backup is written when more than N hours have passed since the last backup."
+- **Look first:** `pantri/backup.py` → `backup_wb()` interval branch (timestamp comparison logic); `pantri/routes/settings.py` → POST handler writing `BACKUP_INTERVAL_HRS` to `.env`.
+- **Flow doc:** `docs/settings.flow.md` covers the Backups tab save step; no dedicated backup-trigger flow doc exists — flag for `/t`.
+
+---
+
 ## Tech Debt
 
 _(none recorded yet)_
