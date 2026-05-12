@@ -3,6 +3,7 @@
 import io
 import json
 import re
+import shutil
 from pathlib import Path
 from flask import Blueprint, request, redirect, url_for, render_template, jsonify, send_file
 from pantry_utils import DATA_DIR, MEAL_TYPES, EXCLUDE_SHEETS
@@ -10,6 +11,8 @@ from pantri.db import load_wb, save_wb, get_all_rows
 from pantri.state import load_exclusions
 
 bp = Blueprint('recipes', __name__)
+
+STARTER_DIR = Path(__file__).parent.parent.parent / 'starter-recipes'
 
 
 @bp.route('/recipes')
@@ -65,9 +68,12 @@ def recipes():
                                'status_label': status_label, 'missing': missing[:6], 'pct': pct})
         cm_recipes.sort(key=lambda x: x['pct'], reverse=True)
 
+    starter_count = len(list(STARTER_DIR.glob('*.json'))) if STARTER_DIR.exists() else 0
     return render_template('recipes.html', recipes=lib_recipes, q=q, meal=meal,
                            tab=tab, cm_recipes=cm_recipes, cm_meal=cm_meal,
-                           ingredient=ingredient, meal_types=MEAL_TYPES)
+                           ingredient=ingredient, meal_types=MEAL_TYPES,
+                           total_recipes=len(all_recipes),
+                           starter_count=starter_count)
 
 
 @bp.route('/recipe/import')
@@ -468,3 +474,15 @@ def download_pdf():
         as_attachment=True,
         download_name=filename
     )
+
+
+@bp.route('/recipes/load-basics', methods=['POST'])
+def load_basics():
+    if not STARTER_DIR.exists():
+        return redirect(url_for('recipes.recipes'))
+    DATA_DIR.mkdir(exist_ok=True)
+    for src in STARTER_DIR.glob('*.json'):
+        dest = DATA_DIR / src.name
+        if not dest.exists():
+            shutil.copy2(src, dest)
+    return redirect(url_for('recipes.recipes'))
