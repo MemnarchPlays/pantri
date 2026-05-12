@@ -13,6 +13,12 @@ EXCLUSIONS_FILE    = STATE_DIR / 'exclusions.json'
 UNITS_FILE         = STATE_DIR / 'units.json'
 TYPES_FILE         = STATE_DIR / 'types.json'
 
+DEFAULT_UNITS = [
+    'bag', 'bottle', 'box', 'bunch', 'can', 'can 5 oz', 'can 8 oz',
+    'can 10 oz', 'can 14.5 oz', 'can 15 oz', 'can 28 oz', 'carton',
+    'count', 'gallon', 'jar', 'lb', 'loaf', 'pint', 'quart', 'roll', 'stick',
+]
+
 DEFAULT_TYPES = [
     'Baking', 'Beverages', 'Canned Goods', 'Cleaning', 'Condiments',
     'Dairy', 'Dry Goods', 'Frozen', 'Oils', 'Produce', 'Spices',
@@ -47,11 +53,12 @@ def save_exclusions(items):
 
 def load_units():
     if not UNITS_FILE.exists():
-        return []
+        return list(DEFAULT_UNITS)
     try:
-        return json.loads(UNITS_FILE.read_text(encoding='utf-8'))
+        data = json.loads(UNITS_FILE.read_text(encoding='utf-8'))
+        return data if data else list(DEFAULT_UNITS)
     except Exception:
-        return []
+        return list(DEFAULT_UNITS)
 
 
 def save_units(units):
