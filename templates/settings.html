@@ -169,7 +169,7 @@
             <table class="table table-hover mb-0">
               <thead><tr><th>Item</th><th>Min Qty</th><th>Type</th>
                 <th>
-                  In Stock <span style="opacity:.5;font-size:.8em;cursor:default;" data-bs-toggle="tooltip" data-bs-placement="top" title="Items marked In Stock are always assumed to be on hand — recipes won't deduct them or list them as missing">(?)</span>
+                  Always On Hand <span style="opacity:.5;font-size:.8em;cursor:default;" data-bs-toggle="tooltip" data-bs-placement="top" title="Items marked Always On Hand are always assumed to be available — recipes won't deduct them or list them as missing">(?)</span>
                 </th><th></th></tr></thead>
               <tbody>
                 {% for type_label, type_group in minimums | groupby('type') %}
@@ -198,7 +198,7 @@
                     <button class="btn btn-sm exclude-btn {% if m.item | lower in excluded_names %}btn-success{% else %}btn-outline-secondary{% endif %}"
                             data-item="{{ m.item }}"
                             data-excluded="{{ 'true' if m.item | lower in excluded_names else 'false' }}">
-                      {% if m.item | lower in excluded_names %}✓ In Stock{% else %}In Stock{% endif %}
+                      {% if m.item | lower in excluded_names %}✓ Always On Hand{% else %}Always On Hand{% endif %}
                     </button>
                   </td>
                   <td>
@@ -570,6 +570,18 @@ function resetTheme() {
           </div>
         </div>
       </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">Server</div>
+          <div class="card-body">
+            <p class="text-muted small mb-3">Restart the Pantri web server. The page will automatically reconnect once it's back up.</p>
+            <button id="restart-btn" class="btn btn-warning w-100">Restart Server</button>
+            <div id="restart-msg" class="alert alert-info mt-3 d-none" role="alert">
+              Restarting&hellip; reconnecting automatically.
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -673,6 +685,23 @@ function loadBotLog() {
 }
 loadBotLog();
 
+(function() {
+  var btn = document.getElementById('restart-btn');
+  if (!btn) return;
+  btn.addEventListener('click', function() {
+    btn.disabled = true;
+    btn.textContent = 'Restarting…';
+    document.getElementById('restart-msg').classList.remove('d-none');
+    fetch('{{ url_for("settings.restart") }}', {method: 'POST'}).catch(function(){});
+    function poll() {
+      fetch(location.href, {cache: 'no-store'})
+        .then(function(r) { if (r.ok) location.reload(); else setTimeout(poll, 800); })
+        .catch(function() { setTimeout(poll, 800); });
+    }
+    setTimeout(poll, 2500);
+  });
+})();
+
 document.querySelectorAll('.exclude-btn').forEach(function(btn) {
   btn.addEventListener('click', function() {
     var item = this.dataset.item;
@@ -681,11 +710,11 @@ document.querySelectorAll('.exclude-btn').forEach(function(btn) {
       .then(function(data) {
         if (data.excluded) {
           btn.className = 'btn btn-sm btn-success exclude-btn';
-          btn.textContent = '✓ In Stock';
+          btn.textContent = '✓ Always On Hand';
           btn.dataset.excluded = 'true';
         } else {
           btn.className = 'btn btn-sm btn-outline-secondary exclude-btn';
-          btn.textContent = 'In Stock';
+          btn.textContent = 'Always On Hand';
           btn.dataset.excluded = 'false';
         }
       });

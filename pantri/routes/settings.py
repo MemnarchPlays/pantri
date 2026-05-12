@@ -1,7 +1,10 @@
 """Settings blueprint — all settings, locations, exclusions, units, backups, discord, appearance."""
 
 import json
+import os
 import re
+import sys
+import threading
 import zipfile
 import shutil
 from pathlib import Path
@@ -251,6 +254,14 @@ def minimums_set():
 def minimums_delete(item):
     delete_minimum(item)
     return redirect(url_for('settings.settings', tab='minimums'))
+
+
+# ── Server ───────────────────────────────────────────────────────────────────
+
+@bp.route('/settings/restart', methods=['POST'])
+def restart():
+    threading.Timer(1.5, lambda: os.execv(sys.executable, [sys.executable] + sys.argv)).start()
+    return ('', 204)
 
 
 # ── Discord bot ───────────────────────────────────────────────────────────────
