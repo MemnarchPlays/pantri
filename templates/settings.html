@@ -164,7 +164,7 @@
       <div class="col-md-8">
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <span>Current Minimums <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">click a number to edit · grouped by type</small></span>
+            <span>Current Minimums <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">click a value to edit · grouped by type</small></span>
             {% if minimums %}
             <form method="post" action="{{ url_for('settings.minimums_delete_all') }}" class="d-inline"
                   onsubmit="return confirm('Clear all {{ minimums|length }} minimums?')">
@@ -201,7 +201,22 @@
                       <button type="button" class="btn btn-sm btn-outline-secondary ms-1 qty-cancel">✕</button>
                     </form>
                   </td>
-                  <td class="text-muted small">{{ m.type or '—' }}</td>
+                  <td class="text-muted small">
+                    <span class="type-display" data-item="{{ m.item }}" title="Click to edit"
+                          style="cursor:pointer;border-bottom:1px dashed var(--purple);padding-bottom:1px;">{{ m.type or '—' }}</span>
+                    <form class="type-form d-none" method="post" action="{{ url_for('settings.minimums_set') }}" style="display:inline;">
+                      <input type="hidden" name="item" value="{{ m.item }}">
+                      <input type="hidden" name="qty" value="{{ m.qty }}">
+                      <select name="item_type" class="form-select form-select-sm d-inline-block" style="width:auto;">
+                        <option value="">— Uncategorized —</option>
+                        {% for t in types %}
+                        <option value="{{ t }}" {% if t == m.type %}selected{% endif %}>{{ t }}</option>
+                        {% endfor %}
+                      </select>
+                      <button type="submit" class="btn btn-sm btn-primary ms-1">✓</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary ms-1 type-cancel">✕</button>
+                    </form>
+                  </td>
                   <td>
                     <button type="button" class="btn btn-sm exclude-btn {% if m.item | lower in excluded_names %}btn-success{% else %}btn-outline-secondary{% endif %}"
                             data-item="{{ m.item }}"
@@ -762,6 +777,22 @@ document.querySelectorAll('.qty-display').forEach(span => {
   });
 });
 document.querySelectorAll('.qty-cancel').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const form = btn.closest('form');
+    form.classList.add('d-none');
+    form.previousElementSibling.classList.remove('d-none');
+  });
+});
+document.querySelectorAll('.type-display').forEach(span => {
+  span.addEventListener('click', () => {
+    span.classList.add('d-none');
+    const form = span.nextElementSibling;
+    form.classList.remove('d-none');
+    form.style.display = 'inline';
+    form.querySelector('select').focus();
+  });
+});
+document.querySelectorAll('.type-cancel').forEach(btn => {
   btn.addEventListener('click', () => {
     const form = btn.closest('form');
     form.classList.add('d-none');
