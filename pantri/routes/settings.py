@@ -250,6 +250,18 @@ def minimums_set():
     return redirect(url_for('settings.settings', tab='minimums'))
 
 
+@bp.route('/minimums/delete-all', methods=['POST'])
+def minimums_delete_all():
+    from pantri.db import load_wb, save_wb
+    wb = load_wb()
+    if 'Minimums' in wb.sheetnames:
+        ws = wb['Minimums']
+        if ws.max_row > 1:
+            ws.delete_rows(2, ws.max_row)
+        save_wb(wb)
+    return redirect(url_for('settings.settings', tab='minimums'))
+
+
 @bp.route('/minimums/delete/<item>')
 def minimums_delete(item):
     delete_minimum(item)

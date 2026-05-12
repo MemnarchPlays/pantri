@@ -476,6 +476,14 @@ def download_pdf():
     )
 
 
+@bp.route('/recipes/delete-all', methods=['POST'])
+def recipes_delete_all():
+    if DATA_DIR.exists():
+        for f in DATA_DIR.glob('*.json'):
+            f.unlink()
+    return redirect(url_for('recipes.recipes'))
+
+
 @bp.route('/recipes/load-basics', methods=['POST'])
 def load_basics():
     if not STARTER_DIR.exists():

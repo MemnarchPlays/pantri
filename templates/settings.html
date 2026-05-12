@@ -163,7 +163,15 @@
     <div class="row g-4">
       <div class="col-md-8">
         <div class="card">
-          <div class="card-header">Current Minimums <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">click a number to edit · grouped by type</small></div>
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Current Minimums <small class="fw-normal ms-2" style="font-size:.8em;opacity:.8">click a number to edit · grouped by type</small></span>
+            {% if minimums %}
+            <form method="post" action="{{ url_for('settings.minimums_delete_all') }}" class="d-inline"
+                  onsubmit="return confirm('Clear all {{ minimums|length }} minimums?')">
+              <button type="submit" class="btn btn-sm btn-outline-danger">Clear All</button>
+            </form>
+            {% endif %}
+          </div>
           {% set excluded_names = exclusions | map(attribute='name') | map('lower') | list %}
           <div class="table-responsive">
             <table class="table table-hover mb-0">

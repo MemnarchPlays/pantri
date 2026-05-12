@@ -4,6 +4,12 @@
   <h1>Recipes</h1>
   <div class="d-flex gap-2">
     <a href="{{ url_for('recipes.download_pdf') }}" class="btn btn-outline-primary">⬇ Download PDF</a>
+    {% if total_recipes > 0 %}
+    <form method="post" action="{{ url_for('recipes.recipes_delete_all') }}" class="d-inline"
+          onsubmit="return confirm('Delete all {{ total_recipes }} recipes? This cannot be undone.')">
+      <button type="submit" class="btn btn-outline-danger">Delete All</button>
+    </form>
+    {% endif %}
     <a href="{{ url_for('recipes.recipe_add') }}" class="btn btn-primary">+ Add Recipe</a>
   </div>
 </div>
