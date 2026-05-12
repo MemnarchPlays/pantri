@@ -155,7 +155,7 @@ All config lives in a `.env` file at the project root. All settings can be confi
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `PORT` | `5000` | Port the web app listens on (requires restart) |
+| `PORT` | `5000` | Port the web app listens on (requires restart). Any port 1–65535 is valid. On Linux, ports below 1024 require root or `CAP_NET_BIND_SERVICE`. |
 | `ACCENT_COLOR` | `#6B2D8B` | Web UI theme color (hex) |
 | `FONT_FAMILY` | `Verdana, Geneva, sans-serif` | Web UI font |
 | `INPUT_MAX_LENGTH` | `60` | Max characters allowed in text input fields |
