@@ -79,5 +79,6 @@
     "dairy_free": "Skip cheese and sour cream toppings.",
     "gluten_free": "Use gluten-free enchilada sauce and tortilla strips.",
     "vegetarian": "Replace chicken with an extra can of beans and use vegetable broth."
-  }
+  },
+  "favorite": false
 }

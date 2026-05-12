@@ -71,7 +71,7 @@ def get_all_rows(wb):
     for sheet_name in [s for s in wb.sheetnames if s not in EXCLUDE_SHEETS]:
         ws = wb[sheet_name]
         for r in range(2, ws.max_row + 1):
-            vals = [ws.cell(row=r, column=c).value for c in range(1, 9)]
+            vals = [ws.cell(row=r, column=c).value for c in range(1, 5)]
             item = vals[0]
             if any(v for v in vals) and item and not str(item).startswith('='):
                 rows.append((sheet_name, r, dict(zip(COLS, vals))))
@@ -97,27 +97,31 @@ def get_minimums():
     for r in range(2, ws.max_row + 1):
         item = ws.cell(row=r, column=1).value
         qty  = ws.cell(row=r, column=2).value
+        item_type = str(ws.cell(row=r, column=3).value or '').strip()
         if item:
-            result.append((str(item), qty, r))
-    return sorted(result, key=lambda x: x[0].lower())
+            result.append({'item': str(item), 'qty': qty, 'type': item_type})
+    return sorted(result, key=lambda x: (x['type'].lower() or 'zzz', x['item'].lower()))
 
 
-def set_minimum(item_title, qty):
+def set_minimum(item_title, qty, item_type=''):
     wb = load_wb()
     if 'Minimums' not in wb.sheetnames:
         ws = wb.create_sheet('Minimums')
         ws.cell(row=1, column=1).value = 'Item'
         ws.cell(row=1, column=2).value = 'Min Qty'
+        ws.cell(row=1, column=3).value = 'Type'
     else:
         ws = wb['Minimums']
     for r in range(2, ws.max_row + 1):
         if str(ws.cell(row=r, column=1).value or '').lower() == item_title.lower():
             ws.cell(row=r, column=2).value = qty
+            ws.cell(row=r, column=3).value = item_type or None
             save_wb(wb)
             return
     row = ws.max_row + 1
     ws.cell(row=row, column=1).value = item_title
     ws.cell(row=row, column=2).value = qty
+    ws.cell(row=row, column=3).value = item_type or None
     save_wb(wb)
 
 

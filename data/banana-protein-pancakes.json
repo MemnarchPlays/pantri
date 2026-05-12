@@ -60,5 +60,6 @@
     "low_carb": "Replace oats with 2 tbsp almond flour and reduce banana to 1.",
     "vegan": "Replace eggs with 2 flax eggs (2 tbsp ground flax + 6 tbsp water)."
   },
-  "notes": "Freeze extras between parchment paper for easy weekday breakfasts."
+  "notes": "Freeze extras between parchment paper for easy weekday breakfasts.",
+  "favorite": false
 }

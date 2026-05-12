@@ -11,6 +11,12 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
+echo Pulling latest updates from GitHub...
+git pull
+if %errorlevel% neq 0 (
+    echo WARNING: git pull failed. Starting with current version.
+)
+
 echo Installing / updating dependencies...
 python -m pip install -r requirements.txt -q
 if %errorlevel% neq 0 (

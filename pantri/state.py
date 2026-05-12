@@ -1,4 +1,4 @@
-"""JSON state helpers — shopping list, exclusions, units."""
+"""JSON state helpers — shopping list, exclusions, units, types."""
 
 import json
 from pathlib import Path
@@ -8,6 +8,12 @@ STATE_DIR          = Path(__file__).parent.parent / 'state'
 SHOPPING_LIST_FILE = STATE_DIR / 'shopping_list.json'
 EXCLUSIONS_FILE    = STATE_DIR / 'exclusions.json'
 UNITS_FILE         = STATE_DIR / 'units.json'
+TYPES_FILE         = STATE_DIR / 'types.json'
+
+DEFAULT_TYPES = [
+    'Baking', 'Beverages', 'Canned Goods', 'Cleaning', 'Condiments',
+    'Dairy', 'Dry Goods', 'Frozen', 'Oils', 'Produce', 'Spices',
+]
 
 
 def load_shopping_list():
@@ -65,6 +71,20 @@ def get_unit_info():
                 if key in counts:
                     counts[key] += 1
     return [(u, counts[u.lower()]) for u in units]
+
+
+def load_types():
+    if not TYPES_FILE.exists():
+        return list(DEFAULT_TYPES)
+    try:
+        data = json.loads(TYPES_FILE.read_text(encoding='utf-8'))
+        return data if data else list(DEFAULT_TYPES)
+    except Exception:
+        return list(DEFAULT_TYPES)
+
+
+def save_types(types):
+    TYPES_FILE.write_text(json.dumps(types, indent=2), encoding='utf-8')
 
 
 def is_excluded(item_name):

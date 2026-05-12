@@ -5,7 +5,7 @@ import json
 import re
 from pathlib import Path
 
-COLS     = ['Item', 'Quantity', 'Unit', 'Location', 'Section', 'Slot', 'Expiration', 'Notes']
+COLS     = ['Item', 'Quantity', 'Unit', 'Location']
 XLSX     = Path(__file__).parent / 'Food in Storage.xlsx'
 DATA_DIR = Path(__file__).parent / 'data'
 ENV_FILE = Path(__file__).parent / '.env'

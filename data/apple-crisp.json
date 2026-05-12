@@ -76,5 +76,6 @@
     "gluten_free": "Use gluten-free oats and a 1:1 gluten-free flour blend.",
     "vegan": "Use coconut oil instead of butter."
   },
-  "notes": "Granny Smith apples hold their shape best. Honeycrisp gives a sweeter result."
+  "notes": "Granny Smith apples hold their shape best. Honeycrisp gives a sweeter result.",
+  "favorite": false
 }

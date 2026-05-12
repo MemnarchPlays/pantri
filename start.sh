@@ -9,6 +9,10 @@ if ! command -v python3 &>/dev/null; then
     exit 1
 fi
 
+# Pull latest from GitHub
+echo "Pulling latest updates from GitHub..."
+git pull || echo "WARNING: git pull failed. Starting with current version."
+
 # Install/update dependencies
 echo "Installing / updating dependencies..."
 python3 -m pip install -r requirements.txt -q

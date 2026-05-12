@@ -33,7 +33,7 @@ def recipes():
     lib_recipes = [r for r in all_recipes
                    if (not q or q in r.get('name', '').lower())
                    and (not meal or meal.lower() in r.get('meal_type', '').lower())]
-    lib_recipes.sort(key=lambda x: x.get('name', ''))
+    lib_recipes.sort(key=lambda x: (not x.get('favorite', False), x.get('name', '').lower()))
 
     cm_recipes = []
     if tab == 'canmake':
@@ -345,6 +345,17 @@ def recipe_use(slug):
     save_wb(wb)
     return redirect(url_for('recipes.recipe_detail', slug=slug,
                             used_count=used_count, not_found_count=not_found_count))
+
+
+@bp.route('/recipe/<slug>/favorite', methods=['POST'])
+def recipe_favorite(slug):
+    path = DATA_DIR / f'{slug}.json'
+    if not path.exists():
+        return jsonify({'ok': False}), 404
+    recipe = json.loads(path.read_text(encoding='utf-8'))
+    recipe['favorite'] = not recipe.get('favorite', False)
+    path.write_text(json.dumps(recipe, indent=2), encoding='utf-8')
+    return jsonify({'favorite': recipe['favorite']})
 
 
 @bp.route('/recipe/delete/<slug>')

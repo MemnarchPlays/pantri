@@ -30,12 +30,19 @@ def shopping():
         if name not in units:
             units[name] = str(d.get('Unit') or '').strip()
 
-    low = []
-    for item, minimum, _ in mins:
-        key     = item.lower()
+    restock = []
+    for m in mins:
+        key     = m['item'].lower()
         current = stock.get(key, 0)
-        if current < minimum:
-            low.append((item, current, minimum, units.get(key, '')))
+        if current < m['qty']:
+            restock.append({
+                'name': m['item'],
+                'have': current,
+                'unit': units.get(key, ''),
+                'need': round(m['qty'] - current, 1),
+                'type': m['type'],
+            })
+    restock.sort(key=lambda x: (x['type'].lower() or 'zzz', x['name'].lower()))
 
     have = {str(d.get('Item', '')).lower() for _, _, d in rows if d.get('Item')}
 
@@ -60,13 +67,56 @@ def shopping():
                 if not any(item_name in h or h in item_name for h in have):
                     missing_ingredients.append(ing)
 
-    out_of_stock_exclusions = [ex for ex in load_exclusions() if not ex.get('in_stock', True)]
-
-    return render_template('shopping.html', low=low, all_recipes=all_recipes,
+    return render_template('shopping.html', restock=restock, all_recipes=all_recipes,
                            selected_recipe=selected_recipe,
                            missing_ingredients=missing_ingredients,
-                           shopping_list=load_shopping_list(),
-                           out_of_stock_exclusions=out_of_stock_exclusions)
+                           shopping_list=load_shopping_list())
+
+
+@bp.route('/shopping/list/add-restock', methods=['POST'])
+def shopping_list_add_restock():
+    wb   = load_wb()
+    rows = get_all_rows(wb)
+    mins = get_minimums()
+
+    stock = {}
+    units = {}
+    for _, _, d in rows:
+        name = str(d.get('Item') or '').strip().lower()
+        if not name:
+            continue
+        try:
+            qty = float(str(d.get('Quantity') or 0))
+        except ValueError:
+            qty = 0
+        stock[name] = stock.get(name, 0) + qty
+        if name not in units:
+            units[name] = str(d.get('Unit') or '').strip()
+
+    items    = load_shopping_list()
+    existing = {i['name'].lower() for i in items}
+
+    for m in mins:
+        key     = m['item'].lower()
+        current = stock.get(key, 0)
+        if current >= m['qty']:
+            continue
+        if key in existing:
+            continue
+        need      = round(m['qty'] - current, 1)
+        unit_str  = f" {units[key]}" if key in units and units[key] else ''
+        items.append({
+            'id':            str(int(datetime.now().timestamp() * 1000)) + str(len(items)),
+            'name':          m['item'],
+            'amount':        f"need {need}{unit_str}",
+            'note':          f"{m['type'] or 'Restock'}",
+            'checked':       False,
+            'store_section': '',
+        })
+        existing.add(key)
+
+    save_shopping_list(items)
+    return redirect(url_for('shopping.shopping'))
 
 
 @bp.route('/shopping/list/add-recipe', methods=['POST'])
@@ -102,11 +152,12 @@ def shopping_list_add_recipe():
         if item_lower in existing_names:
             continue
         items.append({
-            'id':      str(int(datetime.now().timestamp() * 1000)) + str(len(items)),
-            'name':    item_name,
-            'amount':  ing.get('amount', ''),
-            'note':    f'For: {recipe_name}',
-            'checked': False,
+            'id':            str(int(datetime.now().timestamp() * 1000)) + str(len(items)),
+            'name':          item_name,
+            'amount':        ing.get('amount', ''),
+            'note':          f'For: {recipe_name}',
+            'checked':       False,
+            'store_section': ing.get('store_section', ''),
         })
         existing_names.add(item_lower)
 

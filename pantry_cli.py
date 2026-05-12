@@ -44,7 +44,7 @@ def get_all_rows(wb):
             continue
         ws = wb[sheet_name]
         for r in range(2, ws.max_row + 1):
-            row_vals = [ws.cell(row=r, column=c).value for c in range(1, 9)]
+            row_vals = [ws.cell(row=r, column=c).value for c in range(1, 5)]
             if any(v for v in row_vals):
                 d = dict(zip(COLS, row_vals))
                 rows.append((sheet_name, r, d))
@@ -70,12 +70,10 @@ def cmd_list(args):
         print('No items found.')
         return
 
-    print(f'\n{"Item":<30} {"Qty":<8} {"Unit":<12} {"Location":<20} {"Section":<18} {"Slot":<12} {"Exp":<12} Notes')
-    print('-' * 120)
+    print(f'\n{"Item":<30} {"Qty":<8} {"Unit":<12} Location')
+    print('-' * 80)
     for _, _, d in all_rows:
-        print(f'{str(d["Item"]):<30} {str(d["Quantity"] or ""):<8} {str(d["Unit"] or ""):<12} '
-              f'{str(d["Location"] or ""):<20} {str(d["Section"] or ""):<18} '
-              f'{str(d["Slot"] or ""):<12} {str(d["Expiration"] or ""):<12} {str(d["Notes"] or "")}')
+        print(f'{str(d["Item"]):<30} {str(d["Quantity"] or ""):<8} {str(d["Unit"] or ""):<12} {str(d["Location"] or "")}')
     print(f'\n{len(all_rows)} item(s) shown.\n')
 
 
@@ -90,7 +88,7 @@ def cmd_search(args):
         print(f'No items matching "{term}".')
         return
     for _, _, d in rows:
-        print(f'  {d["Item"]}  |  qty: {d["Quantity"]} {d["Unit"]}  |  {d["Location"]} / {d["Section"]} / {d["Slot"]}  |  exp: {d["Expiration"]}')
+        print(f'  {d["Item"]}  |  qty: {d["Quantity"]} {d["Unit"]}  |  {d["Location"]}')
 
 
 def cmd_add(_):
@@ -103,10 +101,6 @@ def cmd_add(_):
     unit       = input('Unit (e.g. can, bag, oz): ').strip()
     print(f'Locations: {", ".join(LOCATION_SHEETS)}')
     location   = input('Location: ').strip()
-    section    = input('Section (e.g. Top Shelf): ').strip()
-    slot       = input('Slot (e.g. Left): ').strip()
-    expiration = input('Expiration date (optional): ').strip()
-    notes      = input('Notes (optional): ').strip()
 
     sheet_name = location if location in LOCATION_SHEETS else LOCATION_SHEETS[0]
     wb  = load_wb()
@@ -116,10 +110,6 @@ def cmd_add(_):
     ws.cell(row=row, column=2).value = quantity or None
     ws.cell(row=row, column=3).value = unit or None
     ws.cell(row=row, column=4).value = location or sheet_name
-    ws.cell(row=row, column=5).value = section or None
-    ws.cell(row=row, column=6).value = slot or None
-    ws.cell(row=row, column=7).value = expiration or None
-    ws.cell(row=row, column=8).value = notes or None
     save_wb(wb)
     print(f'Added: {item} → {sheet_name}')
 
@@ -169,7 +159,7 @@ def cmd_remove(args):
             confirm = input(f'Remove "{cell_val}" from {sheet_name}? (y/n): ').strip().lower()
             if confirm == 'y':
                 ws = wb[sheet_name]
-                for col in range(1, 9):
+                for col in range(1, 5):
                     ws.cell(row=row_idx, column=col).value = None
                 save_wb(wb)
                 print(f'Removed: {cell_val}')
