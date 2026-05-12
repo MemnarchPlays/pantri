@@ -449,7 +449,7 @@ updateBackupUI();
         <div class="card">
           <div class="card-header">Preview</div>
           <div class="card-body">
-            <p class="small text-muted mb-3">A live preview will appear after you click Apply.</p>
+            <p class="small text-muted mb-3">Changes are shown live. Click Apply to save.</p>
             <div class="d-flex flex-column gap-2">
               <button class="btn btn-primary">Primary Button</button>
               <button class="btn btn-outline-primary">Outline Button</button>
@@ -490,12 +490,13 @@ updateBackupUI();
   fontSel.value = p.font;
   preview.style.fontFamily = p.font;
 
-  pick.addEventListener('input', function() { hex.textContent = this.value; });
+  pick.addEventListener('input', function() { hex.textContent = this.value; window._pantri.applyColor(this.value); });
 })();
 
 function setPreset(color) {
   document.getElementById('color-pick').value = color;
   document.getElementById('color-hex').textContent = color;
+  window._pantri.applyColor(color);
 }
 
 function applyAndSave() {

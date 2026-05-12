@@ -8,7 +8,7 @@ description: User customizes accent color and font from the Settings page
 ## Success criteria
 
 - [ ] Accent color picker on Settings → Appearance lets the user pick a color
-- [ ] Sample text updates in real-time as the color is changed (before Apply is clicked)
+- [x] Sample text updates in real-time as the color is changed (before Apply is clicked)
 - [ ] Clicking Apply saves the color to localStorage and applies it to the full UI immediately
 - [ ] Font selector lets the user pick a font family; UI updates on Apply
 - [ ] Color and font persist across page reloads
