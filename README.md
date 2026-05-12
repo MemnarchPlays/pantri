@@ -4,13 +4,39 @@ A personal pantry tracker with a web UI, Discord bot, and PDF recipe binder. Tra
 
 ---
 
+## Quickstart — no git required
+
+If you just want to run it, paste this into any terminal with Docker:
+
+```bash
+docker run -d \
+  --name pantri \
+  -p 5000:5000 \
+  -e PANTRI_DATA=/userdata \
+  -e NO_BROWSER=1 \
+  -v pantri_userdata:/userdata \
+  --restart unless-stopped \
+  memnarchplays/pantri
+```
+
+Then open **http://localhost:5000**. Your data lives in the `pantri_userdata` Docker volume and survives container restarts and image updates.
+
+To update to the latest image:
+```bash
+docker pull memnarchplays/pantri
+docker stop pantri && docker rm pantri
+# re-run the docker run command above
+```
+
+---
+
 ## Requirements
 
 - Python 3.10+ **or** Docker
 
 ---
 
-## Setup
+## Setup (from source)
 
 ### Option A — Docker (recommended)
 
