@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Pantri — start the web app: py pantry_app.py"""
 
+import os
 import socket
 import threading
 import webbrowser
@@ -24,7 +25,7 @@ if __name__ == '__main__':
         except OSError:
             return False
 
-    if not _port_open(port):
+    if not _port_open(port) and not os.environ.get('NO_BROWSER'):
         threading.Timer(1.2, webbrowser.open, args=[f'http://localhost:{port}']).start()
 
     start_bot()

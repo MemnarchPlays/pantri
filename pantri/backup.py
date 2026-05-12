@@ -7,11 +7,14 @@ from datetime import datetime
 from pathlib import Path
 from pantry_utils import XLSX, DATA_DIR, read_env
 
-STATE_DIR           = Path(__file__).parent.parent / 'state'
+import os as _os
+_data               = Path(_os.environ['PANTRI_DATA']) if 'PANTRI_DATA' in _os.environ else Path(__file__).parent.parent
+STATE_DIR           = _data / 'state'
 STATE_DIR.mkdir(parents=True, exist_ok=True)
 BACKUP_STATE_FILE   = STATE_DIR / 'backup_state.json'
-BACKUP_DIR          = Path(__file__).parent.parent / 'backups'
+BACKUP_DIR          = _data / 'backups'
 BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+SEED_DIR            = Path(__file__).parent.parent / 'seed'
 DEFAULT_BACKUP_NAME = 'default-config.zip'
 
 # These mirror state.py paths — used in zip backup
@@ -83,8 +86,10 @@ def backup_wb(force=False):
 
 
 def restore_default_if_needed():
-    """On first run (no xlsx), silently restore from default-config.zip if present."""
-    default_zip = BACKUP_DIR / DEFAULT_BACKUP_NAME
+    """On first run (no xlsx), silently restore from seed/default-config.zip."""
+    default_zip = SEED_DIR / DEFAULT_BACKUP_NAME
+    if not default_zip.exists():
+        default_zip = BACKUP_DIR / DEFAULT_BACKUP_NAME
     if XLSX.exists() or not default_zip.exists():
         return
     print('First run — restoring default configuration from default-config.zip')

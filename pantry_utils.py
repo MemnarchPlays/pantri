@@ -2,13 +2,17 @@
 """Shared constants and helpers used across pantry scripts."""
 
 import json
+import os
 import re
 from pathlib import Path
 
+_BASE    = Path(__file__).parent
+_DATA    = Path(os.environ['PANTRI_DATA']) if 'PANTRI_DATA' in os.environ else _BASE
+
 COLS     = ['Item', 'Quantity', 'Unit', 'Location']
-XLSX     = Path(__file__).parent / 'Food in Storage.xlsx'
-DATA_DIR = Path(__file__).parent / 'data'
-ENV_FILE = Path(__file__).parent / '.env'
+XLSX     = _DATA / 'Food in Storage.xlsx'
+DATA_DIR = _DATA / 'data'
+ENV_FILE = _BASE / '.env'
 
 EXCLUDE_SHEETS = {'Minimums'}
 MEAL_TYPES     = ['Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Desserts']

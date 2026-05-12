@@ -1,0 +1,14 @@
+services:
+  pantri:
+    build: .
+    ports:
+      - "${PORT:-5000}:5000"
+    volumes:
+      - pantri_userdata:/userdata
+    environment:
+      - NO_BROWSER=1
+      - PANTRI_DATA=/userdata
+    restart: unless-stopped
+
+volumes:
+  pantri_userdata:

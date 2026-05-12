@@ -1,10 +1,12 @@
 """JSON state helpers — shopping list, exclusions, units, types."""
 
 import json
+import os
 from pathlib import Path
 from pantry_utils import XLSX, EXCLUDE_SHEETS
 
-STATE_DIR          = Path(__file__).parent.parent / 'state'
+_data     = Path(os.environ['PANTRI_DATA']) if 'PANTRI_DATA' in os.environ else Path(__file__).parent.parent
+STATE_DIR = _data / 'state'
 STATE_DIR.mkdir(parents=True, exist_ok=True)
 SHOPPING_LIST_FILE = STATE_DIR / 'shopping_list.json'
 EXCLUSIONS_FILE    = STATE_DIR / 'exclusions.json'

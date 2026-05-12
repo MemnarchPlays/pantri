@@ -1,13 +1,14 @@
-data/*.json
-output/
-backups/
-__pycache__/
+.git
+.claude
+__pycache__
 *.pyc
 *.pyo
 .env
 Food in Storage.xlsx
 state/
+backups/
+data/
+output/
 bot.pid
 bot.log
 pantry_app.log
-.claude/settings.local.json
