@@ -66,6 +66,17 @@ description: User configures locations, minimums, exclusions, Discord bot, and b
 | 4 | Clicks "Download" on a backup | GET to `/backups/download/<filename>`; sends file as attachment |
 | 5 | Clicks "Restore" on a backup | POST to `/backups/restore/<filename>`; first backs up current xlsx, then copies backup over it |
 
+## Interface tab (Appearance + Server)
+
+| Step | What the user sees | What the system does |
+|------|--------------------|----------------------|
+| 1 | Color picker, font selector, preset buttons, Preview card | JS reads `window._pantri` (color/font from localStorage) and populates controls on load |
+| 2 | Drags color picker or clicks preset | `applyColor()` updates CSS vars live; sample Preview boxes reflect change immediately |
+| 3 | Clicks **Apply** | `applyAndSave()` writes color + font to `localStorage`; applies to full page |
+| 4 | Selects port and/or timezone; clicks **Save** | POST to `/settings/appearance`; writes `PORT`, `DISPLAY_TZ`, `ACCENT_COLOR`, `FONT_FAMILY` to `.env`; redirects to `?tab=interface` |
+
+---
+
 ## Failure modes
 
 | Condition | Behavior |
@@ -75,3 +86,4 @@ description: User configures locations, minimums, exclusions, Discord bot, and b
 | Backup restore: file not in backups/ dir | Redirect without action (path traversal guard) |
 | Always On Hand toggle: fetch fails (server error) | Button shows "Error — try again"; exclusion state unchanged |
 | Always On Hand button near `<form>` in same table row | Button must have `type="button"` to prevent form hijack; foster-parented `<form>` inside `<td>` can capture adjacent buttons in some browsers |
+| Port < 1024 entered in Interface tab | Valid and saved; binding to privileged ports on Linux requires root or `CAP_NET_BIND_SERVICE` — that is the user's responsibility, not enforced by the app |

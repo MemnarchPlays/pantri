@@ -374,7 +374,7 @@ def settings_appearance():
         env['FONT_FAMILY'] = font
     try:
         port = int(request.form.get('port', '5000'))
-        if 1024 <= port <= 65535:
+        if 1 <= port <= 65535:
             env['PORT'] = str(port)
     except ValueError:
         pass
