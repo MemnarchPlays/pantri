@@ -1,0 +1,84 @@
+{
+  "name": "Beef and Broccoli",
+  "meal_type": "Dinner",
+  "servings": 4,
+  "prep_time": "15 minutes",
+  "cook_time": "15 minutes",
+  "macros_per_serving": {
+    "calories": 420,
+    "protein_g": 38,
+    "carbs_g": 28,
+    "fat_g": 16
+  },
+  "ingredients": [
+    {
+      "amount": "1.5 lbs",
+      "item": "flank steak, thinly sliced",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "4 cups",
+      "item": "broccoli florets",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/3 cup",
+      "item": "soy sauce",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "3 tbsp",
+      "item": "oyster sauce",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "brown sugar",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "sesame oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "4 cloves",
+      "item": "garlic, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "fresh ginger, grated",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "cornstarch",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "vegetable oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/3 cup",
+      "item": "beef broth",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Toss sliced beef with 1 tbsp cornstarch, salt, and a splash of soy sauce. Set aside.",
+    "Whisk together soy sauce, oyster sauce, brown sugar, sesame oil, remaining cornstarch, and beef broth.",
+    "Heat oil in a wok over high heat. Sear beef in batches until browned. Remove and set aside.",
+    "Add broccoli and stir fry 3-4 minutes until tender-crisp.",
+    "Add garlic and ginger, cook 30 seconds.",
+    "Return beef to wok. Pour sauce over everything and toss until thickened, 2 minutes.",
+    "Serve over steamed rice."
+  ],
+  "substitutions": {
+    "dairy_free": "Already dairy-free.",
+    "gluten_free": "Use tamari and gluten-free oyster sauce.",
+    "low_carb": "Serve over cauliflower rice."
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "name": "Honey Garlic Pork Chops",
+  "meal_type": "Dinner",
+  "servings": 4,
+  "prep_time": "10 minutes",
+  "cook_time": "20 minutes",
+  "macros_per_serving": {
+    "calories": 380,
+    "protein_g": 35,
+    "carbs_g": 18,
+    "fat_g": 16
+  },
+  "ingredients": [
+    {
+      "amount": "4",
+      "item": "bone-in pork chops (1-inch thick)",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "3 tbsp",
+      "item": "honey",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "4 cloves",
+      "item": "garlic, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "soy sauce",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "apple cider vinegar",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "olive oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "fresh",
+      "item": "parsley for garnish",
+      "store_section": "Produce"
+    }
+  ],
+  "instructions": [
+    "Pat pork chops dry and season both sides with salt and pepper.",
+    "Mix honey, garlic, soy sauce, and apple cider vinegar in a small bowl.",
+    "Heat olive oil in an oven-safe skillet over medium-high heat.",
+    "Sear pork chops 3-4 minutes per side until golden brown.",
+    "Reduce heat to medium. Add butter and honey garlic sauce. Spoon sauce over chops.",
+    "Cook 3-5 more minutes until internal temperature reaches 145\u00b0F.",
+    "Rest 3 minutes. Spoon sauce over top and garnish with parsley."
+  ],
+  "substitutions": {
+    "dairy_free": "Replace butter with olive oil or dairy-free butter.",
+    "gluten_free": "Use tamari instead of soy sauce.",
+    "low_carb": "Reduce honey to 1 tbsp or use a sugar-free alternative."
+  }
+}

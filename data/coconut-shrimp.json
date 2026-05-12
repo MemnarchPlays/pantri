@@ -1,0 +1,68 @@
+{
+  "name": "Coconut Shrimp",
+  "meal_type": "Dinner",
+  "servings": 4,
+  "prep_time": "15 minutes",
+  "cook_time": "15 minutes",
+  "macros_per_serving": {
+    "calories": 320,
+    "protein_g": 22,
+    "carbs_g": 28,
+    "fat_g": 14
+  },
+  "ingredients": [
+    {
+      "amount": "1.5 lbs",
+      "item": "large shrimp, peeled and deveined",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "1.5 cups",
+      "item": "shredded sweetened coconut",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "panko breadcrumbs",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "all-purpose flour",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 large",
+      "item": "eggs, beaten",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "oil",
+      "item": "for frying",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "sweet chili sauce for dipping",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Pat shrimp dry. Season with salt and pepper.",
+    "Set up breading station: flour, beaten eggs, coconut mixed with panko.",
+    "Coat each shrimp: flour, egg, coconut-panko mixture. Press to adhere.",
+    "Heat 2 inches of oil to 350\u00b0F in a heavy pot.",
+    "Fry shrimp in batches 2-3 minutes until golden and coconut is toasted.",
+    "Drain on paper towels. Serve immediately with sweet chili sauce."
+  ],
+  "substitutions": {
+    "dairy_free": "Already dairy-free.",
+    "gluten_free": "Use rice flour and gluten-free panko.",
+    "baked": "Bake at 400\u00b0F on a greased rack 10-12 minutes, flipping halfway."
+  }
+}

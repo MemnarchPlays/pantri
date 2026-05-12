@@ -1,0 +1,62 @@
+{
+  "name": "Classic French Toast",
+  "meal_type": "Breakfast",
+  "servings": 2,
+  "prep_time": "5 minutes",
+  "cook_time": "15 minutes",
+  "macros_per_serving": {
+    "calories": 340,
+    "protein_g": 12,
+    "carbs_g": 52,
+    "fat_g": 9
+  },
+  "ingredients": [
+    {
+      "amount": "4 thick slices",
+      "item": "brioche or Texas toast",
+      "store_section": "Bakery"
+    },
+    {
+      "amount": "2 large",
+      "item": "eggs",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "milk",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "vanilla extract",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "cinnamon",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "maple syrup",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Whisk eggs, milk, vanilla, and cinnamon together in a shallow bowl.",
+    "Melt butter in a large skillet over medium heat.",
+    "Dip each bread slice in the egg mixture, coating both sides well.",
+    "Cook 2-3 minutes per side until golden brown.",
+    "Serve with maple syrup and fresh fruit if desired."
+  ],
+  "substitutions": {
+    "dairy_free": "Use almond or oat milk and dairy-free butter.",
+    "gluten_free": "Use gluten-free bread.",
+    "low_carb": "Use low-carb bread and sugar-free syrup."
+  }
+}

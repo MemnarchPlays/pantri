@@ -23,6 +23,9 @@ Open bugs and tech debt. Use `/t` to investigate and fix a bug, `/w` to review t
 ### ~~[BUG-005] Bulk-add always writes to "End Hall Closet" regardless of selected location~~ FIXED
 - **Root cause:** The bulk-add location `<select>` was missing the `selected` attribute on `<option>` tags, so the browser always defaulted to the first xlsx sheet ("End Hall Closet"). The single-item form already had this correct. Fixed by adding `{% if default_location == l %}selected{% endif %}` to the bulk-add dropdown in `templates/inventory.html`.
 
+### ~~[BUG-006] Recipe library is empty on a fresh git clone~~ FIXED
+- **Root cause:** `data/*.json` was added to `.gitignore` to protect Linux from overwrite on pull, but recipes are shared authoritative data — pull syncing them is correct. Removed `data/*.json` from `.gitignore` and re-tracked all 89 recipe files in git. Updated `docs/deployment.flow.md` to reflect that recipes are now git-managed.
+
 ---
 
 ## Tech Debt

@@ -1,0 +1,74 @@
+{
+  "name": "Fish and Chips",
+  "meal_type": "Dinner",
+  "servings": 4,
+  "prep_time": "15 minutes",
+  "cook_time": "30 minutes",
+  "macros_per_serving": {
+    "calories": 580,
+    "protein_g": 32,
+    "carbs_g": 62,
+    "fat_g": 22
+  },
+  "ingredients": [
+    {
+      "amount": "2 lbs",
+      "item": "cod or haddock fillets",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "4 large",
+      "item": "russet potatoes, cut into fries",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1.5 cups",
+      "item": "all-purpose flour",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "baking powder",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 cup",
+      "item": "cold beer or sparkling water",
+      "store_section": "Beverages"
+    },
+    {
+      "amount": "oil",
+      "item": "for deep frying",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "garlic powder",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "malt vinegar or tartar sauce",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Soak potato fries in cold water 30 minutes. Drain and dry thoroughly.",
+    "Heat oil to 325\u00b0F. Fry potatoes 5-6 minutes until cooked but not browned. Drain.",
+    "Increase oil to 375\u00b0F. Fry potatoes again 2-3 minutes until golden and crispy. Season with salt.",
+    "Whisk flour, baking powder, garlic powder, salt, and pepper. Whisk in cold beer until smooth.",
+    "Pat fish dry. Dip in batter and let excess drip off.",
+    "Fry fish 4-5 minutes until deep golden brown. Drain on paper towels.",
+    "Serve immediately with fries, malt vinegar or tartar sauce."
+  ],
+  "substitutions": {
+    "gluten_free": "Use rice flour and gluten-free sparkling water for the batter.",
+    "dairy_free": "Already dairy-free."
+  },
+  "notes": "Double-frying the chips is what makes them crispy. Do not skip the first fry."
+}

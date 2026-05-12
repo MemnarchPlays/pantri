@@ -1,0 +1,79 @@
+{
+  "name": "Corn Chowder",
+  "meal_type": "Lunch",
+  "servings": 4,
+  "prep_time": "10 minutes",
+  "cook_time": "30 minutes",
+  "macros_per_serving": {
+    "calories": 340,
+    "protein_g": 10,
+    "carbs_g": 42,
+    "fat_g": 16
+  },
+  "ingredients": [
+    {
+      "amount": "4 cups",
+      "item": "corn kernels (fresh or frozen)",
+      "store_section": "Frozen"
+    },
+    {
+      "amount": "3",
+      "item": "russet potatoes, peeled and diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1 large",
+      "item": "onion, diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "3 cloves",
+      "item": "garlic, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "4 strips",
+      "item": "bacon, diced",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "3 cups",
+      "item": "chicken broth",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 cup",
+      "item": "heavy cream",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "all-purpose flour",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt, pepper, smoked paprika",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Cook bacon in a large pot until crispy. Remove and set aside, leaving drippings in pot.",
+    "Add butter and saute onion 5 minutes. Add garlic and cook 1 minute.",
+    "Whisk in flour and cook 2 minutes.",
+    "Add broth and potatoes. Bring to a boil and cook 12 minutes until potatoes are tender.",
+    "Add corn and cream. Simmer 8 minutes.",
+    "Use an immersion blender to blend about half the soup for a creamy-chunky texture.",
+    "Season with salt, pepper, and smoked paprika. Top with reserved bacon."
+  ],
+  "substitutions": {
+    "dairy_free": "Use oat milk and dairy-free butter.",
+    "gluten_free": "Replace flour with 1 tbsp cornstarch.",
+    "vegetarian": "Skip bacon, use vegetable broth, and add 1/2 tsp smoked paprika for depth."
+  }
+}

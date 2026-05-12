@@ -1,0 +1,73 @@
+{
+  "name": "Mini Corn Dogs",
+  "meal_type": "Snacks",
+  "servings": 6,
+  "prep_time": "10 minutes",
+  "cook_time": "15 minutes",
+  "macros_per_serving": {
+    "calories": 220,
+    "protein_g": 8,
+    "carbs_g": 28,
+    "fat_g": 9
+  },
+  "ingredients": [
+    {
+      "amount": "1 pkg",
+      "item": "cocktail sausages (14 oz)",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "1 cup",
+      "item": "yellow cornmeal",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 cup",
+      "item": "all-purpose flour",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "sugar",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "baking powder",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 tsp",
+      "item": "salt",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 cup",
+      "item": "buttermilk",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2 large",
+      "item": "eggs",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "oil",
+      "item": "for frying",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Pat sausages dry and insert a small skewer or toothpick into each.",
+    "Mix cornmeal, flour, sugar, baking powder, and salt.",
+    "Whisk in buttermilk and eggs until smooth batter forms.",
+    "Heat 2 inches of oil to 375\u00b0F.",
+    "Dip each sausage in batter, letting excess drip off.",
+    "Fry in batches 2-3 minutes until golden and cooked through.",
+    "Drain on paper towels. Serve with ketchup and mustard."
+  ],
+  "substitutions": {
+    "dairy_free": "Use oat milk mixed with 1 tsp vinegar instead of buttermilk.",
+    "gluten_free": "Use a gluten-free flour blend and certified GF cornmeal."
+  }
+}

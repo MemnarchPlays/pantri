@@ -1,0 +1,69 @@
+{
+  "name": "Guacamole and Chips",
+  "meal_type": "Snacks",
+  "servings": 6,
+  "prep_time": "10 minutes",
+  "cook_time": "0 minutes",
+  "macros_per_serving": {
+    "calories": 220,
+    "protein_g": 3,
+    "carbs_g": 28,
+    "fat_g": 12
+  },
+  "ingredients": [
+    {
+      "amount": "3 ripe",
+      "item": "avocados",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2",
+      "item": "limes, juiced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/2",
+      "item": "red onion, finely diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1",
+      "item": "jalape\u00f1o, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "fresh cilantro, chopped",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 cloves",
+      "item": "garlic, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 bag",
+      "item": "tortilla chips",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Halve and pit the avocados. Scoop flesh into a bowl.",
+    "Mash with a fork to your preferred texture (chunky or smooth).",
+    "Stir in lime juice, red onion, tomatoes, jalape\u00f1o, cilantro, and garlic.",
+    "Season generously with salt and pepper.",
+    "Serve immediately with tortilla chips."
+  ],
+  "substitutions": {
+    "dairy_free": "Already dairy-free.",
+    "gluten_free": "Use certified gluten-free tortilla chips.",
+    "low_carb": "Serve with cucumber slices or bell pepper strips instead of chips.",
+    "vegan": "Already vegan."
+  },
+  "notes": "Press plastic wrap directly onto the surface of leftover guac to prevent browning."
+}

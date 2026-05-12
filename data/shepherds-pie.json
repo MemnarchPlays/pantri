@@ -1,0 +1,89 @@
+{
+  "name": "Shepherd's Pie",
+  "meal_type": "Dinner",
+  "servings": 6,
+  "prep_time": "20 minutes",
+  "cook_time": "45 minutes",
+  "macros_per_serving": {
+    "calories": 420,
+    "protein_g": 28,
+    "carbs_g": 38,
+    "fat_g": 16
+  },
+  "ingredients": [
+    {
+      "amount": "1.5 lbs",
+      "item": "ground lamb or beef",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "2 lbs",
+      "item": "russet potatoes, peeled",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1 large",
+      "item": "onion, diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2",
+      "item": "carrots, diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "3 cloves",
+      "item": "garlic, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1 cup",
+      "item": "frozen peas",
+      "store_section": "Frozen"
+    },
+    {
+      "amount": "1 cup",
+      "item": "beef broth",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "Worcestershire sauce",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "tomato paste",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "4 tbsp",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "milk or cream",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Boil potatoes until tender. Drain and mash with butter and milk. Season with salt and pepper.",
+    "Preheat oven to 400\u00b0F.",
+    "Brown meat in a skillet. Add onion, carrots, and garlic. Cook 5 minutes.",
+    "Stir in tomato paste, Worcestershire, and broth. Simmer 8 minutes until thickened.",
+    "Stir in frozen peas. Season with salt and pepper.",
+    "Transfer meat mixture to a baking dish. Spread mashed potatoes evenly over the top.",
+    "Bake 20-25 minutes until top is golden. Rest 5 minutes before serving."
+  ],
+  "substitutions": {
+    "dairy_free": "Use dairy-free butter and oat milk in the mash.",
+    "gluten_free": "Already gluten-free.",
+    "vegetarian": "Use lentils instead of meat and vegetable broth."
+  }
+}

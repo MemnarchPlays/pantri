@@ -1,0 +1,59 @@
+{
+  "name": "Monkey Bread",
+  "meal_type": "Desserts",
+  "servings": 10,
+  "prep_time": "15 minutes",
+  "cook_time": "35 minutes",
+  "macros_per_serving": {
+    "calories": 420,
+    "protein_g": 6,
+    "carbs_g": 62,
+    "fat_g": 16
+  },
+  "ingredients": [
+    {
+      "amount": "3 cans",
+      "item": "refrigerated biscuit dough (7.5 oz each)",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 cup",
+      "item": "granulated sugar",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tsp",
+      "item": "cinnamon",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 cup",
+      "item": "brown sugar, packed",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "3/4 cup",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "vanilla extract",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Preheat oven to 350\u00b0F. Grease a bundt pan.",
+    "Mix granulated sugar and cinnamon in a zip-top bag.",
+    "Cut each biscuit into quarters. Toss pieces in cinnamon sugar to coat. Layer in bundt pan.",
+    "Melt butter in a saucepan with brown sugar and vanilla. Bring to a boil and cook 1 minute.",
+    "Pour brown butter sauce over biscuit pieces.",
+    "Bake 30-35 minutes until deep golden brown and cooked through.",
+    "Cool in pan 10 minutes then invert onto a serving plate. Pull apart to serve."
+  ],
+  "substitutions": {
+    "dairy_free": "Use dairy-free butter.",
+    "vegan": "Use dairy-free biscuit dough and vegan butter."
+  },
+  "notes": "Do not skip the 10-minute rest before inverting \u2014 the caramel needs to set slightly."
+}

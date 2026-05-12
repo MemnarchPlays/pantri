@@ -1,0 +1,43 @@
+{
+  "name": "Broccoli Cheddar Soup",
+  "meal_type": "Lunch",
+  "servings": 4,
+  "prep_time": "10 minutes",
+  "cook_time": "30 minutes",
+  "macros_per_serving": {
+    "calories": 380,
+    "protein_g": 18,
+    "carbs_g": 20,
+    "fat_g": 26
+  },
+  "ingredients": [
+    {"amount": "4 cups",   "item": "broccoli florets, chopped small", "store_section": "Produce"},
+    {"amount": "1 large",  "item": "onion, diced",                    "store_section": "Produce"},
+    {"amount": "3 cloves", "item": "garlic, minced",                  "store_section": "Produce"},
+    {"amount": "2 cups",   "item": "chicken broth",                   "store_section": "Pantry/Dry Goods"},
+    {"amount": "2 cups",   "item": "milk",                            "store_section": "Dairy/Eggs"},
+    {"amount": "1 cup",    "item": "heavy cream",                     "store_section": "Dairy/Eggs"},
+    {"amount": "2 cups",   "item": "sharp cheddar cheese, shredded",  "store_section": "Dairy/Eggs"},
+    {"amount": "4 tbsp",   "item": "butter",                          "store_section": "Dairy/Eggs"},
+    {"amount": "3 tbsp",   "item": "all-purpose flour",               "store_section": "Pantry/Dry Goods"},
+    {"amount": "1/2 tsp",  "item": "smoked paprika",                  "store_section": "Pantry/Dry Goods"},
+    {"amount": "to taste", "item": "salt and pepper",                 "store_section": "Pantry/Dry Goods"}
+  ],
+  "instructions": [
+    "Melt butter in a large pot over medium heat. Saute onion until soft, 5 minutes.",
+    "Add garlic and cook 1 minute.",
+    "Whisk in flour and cook 2 minutes to remove raw flour taste.",
+    "Slowly whisk in chicken broth, then milk and cream. Bring to a simmer.",
+    "Add broccoli and smoked paprika. Cook 15 minutes until broccoli is very tender.",
+    "Use an immersion blender to partially blend — leave some chunks for texture.",
+    "Reduce heat to low. Stir in cheddar a handful at a time until melted and smooth.",
+    "Season with salt and pepper. Serve with crusty bread."
+  ],
+  "substitutions": {
+    "dairy_free": "Use oat milk, coconut cream, dairy-free butter, and vegan cheddar.",
+    "gluten_free": "Replace flour with cornstarch (1.5 tbsp) and use gluten-free bread.",
+    "low_carb": "Skip the flour and thicken with 1 tsp xanthan gum instead.",
+    "vegan": "Use vegetable broth, oat milk, and vegan cheddar."
+  },
+  "notes": "Do not add cheese while boiling — it will go grainy. Keep heat low."
+}

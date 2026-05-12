@@ -1,0 +1,78 @@
+{
+  "name": "Cold Pasta Salad",
+  "meal_type": "Lunch",
+  "servings": 6,
+  "prep_time": "15 minutes",
+  "cook_time": "10 minutes",
+  "macros_per_serving": {
+    "calories": 380,
+    "protein_g": 14,
+    "carbs_g": 48,
+    "fat_g": 16
+  },
+  "ingredients": [
+    {
+      "amount": "1 lb",
+      "item": "rotini or penne pasta",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "4 oz",
+      "item": "salami, sliced into strips",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "1 cup",
+      "item": "black olives, sliced",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 cup",
+      "item": "mozzarella balls or cubed",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "pepperoncini, sliced",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "red onion, thinly sliced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "Italian dressing",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "grated parmesan",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "dried Italian seasoning",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Cook pasta according to package directions. Drain and rinse under cold water.",
+    "Combine pasta, salami, olives, mozzarella, pepperoncini, and red onion in a large bowl.",
+    "Pour Italian dressing over and toss to coat.",
+    "Add parmesan and Italian seasoning. Toss again.",
+    "Refrigerate at least 1 hour before serving. Toss again and adjust seasoning."
+  ],
+  "substitutions": {
+    "dairy_free": "Skip mozzarella and parmesan.",
+    "gluten_free": "Use gluten-free pasta.",
+    "vegetarian": "Skip salami and add artichoke hearts and extra olives."
+  },
+  "notes": "Gets better overnight as flavors meld. Add a splash more dressing before serving if it seems dry."
+}

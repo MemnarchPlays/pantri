@@ -1,0 +1,91 @@
+{
+  "name": "Chicken Tikka Masala",
+  "meal_type": "Dinner",
+  "servings": 4,
+  "prep_time": "20 minutes",
+  "cook_time": "35 minutes",
+  "macros_per_serving": {
+    "calories": 480,
+    "protein_g": 38,
+    "carbs_g": 28,
+    "fat_g": 22
+  },
+  "ingredients": [
+    {
+      "amount": "2 lbs",
+      "item": "chicken breast, cubed",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "1 cup",
+      "item": "plain yogurt",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 can",
+      "item": "crushed tomatoes (28 oz)",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 cup",
+      "item": "heavy cream",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 large",
+      "item": "onion, diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "4 cloves",
+      "item": "garlic, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "fresh ginger, grated",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "garam masala",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "cumin",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "paprika",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Marinate chicken in yogurt, half the garam masala, and salt for at least 30 minutes.",
+    "Broil marinated chicken 8-10 minutes until slightly charred. Set aside.",
+    "Melt butter in a large pan. Saute onion until golden, 8 minutes.",
+    "Add garlic and ginger. Cook 2 minutes.",
+    "Add remaining spices and cook 1 minute.",
+    "Pour in crushed tomatoes. Simmer 15 minutes.",
+    "Stir in cream and broiled chicken. Simmer 10 more minutes.",
+    "Serve over basmati rice with naan bread."
+  ],
+  "substitutions": {
+    "dairy_free": "Use coconut yogurt for the marinade and coconut cream instead of heavy cream.",
+    "gluten_free": "Already gluten-free \u2014 serve with rice instead of naan.",
+    "low_carb": "Skip the rice and naan, serve with cauliflower rice."
+  },
+  "notes": "The longer you marinate the chicken, the more flavorful it becomes."
+}

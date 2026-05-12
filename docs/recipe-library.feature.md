@@ -37,6 +37,10 @@ COMPLETE
 - Read-only browsing and viewing
 - Out of scope: recipe CRUD (see `recipe-management.feature.md`), can-make tab (see `can-i-make.feature.md`)
 
+## Known Bugs
+
+- ~~[BUG] Recipe library is empty on a fresh git clone.~~ FIXED — removed `data/*.json` from `.gitignore`; all 89 recipes are now tracked in git and present after a fresh clone.
+
 ## Files
 
 - `pantry_app.py` — `RECIPES_HTML`, `RECIPE_DETAIL_HTML`, routes `/recipes`, `/recipe/<slug>`

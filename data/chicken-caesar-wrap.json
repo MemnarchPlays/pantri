@@ -1,0 +1,68 @@
+{
+  "name": "Chicken Caesar Wrap",
+  "meal_type": "Lunch",
+  "servings": 2,
+  "prep_time": "10 minutes",
+  "cook_time": "15 minutes",
+  "macros_per_serving": {
+    "calories": 480,
+    "protein_g": 38,
+    "carbs_g": 42,
+    "fat_g": 16
+  },
+  "ingredients": [
+    {
+      "amount": "2",
+      "item": "chicken breasts",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "2 large",
+      "item": "flour tortillas",
+      "store_section": "Bakery"
+    },
+    {
+      "amount": "2 cups",
+      "item": "romaine lettuce, chopped",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "Caesar dressing",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "shredded parmesan",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "croutons",
+      "store_section": "Bakery"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "olive oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt, pepper, garlic powder",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Season chicken with salt, pepper, and garlic powder.",
+    "Heat olive oil in a skillet over medium-high heat. Cook chicken 6-7 minutes per side until cooked through.",
+    "Rest 5 minutes then slice thin.",
+    "Toss romaine with Caesar dressing and parmesan.",
+    "Lay tortilla flat. Add salad, chicken, and croutons down the center.",
+    "Fold sides in and roll tightly. Slice in half diagonally."
+  ],
+  "substitutions": {
+    "dairy_free": "Use dairy-free Caesar dressing and skip parmesan.",
+    "gluten_free": "Use gluten-free wrap and skip croutons.",
+    "low_carb": "Serve as a salad bowl instead of a wrap."
+  }
+}

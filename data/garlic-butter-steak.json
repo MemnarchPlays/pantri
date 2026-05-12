@@ -1,0 +1,60 @@
+{
+  "name": "Garlic Butter Steak",
+  "meal_type": "Dinner",
+  "servings": 2,
+  "prep_time": "5 minutes",
+  "cook_time": "15 minutes",
+  "macros_per_serving": {
+    "calories": 520,
+    "protein_g": 48,
+    "carbs_g": 4,
+    "fat_g": 34
+  },
+  "ingredients": [
+    {
+      "amount": "2",
+      "item": "ribeye or New York strip steaks (1-inch thick)",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "4 tbsp",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "4 cloves",
+      "item": "garlic, smashed",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "4 sprigs",
+      "item": "fresh thyme or rosemary",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "vegetable oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "coarse salt and black pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Take steaks out of fridge 30 minutes before cooking. Pat dry.",
+    "Season very generously with salt and pepper on both sides.",
+    "Heat oil in a cast iron skillet over high heat until smoking.",
+    "Sear steaks 3-4 minutes without moving. Flip and cook 3 more minutes.",
+    "Reduce heat to medium. Add butter, garlic, and herbs to pan.",
+    "Tilt pan and spoon melted butter over steaks continuously for 2 minutes.",
+    "Rest steaks 5 minutes before slicing."
+  ],
+  "substitutions": {
+    "dairy_free": "Use dairy-free butter or skip basting.",
+    "gluten_free": "Already gluten-free.",
+    "low_carb": "Already low-carb \u2014 serve with roasted vegetables."
+  },
+  "notes": "Do not skip the resting step. Slicing too early loses all the juices."
+}

@@ -1,0 +1,67 @@
+{
+  "name": "Overnight Oats",
+  "meal_type": "Breakfast",
+  "servings": 1,
+  "prep_time": "5 minutes",
+  "cook_time": "0 minutes",
+  "macros_per_serving": {
+    "calories": 420,
+    "protein_g": 15,
+    "carbs_g": 62,
+    "fat_g": 12
+  },
+  "ingredients": [
+    {
+      "amount": "1/2 cup",
+      "item": "rolled oats",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "milk",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "Greek yogurt",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "chia seeds",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "honey",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 tsp",
+      "item": "vanilla extract",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "mixed berries",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "peanut butter",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Combine oats, milk, yogurt, chia seeds, honey, and vanilla in a jar or bowl.",
+    "Stir well until fully mixed.",
+    "Cover and refrigerate overnight or at least 4 hours.",
+    "In the morning, stir and top with berries and peanut butter."
+  ],
+  "substitutions": {
+    "dairy_free": "Use almond or oat milk and coconut yogurt.",
+    "gluten_free": "Use certified gluten-free oats.",
+    "vegan": "Replace honey with maple syrup and use plant-based yogurt."
+  },
+  "notes": "Keeps in the fridge up to 3 days. Prep a week's worth on Sunday."
+}

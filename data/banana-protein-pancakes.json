@@ -1,0 +1,65 @@
+{
+  "name": "Banana Protein Pancakes",
+  "meal_type": "Breakfast",
+  "servings": 2,
+  "prep_time": "5 minutes",
+  "cook_time": "15 minutes",
+  "macros_per_serving": {
+    "calories": 380,
+    "protein_g": 28,
+    "carbs_g": 48,
+    "fat_g": 8
+  },
+  "ingredients": [
+    {
+      "amount": "2 large",
+      "item": "ripe bananas",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "2",
+      "item": "eggs",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 scoop",
+      "item": "vanilla protein powder",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "rolled oats",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "baking powder",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 tsp",
+      "item": "cinnamon",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tbsp",
+      "item": "coconut oil",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Mash bananas in a large bowl until smooth.",
+    "Add eggs, protein powder, oats, baking powder, and cinnamon. Mix well.",
+    "Heat coconut oil in a non-stick skillet over medium heat.",
+    "Pour 1/4 cup batter per pancake. Cook 2-3 minutes until bubbles form.",
+    "Flip and cook another 1-2 minutes until golden. Serve warm."
+  ],
+  "substitutions": {
+    "dairy_free": "Protein powder is already dairy-free if using plant-based variety.",
+    "gluten_free": "Use certified gluten-free oats.",
+    "low_carb": "Replace oats with 2 tbsp almond flour and reduce banana to 1.",
+    "vegan": "Replace eggs with 2 flax eggs (2 tbsp ground flax + 6 tbsp water)."
+  },
+  "notes": "Freeze extras between parchment paper for easy weekday breakfasts.",
+  "favorite": false
+}

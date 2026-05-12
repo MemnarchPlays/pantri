@@ -1,0 +1,84 @@
+{
+  "name": "Shrimp Scampi",
+  "meal_type": "Dinner",
+  "servings": 4,
+  "prep_time": "10 minutes",
+  "cook_time": "15 minutes",
+  "macros_per_serving": {
+    "calories": 480,
+    "protein_g": 32,
+    "carbs_g": 48,
+    "fat_g": 18
+  },
+  "ingredients": [
+    {
+      "amount": "1.5 lbs",
+      "item": "large shrimp, peeled and deveined",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "12 oz",
+      "item": "linguine pasta",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "6 cloves",
+      "item": "garlic, thinly sliced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "dry white wine",
+      "store_section": "Beverages"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "chicken broth",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "4 tbsp",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "3 tbsp",
+      "item": "olive oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 tsp",
+      "item": "red pepper flakes",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2",
+      "item": "lemon, juiced and zested",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "fresh parsley, chopped",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Cook linguine until al dente. Reserve 1 cup pasta water. Drain.",
+    "Heat olive oil in a large skillet over medium-high heat. Cook shrimp 1-2 minutes per side until pink. Remove.",
+    "Add garlic and red pepper flakes. Cook 1 minute.",
+    "Pour in wine and broth. Simmer 3 minutes.",
+    "Add butter and lemon juice. Swirl until butter melts.",
+    "Add pasta and toss, adding pasta water to loosen as needed.",
+    "Return shrimp. Toss and top with parsley and lemon zest."
+  ],
+  "substitutions": {
+    "dairy_free": "Replace butter with olive oil.",
+    "gluten_free": "Use gluten-free pasta.",
+    "low_carb": "Serve over zucchini noodles."
+  }
+}

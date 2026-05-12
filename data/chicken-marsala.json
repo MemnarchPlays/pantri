@@ -1,0 +1,85 @@
+{
+  "name": "Chicken Marsala",
+  "meal_type": "Dinner",
+  "servings": 4,
+  "prep_time": "10 minutes",
+  "cook_time": "25 minutes",
+  "macros_per_serving": {
+    "calories": 420,
+    "protein_g": 38,
+    "carbs_g": 18,
+    "fat_g": 20
+  },
+  "ingredients": [
+    {
+      "amount": "4",
+      "item": "chicken breasts, pounded thin",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "all-purpose flour",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "3/4 cup",
+      "item": "Marsala wine",
+      "store_section": "Beverages"
+    },
+    {
+      "amount": "1 cup",
+      "item": "chicken broth",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "heavy cream",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1 large",
+      "item": "onion, thinly sliced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "4 cloves",
+      "item": "garlic, minced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "3 tbsp",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "olive oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "fresh",
+      "item": "parsley for garnish",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Season chicken with salt and pepper. Dredge in flour, shaking off excess.",
+    "Heat oil in a large skillet over medium-high heat. Cook chicken 4-5 minutes per side until golden.",
+    "Remove chicken. Add butter, onion, and garlic to pan. Cook 5 minutes.",
+    "Pour in Marsala wine, scraping up browned bits. Simmer 3 minutes.",
+    "Add broth and cream. Simmer 8 minutes until sauce thickens.",
+    "Return chicken to pan and coat in sauce. Simmer 3 more minutes.",
+    "Garnish with parsley. Serve with mashed potatoes or pasta."
+  ],
+  "substitutions": {
+    "dairy_free": "Use dairy-free butter and coconut cream.",
+    "gluten_free": "Use rice flour for dredging and gluten-free pasta on the side.",
+    "low_carb": "Serve over cauliflower mash."
+  },
+  "notes": "Traditional Marsala uses mushrooms \u2014 swapped here for onion to keep the sauce rich."
+}

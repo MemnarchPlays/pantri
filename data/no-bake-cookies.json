@@ -1,0 +1,62 @@
+{
+  "name": "No-Bake Cookies",
+  "meal_type": "Desserts",
+  "servings": 24,
+  "prep_time": "5 minutes",
+  "cook_time": "10 minutes",
+  "macros_per_serving": {
+    "calories": 140,
+    "protein_g": 2.0,
+    "carbs_g": 20.0,
+    "fat_g": 6.0
+  },
+  "ingredients": [
+    {
+      "amount": "2 cups",
+      "item": "granulated sugar"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "butter"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "milk"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "unsweetened cocoa powder"
+    },
+    {
+      "amount": "3 cups",
+      "item": "quick oats"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "peanut butter"
+    },
+    {
+      "amount": "2 tsp",
+      "item": "vanilla extract"
+    },
+    {
+      "amount": "1/4 tsp",
+      "item": "salt"
+    }
+  ],
+  "instructions": [
+    "Line two baking sheets with parchment paper.",
+    "Combine sugar, butter, milk, and cocoa powder in a saucepan over medium heat.",
+    "Bring to a rolling boil, stirring constantly. Boil exactly 1 minute \u2014 no more.",
+    "Remove from heat. Quickly stir in peanut butter and vanilla until smooth.",
+    "Fold in oats and salt. Mix well.",
+    "Drop heaping tablespoons onto prepared baking sheets.",
+    "Let cool and set at room temperature, about 30 minutes. Do not refrigerate while setting."
+  ],
+  "substitutions": {
+    "dairy_free": "Use dairy-free butter and oat milk.",
+    "gluten_free": "Use certified gluten-free quick oats.",
+    "vegan": "Use dairy-free butter and plant milk."
+  },
+  "notes": "The 1-minute boil is critical \u2014 too short and they won't set, too long and they go crumbly."
+}

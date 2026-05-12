@@ -1,0 +1,39 @@
+{
+  "name": "Tomato Basil Soup",
+  "meal_type": "Lunch",
+  "servings": 4,
+  "prep_time": "10 minutes",
+  "cook_time": "30 minutes",
+  "macros_per_serving": {
+    "calories": 180,
+    "protein_g": 5,
+    "carbs_g": 22,
+    "fat_g": 8
+  },
+  "ingredients": [
+    {"amount": "2 cans",   "item": "whole peeled tomatoes (28 oz)", "store_section": "Pantry/Dry Goods"},
+    {"amount": "1 large",  "item": "onion, chopped",                "store_section": "Produce"},
+    {"amount": "4 cloves", "item": "garlic, minced",                "store_section": "Produce"},
+    {"amount": "2 cups",   "item": "chicken broth",                 "store_section": "Pantry/Dry Goods"},
+    {"amount": "1/2 cup",  "item": "heavy cream",                   "store_section": "Dairy/Eggs"},
+    {"amount": "1/4 cup",  "item": "fresh basil leaves",            "store_section": "Produce"},
+    {"amount": "2 tbsp",   "item": "olive oil",                     "store_section": "Pantry/Dry Goods"},
+    {"amount": "1 tsp",    "item": "sugar",                         "store_section": "Pantry/Dry Goods"},
+    {"amount": "to taste", "item": "salt and pepper",               "store_section": "Pantry/Dry Goods"}
+  ],
+  "instructions": [
+    "Heat olive oil in a large pot over medium heat. Saute onion until soft, 5 minutes.",
+    "Add garlic and cook 1 minute.",
+    "Add tomatoes with juice and chicken broth. Bring to a boil.",
+    "Reduce heat and simmer 20 minutes.",
+    "Use an immersion blender to blend until smooth.",
+    "Stir in heavy cream, basil, and sugar. Season with salt and pepper.",
+    "Simmer 5 more minutes. Serve with crusty bread."
+  ],
+  "substitutions": {
+    "dairy_free": "Replace heavy cream with full-fat coconut milk.",
+    "gluten_free": "Already gluten-free — skip the bread.",
+    "vegan": "Use vegetable broth and coconut milk instead of chicken broth and cream.",
+    "low_carb": "Skip the sugar and bread, serve as-is."
+  }
+}

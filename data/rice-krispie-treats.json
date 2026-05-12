@@ -1,0 +1,55 @@
+{
+  "name": "Rice Krispie Treats",
+  "meal_type": "Desserts",
+  "servings": 16,
+  "prep_time": "5 minutes",
+  "cook_time": "10 minutes",
+  "macros_per_serving": {
+    "calories": 160,
+    "protein_g": 1,
+    "carbs_g": 30,
+    "fat_g": 5
+  },
+  "ingredients": [
+    {
+      "amount": "6 cups",
+      "item": "Rice Krispies cereal",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "4 tbsp",
+      "item": "butter",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "10 oz",
+      "item": "mini marshmallows",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "vanilla extract",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/4 tsp",
+      "item": "salt",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Grease a 9x13 inch pan with butter.",
+    "Melt butter in a large pot over low heat.",
+    "Add marshmallows and stir until completely melted. Remove from heat.",
+    "Stir in vanilla and salt.",
+    "Add Rice Krispies and fold until fully coated.",
+    "Press mixture firmly into prepared pan using a buttered spatula.",
+    "Let cool 30 minutes before cutting into squares."
+  ],
+  "substitutions": {
+    "dairy_free": "Use dairy-free butter.",
+    "gluten_free": "Already gluten-free.",
+    "vegan": "Use vegan butter and vegan marshmallows."
+  },
+  "notes": "Use low heat and don't overcook \u2014 brown butter makes them chewy instead of gooey."
+}

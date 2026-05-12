@@ -30,7 +30,7 @@ On a fresh clone, `state/` and `backups/` do not exist. Any write operation that
 |------|--------|-------|
 | `Food in Storage.xlsx` | Copy from existing machine | All pantry data; must be present before app starts or xlsx ops will fail |
 | `.env` | Create from template or copy | Discord token, port, backup config; app starts without it (defaults used) |
-| `data/*.json` | Copy from existing machine or add via UI | Recipes; app runs without them but recipe features are empty |
+| `data/*.json` | Tracked in git — present after `git clone` | Recipes; app runs without them but recipe features are empty |
 
 ---
 

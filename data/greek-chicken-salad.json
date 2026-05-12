@@ -1,0 +1,78 @@
+{
+  "name": "Greek Chicken Salad",
+  "meal_type": "Lunch",
+  "servings": 2,
+  "prep_time": "10 minutes",
+  "cook_time": "15 minutes",
+  "macros_per_serving": {
+    "calories": 380,
+    "protein_g": 35,
+    "carbs_g": 12,
+    "fat_g": 22
+  },
+  "ingredients": [
+    {
+      "amount": "2",
+      "item": "chicken breasts",
+      "store_section": "Meat/Seafood"
+    },
+    {
+      "amount": "4 cups",
+      "item": "romaine lettuce, chopped",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1",
+      "item": "cucumber, diced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "kalamata olives",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1/2 cup",
+      "item": "feta cheese, crumbled",
+      "store_section": "Dairy/Eggs"
+    },
+    {
+      "amount": "1/4 cup",
+      "item": "red onion, thinly sliced",
+      "store_section": "Produce"
+    },
+    {
+      "amount": "3 tbsp",
+      "item": "olive oil",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "2 tbsp",
+      "item": "red wine vinegar",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "1 tsp",
+      "item": "dried oregano",
+      "store_section": "Pantry/Dry Goods"
+    },
+    {
+      "amount": "to taste",
+      "item": "salt and pepper",
+      "store_section": "Pantry/Dry Goods"
+    }
+  ],
+  "instructions": [
+    "Season chicken with salt, pepper, and oregano.",
+    "Cook in a skillet with 1 tbsp olive oil over medium-high heat, 6-7 minutes per side.",
+    "Rest 5 minutes then slice.",
+    "Whisk together remaining olive oil, red wine vinegar, oregano, salt, and pepper.",
+    "Combine lettuce, tomatoes, cucumber, olives, feta, and red onion in a large bowl.",
+    "Top with sliced chicken and drizzle with dressing."
+  ],
+  "substitutions": {
+    "dairy_free": "Skip feta or use a dairy-free alternative.",
+    "gluten_free": "Already gluten-free.",
+    "vegan": "Replace chicken with chickpeas and skip feta."
+  }
+}
