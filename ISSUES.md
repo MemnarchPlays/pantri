@@ -20,6 +20,9 @@ Open bugs and tech debt. Use `/t` to investigate and fix a bug, `/w` to review t
 ### ~~[BUG-004] All writes fail on Linux — missing directories~~ FIXED
 - **Root cause:** `state/` and `backups/` are gitignored and were never auto-created. All `save_*` functions wrote directly into these paths; on a fresh clone they raised `FileNotFoundError`. Fixed by adding `STATE_DIR.mkdir(parents=True, exist_ok=True)` in `pantri/state.py` and `STATE_DIR.mkdir` + `BACKUP_DIR.mkdir` in `pantri/backup.py`. Deployment flow doc created at `docs/deployment.flow.md`.
 
+### ~~[BUG-005] Bulk-add always writes to "End Hall Closet" regardless of selected location~~ FIXED
+- **Root cause:** The bulk-add location `<select>` was missing the `selected` attribute on `<option>` tags, so the browser always defaulted to the first xlsx sheet ("End Hall Closet"). The single-item form already had this correct. Fixed by adding `{% if default_location == l %}selected{% endif %}` to the bulk-add dropdown in `templates/inventory.html`.
+
 ---
 
 ## Tech Debt
