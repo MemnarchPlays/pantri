@@ -6,21 +6,37 @@ A personal pantry tracker with a web UI, Discord bot, and PDF recipe binder. Tra
 
 ## Requirements
 
-- Python 3.10+
-- Windows, macOS, or Linux
+- Python 3.10+ **or** Docker
 
 ---
 
 ## Setup
 
-### 1. Clone the repo
+### Option A — Docker (recommended)
+
+```bash
+git clone https://github.com/MemnarchPlays/pantri.git
+cd pantri
+docker compose up --build
+```
+
+The app starts at **http://localhost:5000**. All data is stored in a Docker named volume (`pantri_userdata`) so it persists across restarts and rebuilds.
+
+To run on a different port:
+```bash
+PORT=8080 docker compose up
+```
+
+### Option B — Python directly
+
+#### 1. Clone the repo
 
 ```bash
 git clone https://github.com/MemnarchPlays/pantri.git
 cd pantri
 ```
 
-### 2. Start the app
+#### 2. Start the app
 
 The launchers install dependencies automatically on every run.
 
@@ -42,7 +58,7 @@ python pantry_app.py
 
 The app opens at **http://localhost:5000** automatically.
 
-> The first time you run it, the pantry file (`Food in Storage.xlsx`) is created automatically.
+> The first time you run it, a default pantry file is created automatically with generic storage locations (Pantry, Fridge, Freezer, Cabinet). You can add your own locations from **Settings → Locations**.
 
 ---
 
@@ -173,9 +189,13 @@ pantri/              — Flask app package
   bot.py             — Discord bot subprocess management
   routes/            — Flask blueprints (inventory, recipes, shopping, settings)
 templates/           — Jinja2 HTML templates
-data/                — recipe JSON files (~90 recipes)
+starter-recipes/     — bundled starter recipe JSON files (~89 recipes)
+data/                — your recipe library, gitignored (populated at runtime)
+seed/                — default-config.zip, baked into Docker image for first-run restore
 state/               — runtime state, gitignored (shopping list, units, exclusions)
 backups/             — timestamped zip backups, gitignored
+Dockerfile           — single-stage Python image
+docker-compose.yml   — compose config with named volume
 pantry_utils.py      — shared constants and helpers
 pdf_utils.py         — shared PDF colors and canvas
 generate_pdf.py      — recipe binder PDF generator
@@ -192,6 +212,9 @@ discord_bot.py       — Discord bot
 - `state/` — shopping list, units, exclusions, backup counter (gitignored)
 - `backups/` — timestamped zip backups (gitignored)
 - `.env` — your tokens and config (gitignored)
-- `data/*.json` — recipe files, tracked in git
+- `data/*.json` — your recipe library (gitignored; populated at runtime)
+- `starter-recipes/*.json` — bundled starter recipes (tracked in git, never modified at runtime)
+
+**Docker:** all user data lives in the `pantri_userdata` named volume. The image itself contains no personal data.
 
 Nothing is sent anywhere except Discord API calls if you use the bot.
