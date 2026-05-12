@@ -26,6 +26,14 @@ Open bugs and tech debt. Use `/t` to investigate and fix a bug, `/w` to review t
 
 ---
 
+### [BUG-007] Theme color sample text does not update in real-time
+- **What breaks:** On Settings → Appearance, the sample text only reflects the new color after clicking Apply. Changing the color picker has no visible effect until Apply is clicked.
+- **Criterion violated:** `docs/appearance.feature.md` — "Sample text updates in real-time as the color is changed"
+- **Look first:** `templates/settings.html` — color picker `input[type=color]` is missing an `oninput` handler to update the sample preview.
+- **Flow doc:** None — flag for `/t` to create before fixing.
+
+---
+
 ## Tech Debt
 
 _(none recorded yet)_
