@@ -9,10 +9,8 @@ Open bugs and tech debt. Use `/t` to investigate and fix a bug, `/w` to review t
 ### ~~[BUG-001] Minimums page shows "in stock" instead of correct stock status~~ FIXED
 - **Root cause:** The "In Stock" column was an Exclusions toggle (not a stock status indicator). The label "In Stock" appeared on every row making it look like a stock report. Renamed to "Always On Hand" throughout `templates/settings.html`.
 
-### [BUG-002] `MINIMUMS_HTML` is dead code
-- **What breaks:** `MINIMUMS_HTML` template is defined but never rendered; the `/minimums` route just redirects to `/settings?tab=minimums`.
-- **Criterion violated:** `stock-minimums.feature.md` Known Bugs entry.
-- **Look here first:** `pantry_app.py` ~line 765 (`MINIMUMS_HTML` definition) and the `/minimums` redirect route.
+### ~~[BUG-002] `MINIMUMS_HTML` is dead code~~ FIXED
+- **Root cause:** These dead template strings (`MINIMUMS_HTML`, `ADD_PAGE_HTML`, `CAN_MAKE_HTML`, `RESTOCK_HTML`) were eliminated by the blueprint refactor — they never existed in the `pantri/` package. The bug entries in the feature docs referenced the old monolith (`pantry_app.py`) which was replaced. No code change needed; docs updated to reflect reality.
 
 ### ~~[BUG-003] "Always On Hand" toggle on Minimums tab does not update on click~~ FIXED
 - **Root cause:** Button had no `type="button"`, defaulting to `type="submit"`. The `<form class="qty-form">` inside the adjacent `<td>` is foster-parented by the browser, and in some browsers the button was treated as a submit trigger for that form — submitting to `/minimums/set` instead of firing the JS fetch. Also simplified fetch URL away from `url_for`+replace pattern; added `.catch()` for error visibility. Fix in `templates/settings.html`.

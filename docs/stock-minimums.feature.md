@@ -39,7 +39,7 @@ COMPLETE
 
 ## Known Bugs
 
-- [BUG] `MINIMUMS_HTML` template (~80 lines, `pantry_app.py:765`) is dead code — it is defined but never rendered. The `/minimums` route redirects to `/settings?tab=minimums` which uses `SETTINGS_HTML`. **Fixed when:** `MINIMUMS_HTML` is deleted and the `/minimums` redirect route is removed with no change in observable behavior.
+- ~~[BUG] `MINIMUMS_HTML` dead code.~~ FIXED — never existed in the blueprint refactor; was only in the archived monolith.
 - ~~[BUG] The Minimums page displays "in stock" for items instead of the expected status.~~ FIXED — Renamed the Exclusions toggle column from "In Stock" to "Always On Hand" in `templates/settings.html` (column header, button label, and JS update).
 
 ## Files

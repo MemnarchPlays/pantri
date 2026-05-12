@@ -47,4 +47,4 @@ COMPLETE
 
 ## Known Bugs
 
-- [BUG] `CAN_MAKE_HTML` template (~65 lines, `pantry_app.py:698`) is dead code — it is defined but never rendered. The `/can-make` route redirects to `/recipes?tab=canmake` which uses `RECIPES_HTML`. **Fixed when:** `CAN_MAKE_HTML` is deleted from `pantry_app.py` and the `/can-make` redirect route is also removed with no change in observable behavior.
+- ~~[BUG] `CAN_MAKE_HTML` dead code.~~ FIXED — never existed in the blueprint refactor; was only in the archived monolith.

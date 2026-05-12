@@ -46,7 +46,7 @@ COMPLETE
 
 ## Known Bugs
 
-- [BUG] `RESTOCK_HTML` template (~30 lines, `pantry_app.py:1832`) is dead code — it is defined but never rendered. The `/restock` route redirects to `/shopping` which uses `SHOPPING_HTML`. **Fixed when:** `RESTOCK_HTML` is deleted and the `/restock` redirect route is removed with no change in observable behavior.
+- ~~[BUG] `RESTOCK_HTML` dead code.~~ FIXED — never existed in the blueprint refactor; was only in the archived monolith.
 
 ## Files
 
