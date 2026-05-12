@@ -30,9 +30,12 @@ def load_wb():
 
 def save_wb(wb):
     from pantri.backup import backup_wb  # lazy import to avoid circular dependency
-    backup_wb()
     dedup_workbook(wb)
     wb.save(XLSX)
+    try:
+        backup_wb()
+    except Exception:
+        pass
 
 
 def dedup_workbook(wb):
