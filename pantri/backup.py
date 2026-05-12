@@ -8,8 +8,10 @@ from pathlib import Path
 from pantry_utils import XLSX, DATA_DIR, read_env
 
 STATE_DIR         = Path(__file__).parent.parent / 'state'
+STATE_DIR.mkdir(parents=True, exist_ok=True)
 BACKUP_STATE_FILE = STATE_DIR / 'backup_state.json'
 BACKUP_DIR        = Path(__file__).parent.parent / 'backups'
+BACKUP_DIR.mkdir(parents=True, exist_ok=True)
 
 # These mirror state.py paths — used in zip backup
 UNITS_FILE      = STATE_DIR / 'units.json'

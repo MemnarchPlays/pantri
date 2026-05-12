@@ -33,6 +33,10 @@ COMPLETE
 - [x] Exclusion skip in `shopping_list_add_recipe` route
 - [x] Out-of-stock exclusions card in Shopping page
 
+## Known Bugs
+
+- ~~[BUG] The "Always On Hand" toggle button on the Minimums tab does not update visually when clicked.~~ FIXED — Added `type="button"` to the button (was defaulting to `type="submit"`, hijacked by adjacent foster-parented form). Simplified fetch URL; added `.catch()`. Fix in `templates/settings.html`.
+
 ## Scope
 
 - Name-based fuzzy matching (contains/contained-by) for exclusion checks

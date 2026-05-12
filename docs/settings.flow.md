@@ -73,3 +73,5 @@ description: User configures locations, minimums, exclusions, Discord bot, and b
 | Location delete: sheet has items | Delete button not shown; instructional message shown instead |
 | Bot start: no token set | `start_bot()` returns False silently; bot stays offline |
 | Backup restore: file not in backups/ dir | Redirect without action (path traversal guard) |
+| Always On Hand toggle: fetch fails (server error) | Button shows "Error — try again"; exclusion state unchanged |
+| Always On Hand button near `<form>` in same table row | Button must have `type="button"` to prevent form hijack; foster-parented `<form>` inside `<td>` can capture adjacent buttons in some browsers |

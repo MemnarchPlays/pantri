@@ -195,7 +195,7 @@
                   </td>
                   <td class="text-muted small">{{ m.type or '—' }}</td>
                   <td>
-                    <button class="btn btn-sm exclude-btn {% if m.item | lower in excluded_names %}btn-success{% else %}btn-outline-secondary{% endif %}"
+                    <button type="button" class="btn btn-sm exclude-btn {% if m.item | lower in excluded_names %}btn-success{% else %}btn-outline-secondary{% endif %}"
                             data-item="{{ m.item }}"
                             data-excluded="{{ 'true' if m.item | lower in excluded_names else 'false' }}">
                       {% if m.item | lower in excluded_names %}✓ Always On Hand{% else %}Always On Hand{% endif %}
@@ -705,7 +705,7 @@ loadBotLog();
 document.querySelectorAll('.exclude-btn').forEach(function(btn) {
   btn.addEventListener('click', function() {
     var item = this.dataset.item;
-    fetch('{{ url_for("settings.exclusions_toggle", name="__ITEM__") }}'.replace('__ITEM__', encodeURIComponent(item)), {method: 'POST'})
+    fetch('/exclusions/toggle/' + encodeURIComponent(item), {method: 'POST'})
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.excluded) {
@@ -717,6 +717,9 @@ document.querySelectorAll('.exclude-btn').forEach(function(btn) {
           btn.textContent = 'Always On Hand';
           btn.dataset.excluded = 'false';
         }
+      })
+      .catch(function() {
+        btn.textContent = 'Error — try again';
       });
   });
 });

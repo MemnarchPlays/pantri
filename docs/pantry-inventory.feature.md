@@ -44,6 +44,7 @@ COMPLETE
 ## Known Bugs
 
 - [BUG] `ADD_PAGE_HTML` template (~80 lines, `pantry_app.py:618`) is dead code — it is defined but never rendered. The `/add` GET route redirects to `/?tab=add`; add forms live inside `INDEX_HTML`. **Fixed when:** `ADD_PAGE_HTML` is deleted from `pantry_app.py` with no change in observable behavior.
+- ~~[BUG] **SYSTEMIC — Linux only.** All write operations fail on a fresh Linux install.~~ FIXED — `STATE_DIR.mkdir` added to `pantri/state.py`; `STATE_DIR.mkdir` + `BACKUP_DIR.mkdir` added to `pantri/backup.py`. Deployment guide at `docs/deployment.flow.md`.
 
 ## Files
 

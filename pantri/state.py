@@ -5,6 +5,7 @@ from pathlib import Path
 from pantry_utils import XLSX, EXCLUDE_SHEETS
 
 STATE_DIR          = Path(__file__).parent.parent / 'state'
+STATE_DIR.mkdir(parents=True, exist_ok=True)
 SHOPPING_LIST_FILE = STATE_DIR / 'shopping_list.json'
 EXCLUSIONS_FILE    = STATE_DIR / 'exclusions.json'
 UNITS_FILE         = STATE_DIR / 'units.json'
