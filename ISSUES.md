@@ -57,6 +57,16 @@ Open bugs and tech debt. Use `/t` to investigate and fix a bug, `/w` to review t
 
 ---
 
+### ~~[BUG-011] HTTP 500 Internal Server Error on deployed app (ad.jarremy.xyz)~~ FIXED
+- **What breaks:** Navigating to the deployed Pantri app at ad.jarremy.xyz returns "Internal Server Error — the server encountered an internal error and was unable to complete your request." All pages affected.
+- **Criterion violated:** `docs/pantry-inventory.feature.md` — app must return a 200 and render the inventory page at `/`.
+- **Look first:** `pantri/routes/settings.py`, `templates/base.html`, `templates/settings.html` — all have uncommitted modifications; likely a syntax or import error introduced during minimums inline click-to-edit work (post-commit 50befc8).
+- **Root cause:** `seed/default-config.zip` contained a corrupt `Food in Storage.xlsx` (bad CRC-32 on `xl/workbook.xml`). `restore_default_if_needed()` extracted it on first run — the outer zip was valid so no extraction error, but openpyxl failed to open the inner xlsx. `load_wb()` had no error handling so every request crashed.
+- **Fix:** `load_wb()` now catches any xlsx read exception, deletes the corrupt file, and recreates a blank workbook. `seed/default-config.zip` regenerated with a valid minimal xlsx.
+- **Deploy:** Push to main triggers CI → `docker compose pull && docker compose up -d` on 10.0.0.34 to pick up the new image.
+
+---
+
 ## Tech Debt
 
 _(none recorded yet)_

@@ -25,7 +25,13 @@ def get_location_sheets():
 
 def load_wb():
     init_wb()
-    return load_workbook(XLSX)
+    try:
+        return load_workbook(XLSX)
+    except Exception:
+        # xlsx exists but is unreadable (e.g. corrupt seed on first run) — delete and recreate blank
+        XLSX.unlink(missing_ok=True)
+        init_wb()
+        return load_workbook(XLSX)
 
 
 def save_wb(wb):

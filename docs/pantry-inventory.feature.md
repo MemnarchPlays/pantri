@@ -43,6 +43,8 @@ COMPLETE
 
 ## Known Bugs
 
+- ~~[BUG] **BUG-011 — HTTP 500 Internal Server Error on the deployed app (ad.jarremy.xyz)**~~ FIXED — `seed/default-config.zip` contained a corrupt xlsx (bad CRC-32 on `xl/workbook.xml`); openpyxl crashed on every request. Fixed in `pantri/db.py:load_wb()` (now recovers from corrupt file) and seed zip regenerated.
+
 - ~~[BUG] Bulk-add always writes to "End Hall Closet" regardless of which location the user selects in the form.~~ FIXED — bulk-add `<select>` was missing `selected` attribute; added `{% if default_location == l %}selected{% endif %}` in `templates/inventory.html`.
 - ~~[BUG] `ADD_PAGE_HTML` dead code.~~ FIXED — never existed in the blueprint refactor; was only in the archived monolith.
 - ~~[BUG] **SYSTEMIC — Linux only.** All write operations fail on a fresh Linux install.~~ FIXED — `STATE_DIR.mkdir` added to `pantri/state.py`; `STATE_DIR.mkdir` + `BACKUP_DIR.mkdir` added to `pantri/backup.py`. Deployment guide at `docs/deployment.flow.md`.
