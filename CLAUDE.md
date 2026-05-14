@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Start here
+
+On session start, read in this order:
+1. **This file** — stack, commands, architecture
+2. **`.claude/current-feature`** (if present) — what this session is working on
+3. **`docs/<feature>.feature.md`** — success criteria for the current feature
+4. **`docs/<feature>.flow.md`** — pipeline trace for the affected area
+5. **`ISSUES.md`** — open bugs and tech debt (`/t` to fix, `/w` to review)
+
 ## Running the app
 
 ```bash
@@ -80,3 +89,16 @@ Both `generate_pdf.py` and `shopping_list.py` use ReportLab with a shared purple
 | `BACKUP_MAX` | `10` | Max number of timestamped backups to keep in `backups/` |
 
 Backups are timestamped copies of the xlsx written to `backups/` (gitignored). The web app Settings page exposes a UI for all of these.
+
+### Known issues
+
+`ISSUES.md` at the repo root tracks open bugs and tech debt. Use `/b` to record a new bug, `/t` to investigate and fix one, `/w` to review the list.
+
+## Plugin Enforcement
+
+Feature docs (`docs/*.feature.md`) are required for any non-trivial change.
+
+- Before implementing a feature or fix, verify a feature doc exists in `docs/`. If not, create one with `/b` (bugs) or manually.
+- The feature doc's **Success Criteria** define what "done" means — a feature is complete when all criteria are checkmarked.
+- Flow docs (`docs/*.flow.md`) trace the pipeline for the affected area. Read the relevant one before editing routes, backup logic, or data flow.
+- Enforcement mode: `warn` (see `.claude/feature-doc-mode`)
