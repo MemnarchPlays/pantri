@@ -26,21 +26,21 @@ IN PROGRESS
 
 ### Progress
 
-- [ ] Add Bootstrap JS bundle `<script>` to `BASE_HTML`
-- [ ] Add hamburger toggler `<button>` to navbar in `BASE_HTML`
-- [ ] Wrap `navbar-nav` in `navbar-collapse collapse` div
-- [ ] Audit all `<table>` elements — add `table-responsive` wrapper where missing
-- [ ] Audit form inputs for font-size < 16px — add mobile CSS override
-- [ ] Audit buttons for tap target height — add `min-height` mobile CSS if needed
+- [x] Bootstrap JS bundle already present in `templates/base.html` (was already loaded)
+- [x] Add hamburger toggler `<button>` to navbar in `templates/base.html`
+- [x] Wrap `navbar-nav` in `navbar-collapse collapse` div; add `navbar-dark` for white icon
+- [x] All `<table>` elements already wrapped in `table-responsive` across all templates
+- [x] Add `@media (max-width:767px)` — `font-size:16px !important` on inputs/selects/textareas
+- [x] Add `@media (max-width:767px)` — `min-height:44px` on `.btn`
 - [ ] Manual test at 375px width: navbar, shopping, inventory, recipes, recipe detail, settings
 
 ## Scope
 
-- Changes confined to `BASE_HTML` and inline HTML template strings in `pantry_app.py`
+- Changes confined to `templates/base.html` (blueprint refactor moved templates out of pantry_app.py)
 - No layout redesign — Bootstrap grid already handles column stacking; this fixes the navbar JS gap and specific overflow issues
 - Out of scope: dark mode, PWA/offline support, native app
 
 ## Files
 
-- `pantry_app.py` — `BASE_HTML` (navbar fix, JS bundle, mobile CSS) + table wrappers in template strings
-- `mobile-layout.flow.md` — flow doc
+- `templates/base.html` — navbar hamburger toggle, `navbar-dark`, collapse div, mobile CSS (`@media` block)
+- `docs/mobile-layout.flow.md` — flow doc

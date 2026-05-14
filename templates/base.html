@@ -33,6 +33,10 @@
   .instruction-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: flex-start; }
   .instruction-row span { padding-top: 8px; font-weight: bold; color: var(--purple); min-width: 24px; }
   .instruction-row textarea { flex: 1; }
+  @media (max-width: 767px) {
+    .btn { min-height: 44px; }
+    input, select, textarea { font-size: 16px !important; }
+  }
 </style>
 <script>
 (function() {
@@ -74,14 +78,20 @@
 </script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg mb-4">
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
   <div class="container">
     <a class="navbar-brand" href="{{ url_for('inventory.index') }}">Pantri</a>
-    <div class="navbar-nav ms-auto">
-      <a class="nav-link" href="{{ url_for('inventory.index') }}">Inventory</a>
-      <a class="nav-link" href="{{ url_for('recipes.recipes') }}">Recipes</a>
-      <a class="nav-link" href="{{ url_for('shopping.shopping') }}">Shopping</a>
-      <a class="nav-link" href="{{ url_for('settings.settings') }}">⚙ Settings</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav"
+            aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="main-nav">
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="{{ url_for('inventory.index') }}">Inventory</a>
+        <a class="nav-link" href="{{ url_for('recipes.recipes') }}">Recipes</a>
+        <a class="nav-link" href="{{ url_for('shopping.shopping') }}">Shopping</a>
+        <a class="nav-link" href="{{ url_for('settings.settings') }}">⚙ Settings</a>
+      </div>
     </div>
   </div>
 </nav>
