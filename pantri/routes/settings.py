@@ -223,6 +223,18 @@ def types_add():
     return redirect(url_for('settings.settings', tab='lists'))
 
 
+@bp.route('/types/rename', methods=['POST'])
+def types_rename():
+    old_name = request.form.get('old_name', '').strip()
+    new_name = request.form.get('new_name', '').strip()
+    if old_name and new_name and old_name.lower() != new_name.lower():
+        types = load_types()
+        if new_name.lower() not in [t.lower() for t in types if t.lower() != old_name.lower()]:
+            types = [new_name if t.lower() == old_name.lower() else t for t in types]
+            save_types(types)
+    return redirect(url_for('settings.settings', tab='lists'))
+
+
 @bp.route('/types/delete/<type_name>')
 def types_delete(type_name):
     types = [t for t in load_types() if t.lower() != type_name.lower()]

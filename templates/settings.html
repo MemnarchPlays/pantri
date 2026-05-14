@@ -130,7 +130,17 @@
                 {% for t in types %}
                 <tr data-type="{{ t }}">
                   <td class="text-muted" style="cursor:grab;user-select:none;font-size:1.1rem">&#9776;</td>
-                  <td><strong>{{ t }}</strong></td>
+                  <td>
+                    <span class="type-name-display" style="cursor:pointer" title="Click to rename">{{ t }}</span>
+                    <form class="type-rename-form d-none" method="post" action="{{ url_for('settings.types_rename') }}" style="display:inline">
+                      <input type="hidden" name="old_name" value="{{ t }}">
+                      <div class="input-group input-group-sm">
+                        <input type="text" name="new_name" class="form-control form-control-sm" value="{{ t }}" maxlength="60" required>
+                        <button type="submit" class="btn btn-sm btn-success">✓</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary type-rename-cancel">✕</button>
+                      </div>
+                    </form>
+                  </td>
                   <td>
                     <a href="{{ url_for('settings.types_delete', type_name=t) }}" class="btn btn-sm btn-outline-danger"
                        onclick="return confirm('Delete type {{ t }}?')">Del</a>
@@ -836,6 +846,22 @@ document.querySelectorAll('.type-cancel').forEach(btn => {
       }
     });
   }
+
+  document.querySelectorAll('.type-name-display').forEach(function(span) {
+    span.addEventListener('click', function() {
+      var form = span.nextElementSibling;
+      span.classList.add('d-none');
+      form.classList.remove('d-none');
+      form.querySelector('input[name="new_name"]').focus();
+    });
+  });
+  document.querySelectorAll('.type-rename-cancel').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var form = btn.closest('form');
+      form.classList.add('d-none');
+      form.previousElementSibling.classList.remove('d-none');
+    });
+  });
 
   var typeBody = document.getElementById('types-sortable');
   if (typeBody) {
