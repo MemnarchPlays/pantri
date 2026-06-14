@@ -33,6 +33,20 @@
   .instruction-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: flex-start; }
   .instruction-row span { padding-top: 8px; font-weight: bold; color: var(--purple); min-width: 24px; }
   .instruction-row textarea { flex: 1; }
+  @media (max-width: 991.98px) {
+    .navbar-collapse {
+      background: var(--dark-purple);
+      border-radius: 0 0 10px 10px;
+      margin-top: 8px;
+      padding: 4px 0 8px;
+    }
+    .navbar-collapse .nav-link {
+      padding: 13px 20px !important;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      font-size: 1.05rem;
+    }
+    .navbar-collapse .nav-link:last-child { border-bottom: none; }
+  }
   @media (max-width: 767.98px) {
     input:not([type=checkbox]):not([type=radio]), select, textarea { font-size: 16px !important; }
     .btn { min-height: 44px; }
