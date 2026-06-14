@@ -1,4 +1,5 @@
 data/*.json
+data/images/
 output/
 backups/
 __pycache__/

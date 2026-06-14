@@ -5,7 +5,8 @@ import json
 import re
 import shutil
 from pathlib import Path
-from flask import Blueprint, request, redirect, url_for, render_template, jsonify, send_file
+from flask import Blueprint, request, redirect, url_for, render_template, jsonify, send_file, send_from_directory, abort
+from werkzeug.utils import secure_filename
 from pantry_utils import DATA_DIR, MEAL_TYPES, EXCLUDE_SHEETS
 from pantri.db import load_wb, save_wb, get_all_rows
 from pantri.state import load_exclusions
@@ -13,6 +14,20 @@ from pantri.state import load_exclusions
 bp = Blueprint('recipes', __name__)
 
 STARTER_DIR = Path(__file__).parent.parent.parent / 'starter-recipes'
+IMAGES_DIR = DATA_DIR / 'images'
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
+
+
+def _allowed_image(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@bp.route('/recipe-images/<slug>/<filename>')
+def recipe_image(slug, filename):
+    img_dir = IMAGES_DIR / slug
+    if not img_dir.is_dir():
+        abort(404)
+    return send_from_directory(str(img_dir), filename)
 
 
 @bp.route('/recipes')
@@ -267,12 +282,26 @@ def recipe_add():
 
         DATA_DIR.mkdir(exist_ok=True)
         slug = re.sub(r"[^a-z0-9]+", '-', name.lower()).strip('-')
+
+        photos = []
+        for f in request.files.getlist('photos'):
+            if f and f.filename:
+                if not _allowed_image(f.filename):
+                    abort(400, f"'{f.filename}' is not an allowed image type. Accepted: jpg, jpeg, png, gif, webp.")
+                fname = secure_filename(f.filename)
+                img_dir = IMAGES_DIR / slug
+                img_dir.mkdir(parents=True, exist_ok=True)
+                f.save(str(img_dir / fname))
+                photos.append(fname)
+        if photos:
+            recipe['photos'] = photos
+
         (DATA_DIR / f'{slug}.json').write_text(json.dumps(recipe, indent=2), encoding='utf-8')
         return redirect(url_for('recipes.recipes'))
 
     rv = {'name':'','meal_type':'','servings':4,'prep_time':'','cook_time':'',
           'calories':'','protein':'','carbs':'','fat':'','notes':'',
-          'ingredients':[],'instructions':[],
+          'ingredients':[],'instructions':[],'photos':[],
           'sub_dairy_free':'','sub_gluten_free':'','sub_vegan':'','sub_vegetarian':'','sub_low_carb':''}
     return render_template('recipe_add.html', meal_types=MEAL_TYPES, rv=rv,
                            page_title='Add Recipe', edit_mode=False)
@@ -369,6 +398,9 @@ def recipe_delete(slug):
     path = DATA_DIR / f'{slug}.json'
     if path.exists():
         path.unlink()
+    img_dir = IMAGES_DIR / slug
+    if img_dir.exists():
+        shutil.rmtree(img_dir)
     return redirect(url_for('recipes.recipes'))
 
 
@@ -379,6 +411,9 @@ def recipe_edit(slug):
         return redirect(url_for('recipes.recipes'))
 
     if request.method == 'POST':
+        existing_for_photos = json.load(open(path, encoding='utf-8'))
+        old_photos = existing_for_photos.get('photos', [])
+
         name      = request.form.get('name', '').strip()
         meal_type = request.form.get('meal_type', '')
         servings  = int(request.form.get('servings') or 1)
@@ -418,10 +453,39 @@ def recipe_edit(slug):
         if notes:
             recipe['notes'] = notes
 
-        # If name changed, rename the file
         new_slug = re.sub(r"[^a-z0-9]+", '-', name.lower()).strip('-')
+
+        # Delete photos the user removed
+        kept_photos = request.form.getlist('existing_photo[]')
+        for fname in [p for p in old_photos if p not in kept_photos]:
+            old_file = IMAGES_DIR / slug / fname
+            if old_file.exists():
+                old_file.unlink()
+
+        # Handle new uploads into current slug directory (before any rename)
+        new_photos = []
+        for f in request.files.getlist('photos'):
+            if f and f.filename:
+                if not _allowed_image(f.filename):
+                    abort(400, f"'{f.filename}' is not an allowed image type. Accepted: jpg, jpeg, png, gif, webp.")
+                fname = secure_filename(f.filename)
+                img_dir = IMAGES_DIR / slug
+                img_dir.mkdir(parents=True, exist_ok=True)
+                f.save(str(img_dir / fname))
+                new_photos.append(fname)
+
+        all_photos = kept_photos + new_photos
+        if all_photos:
+            recipe['photos'] = all_photos
+
+        # If name changed, rename the JSON file and image folder
         if new_slug != slug:
+            old_img_dir = IMAGES_DIR / slug
+            new_img_dir = IMAGES_DIR / new_slug
+            if old_img_dir.exists():
+                old_img_dir.rename(new_img_dir)
             path.unlink()
+
         (DATA_DIR / f'{new_slug}.json').write_text(json.dumps(recipe, indent=2), encoding='utf-8')
         return redirect(url_for('recipes.recipe_detail', slug=new_slug))
 
@@ -441,6 +505,7 @@ def recipe_edit(slug):
         'notes':      existing.get('notes', ''),
         'ingredients':   existing.get('ingredients', []),
         'instructions':  existing.get('instructions', []),
+        'photos':        existing.get('photos', []),
         'sub_dairy_free':  subs.get('dairy_free', ''),
         'sub_gluten_free': subs.get('gluten_free', ''),
         'sub_vegan':       subs.get('vegan', ''),
@@ -448,7 +513,7 @@ def recipe_edit(slug):
         'sub_low_carb':    subs.get('low_carb', ''),
     }
     return render_template('recipe_add.html', meal_types=MEAL_TYPES, rv=rv,
-                           page_title=f'Edit: {rv["name"]}', edit_mode=True)
+                           page_title=f'Edit: {rv["name"]}', edit_mode=True, slug=slug)
 
 
 @bp.route('/recipes/download-pdf')
@@ -481,6 +546,8 @@ def recipes_delete_all():
     if DATA_DIR.exists():
         for f in DATA_DIR.glob('*.json'):
             f.unlink()
+    if IMAGES_DIR.exists():
+        shutil.rmtree(IMAGES_DIR)
     return redirect(url_for('recipes.recipes'))
 
 

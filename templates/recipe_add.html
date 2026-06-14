@@ -20,7 +20,7 @@
 <div class="card mt-3">
   <div class="card-header">{{ page_title }}</div>
   <div class="card-body">
-    <form method="post" id="recipeForm">
+    <form method="post" enctype="multipart/form-data" id="recipeForm">
 
       <div class="row g-3 mb-3">
         <div class="col-md-6">
@@ -149,6 +149,34 @@
         <textarea name="notes" class="form-control" rows="2">{{ rv.notes }}</textarea>
       </div>
 
+      <div class="card mb-3">
+        <div class="card-header" style="background:#f3eaf8;color:#4A1E6B;">Photos (optional)</div>
+        <div class="card-body">
+          {% if edit_mode and rv.photos %}
+          <div class="mb-3">
+            <label class="form-label fw-bold">Current Photos</label>
+            <div class="d-flex flex-wrap gap-3" id="existing-photos">
+              {% for fname in rv.photos %}
+              <div class="photo-item text-center" id="existing-{{ loop.index }}">
+                <img src="{{ url_for('recipes.recipe_image', slug=slug, filename=fname) }}"
+                     style="width:120px;height:90px;object-fit:cover;border-radius:4px;border:1px solid #ddd;"
+                     loading="lazy">
+                <input type="hidden" name="existing_photo[]" value="{{ fname }}">
+                <br>
+                <button type="button" class="btn btn-outline-danger btn-sm mt-1"
+                        onclick="removeExistingPhoto(this)">Remove</button>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          <label class="form-label fw-bold">Add Photos</label>
+          <input type="file" name="photos" class="form-control" multiple
+                 accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
+          <div class="form-text text-muted">Accepted: jpg, jpeg, png, gif, webp</div>
+        </div>
+      </div>
+
       <div class="d-flex gap-2">
         <button type="submit" class="btn btn-primary px-4">Save Recipe</button>
         <a href="{{ url_for('recipes.recipes') }}" class="btn btn-outline-secondary">Cancel</a>
@@ -178,6 +206,13 @@ function addInstruction(text='') {
     <textarea class="form-control" name="instruction[]" rows="2" placeholder="Step ${num}...">${text.replace(/</g,'&lt;')}</textarea>
     <button type="button" class="btn btn-outline-danger btn-sm mt-1" onclick="removeRow(this)">✕</button>`;
   container.appendChild(row);
+}
+function removeExistingPhoto(btn) {
+  const item = btn.closest('.photo-item');
+  item.querySelector('input[name="existing_photo[]"]').remove();
+  item.querySelector('img').style.filter = 'grayscale(100%) opacity(40%)';
+  btn.textContent = 'Removed';
+  btn.disabled = true;
 }
 function removeRow(btn) {
   btn.closest('.ingredient-row, .instruction-row').remove();
