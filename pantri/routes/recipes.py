@@ -214,6 +214,15 @@ def recipe_import():
         amount, item = parse_ingredient(str(ing))
         ingredients.append({'amount': amount, 'item': item})
 
+    def extract_image_url(image):
+        if not image:
+            return ''
+        if isinstance(image, list):
+            image = image[0] if image else ''
+        if isinstance(image, dict):
+            return image.get('url', '')
+        return str(image)
+
     result = {
         'name':         recipe_data.get('name', '').strip(),
         'meal_type':    meal_type,
@@ -227,6 +236,7 @@ def recipe_import():
         'ingredients':  ingredients,
         'instructions': parse_instructions(recipe_data.get('recipeInstructions', [])),
         'notes':        (recipe_data.get('description') or '').strip(),
+        'image_url':    extract_image_url(recipe_data.get('image')),
     }
     return json.dumps(result), 200, {'Content-Type': 'application/json'}
 
@@ -284,6 +294,32 @@ def recipe_add():
         slug = re.sub(r"[^a-z0-9]+", '-', name.lower()).strip('-')
 
         photos = []
+
+        import_image_url = request.form.get('import_image_url', '').strip()
+        if import_image_url:
+            try:
+                import requests as _req
+                _headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+                _ir = _req.get(import_image_url, headers=_headers, timeout=10)
+                _ir.raise_for_status()
+                _ct = _ir.headers.get('Content-Type', '').split(';')[0].strip()
+                _ext_map = {'image/jpeg': 'jpg', 'image/jpg': 'jpg', 'image/png': 'png',
+                            'image/gif': 'gif', 'image/webp': 'webp'}
+                _ext = _ext_map.get(_ct, '')
+                if not _ext:
+                    _stem = import_image_url.split('?')[0]
+                    _ue = _stem.rsplit('.', 1)[-1].lower() if '.' in _stem else ''
+                    if _ue in ALLOWED_EXTENSIONS:
+                        _ext = _ue
+                if _ext:
+                    _idir = IMAGES_DIR / slug
+                    _idir.mkdir(parents=True, exist_ok=True)
+                    _fname = f'imported.{_ext}'
+                    (_idir / _fname).write_bytes(_ir.content)
+                    photos.append(_fname)
+            except Exception:
+                pass
+
         for f in request.files.getlist('photos'):
             if f and f.filename:
                 if not _allowed_image(f.filename):

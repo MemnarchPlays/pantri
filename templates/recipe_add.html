@@ -12,7 +12,10 @@
       <button type="button" id="import-btn" class="btn btn-primary px-4" onclick="importFromUrl()">Import</button>
     </div>
     <div id="import-error" class="text-danger small mt-2 d-none"></div>
-    <div id="import-success" class="text-success small mt-2 d-none">✅ Recipe imported — review the fields below and save.</div>
+    <div id="import-success" class="mt-2 d-none d-flex align-items-center gap-2">
+      <span class="text-success small">✅ Recipe imported — review the fields below and save.</span>
+      <img id="import-photo-preview" src="" style="height:56px;border-radius:4px;border:1px solid #ddd;display:none;">
+    </div>
   </div>
 </div>
 {% endif %}
@@ -171,9 +174,10 @@
           </div>
           {% endif %}
           <label class="form-label fw-bold">Add Photos</label>
+          <input type="hidden" name="import_image_url" id="import-image-url">
           <input type="file" name="photos" class="form-control" multiple
                  accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
-          <div class="form-text text-muted">Accepted: jpg, jpeg, png, gif, webp</div>
+          <div class="form-text text-muted">Accepted: jpg, jpeg, png, gif, webp. Photos from URL import are saved automatically.</div>
         </div>
       </div>
 
@@ -257,6 +261,16 @@ async function importFromUrl() {
     (data.instructions || []).forEach(s => addInstruction(s));
     if (!(data.instructions || []).length) addInstruction();
 
+    const preview = document.getElementById('import-photo-preview');
+    const imgUrlInput = document.getElementById('import-image-url');
+    if (data.image_url) {
+      imgUrlInput.value = data.image_url;
+      preview.src = data.image_url;
+      preview.style.display = '';
+    } else {
+      imgUrlInput.value = '';
+      preview.style.display = 'none';
+    }
     okEl.classList.remove('d-none');
     window.scrollTo(0, 0);
   } catch(e) {
