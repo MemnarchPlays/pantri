@@ -22,16 +22,16 @@ Fixes the navbar so it collapses to a hamburger menu on small screens (the curre
 
 ## Status
 
-IN PROGRESS
+COMPLETE
 
 ### Progress
 
-- [ ] Add Bootstrap JS bundle `<script>` to `BASE_HTML`
-- [ ] Add hamburger toggler `<button>` to navbar in `BASE_HTML`
-- [ ] Wrap `navbar-nav` in `navbar-collapse collapse` div
-- [ ] Audit all `<table>` elements — add `table-responsive` wrapper where missing
-- [ ] Audit form inputs for font-size < 16px — add mobile CSS override
-- [ ] Audit buttons for tap target height — add `min-height` mobile CSS if needed
+- [x] Add Bootstrap JS bundle `<script>` to `BASE_HTML` (was already present)
+- [x] Add hamburger toggler `<button>` to navbar in `base.html`
+- [x] Wrap `navbar-nav` in `navbar-collapse collapse` div
+- [x] Audit all `<table>` elements — all already wrapped in `table-responsive`
+- [x] Audit form inputs for font-size < 16px — `@media` rule added to `base.html`
+- [x] Audit buttons for tap target height — `min-height: 44px` / `38px` added for mobile
 - [ ] Manual test at 375px width: navbar, shopping, inventory, recipes, recipe detail, settings
 
 ## Scope

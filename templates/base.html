@@ -33,6 +33,12 @@
   .instruction-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: flex-start; }
   .instruction-row span { padding-top: 8px; font-weight: bold; color: var(--purple); min-width: 24px; }
   .instruction-row textarea { flex: 1; }
+  @media (max-width: 767.98px) {
+    input:not([type=checkbox]):not([type=radio]), select, textarea { font-size: 16px !important; }
+    .btn { min-height: 44px; }
+    .btn-sm { min-height: 38px; }
+    .navbar-toggler-icon { filter: invert(1); }
+  }
 </style>
 <script>
 (function() {
@@ -77,11 +83,18 @@
 <nav class="navbar navbar-expand-lg mb-4">
   <div class="container">
     <a class="navbar-brand" href="{{ url_for('inventory.index') }}">Pantri</a>
-    <div class="navbar-nav ms-auto">
-      <a class="nav-link" href="{{ url_for('inventory.index') }}">Inventory</a>
-      <a class="nav-link" href="{{ url_for('recipes.recipes') }}">Recipes</a>
-      <a class="nav-link" href="{{ url_for('shopping.shopping') }}">Shopping</a>
-      <a class="nav-link" href="{{ url_for('settings.settings') }}">⚙ Settings</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+            aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation"
+            style="border-color:rgba(255,255,255,.5);">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="{{ url_for('inventory.index') }}">Inventory</a>
+        <a class="nav-link" href="{{ url_for('recipes.recipes') }}">Recipes</a>
+        <a class="nav-link" href="{{ url_for('shopping.shopping') }}">Shopping</a>
+        <a class="nav-link" href="{{ url_for('settings.settings') }}">⚙ Settings</a>
+      </div>
     </div>
   </div>
 </nav>
