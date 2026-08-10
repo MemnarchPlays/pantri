@@ -33,9 +33,25 @@
   .instruction-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: flex-start; }
   .instruction-row span { padding-top: 8px; font-weight: bold; color: var(--purple); min-width: 24px; }
   .instruction-row textarea { flex: 1; }
-  @media (max-width: 767px) {
+  @media (max-width: 991.98px) {
+    .navbar-collapse {
+      background: var(--dark-purple);
+      border-radius: 0 0 10px 10px;
+      margin-top: 8px;
+      padding: 4px 0 8px;
+    }
+    .navbar-collapse .nav-link {
+      padding: 13px 20px !important;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      font-size: 1.05rem;
+    }
+    .navbar-collapse .nav-link:last-child { border-bottom: none; }
+  }
+  @media (max-width: 767.98px) {
+    input:not([type=checkbox]):not([type=radio]), select, textarea { font-size: 16px !important; }
     .btn { min-height: 44px; }
-    input, select, textarea { font-size: 16px !important; }
+    .btn-sm { min-height: 38px; }
+    .navbar-toggler-icon { filter: invert(1); }
   }
 </style>
 <script>
@@ -78,14 +94,15 @@
 </script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark mb-4">
+<nav class="navbar navbar-expand-lg mb-4">
   <div class="container">
     <a class="navbar-brand" href="{{ url_for('inventory.index') }}">Pantri</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav"
-            aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+            aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation"
+            style="border-color:rgba(255,255,255,.5);">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="main-nav">
+    <div class="collapse navbar-collapse" id="navMenu">
       <div class="navbar-nav ms-auto">
         <a class="nav-link" href="{{ url_for('inventory.index') }}">Inventory</a>
         <a class="nav-link" href="{{ url_for('recipes.recipes') }}">Recipes</a>

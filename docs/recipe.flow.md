@@ -27,9 +27,18 @@ description: User browses, views, adds, edits, deletes, imports, and uses recipe
 | 1 | Clicks "+ Add Recipe" | Navigates to `/recipe/add`; blank form with URL import panel |
 | 2 | Pastes a recipe URL and clicks "Import" | JS `fetch('/recipe/import?url=…')` — server scrapes schema.org JSON-LD, returns parsed fields |
 | 3 | Form pre-fills with imported data | User reviews and adjusts before saving |
-| 4 | Submits form | POST to `/recipe/add`; writes `data/<slug>.json`, redirects to library |
-| 5 | Clicks "Edit Recipe" on detail page | Navigates to `/recipe/edit/<slug>`; same form pre-populated |
-| 6 | Saves edit | POST to `/recipe/edit/<slug>`; overwrites JSON; if name changed, old file is deleted and new slug used; redirects to detail |
+| 4 | (Optional) Selects one or more image files via "Add Photos" file input | Multiple file input; accepts jpg, jpeg, png, gif, webp |
+| 5 | Submits form | POST to `/recipe/add`; writes `data/<slug>.json`; saves uploaded images to `data/images/<slug>/`; stores relative paths in JSON `photos` array; redirects to library |
+| 6 | Clicks "Edit Recipe" on detail page | Navigates to `/recipe/edit/<slug>`; same form pre-populated; existing photos listed with delete buttons |
+| 7 | Deletes an existing photo | JS confirm; DELETE/POST removes file from disk and from JSON `photos` array |
+| 8 | Saves edit | POST to `/recipe/edit/<slug>`; overwrites JSON; new uploads appended; if name changed, old file/folder deleted and new slug used; redirects to detail |
+
+## Step table — Detail page photos
+
+| Step | What the user sees | What the system does |
+|------|--------------------|----------------------|
+| 1 | Views recipe detail page for a recipe with photos | Photos rendered in a gallery section above the ingredient list |
+| 2 | Views recipe with no photos | No photo section rendered — graceful omission |
 
 ## Step table — Delete
 

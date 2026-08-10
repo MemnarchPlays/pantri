@@ -72,6 +72,21 @@
     </div>
     {% endif %}
 
+    {% if recipe.photos %}
+    <div class="mb-4">
+      <h5 style="color:#4A1E6B;">Photos</h5>
+      <div class="d-flex flex-wrap gap-3">
+        {% for fname in recipe.photos %}
+        <a href="{{ url_for('recipes.recipe_image', slug=slug, filename=fname) }}" target="_blank">
+          <img src="{{ url_for('recipes.recipe_image', slug=slug, filename=fname) }}"
+               style="width:160px;height:120px;object-fit:cover;border-radius:6px;border:1px solid #E8D5F0;"
+               loading="lazy">
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
     <div class="row g-4">
       <div class="col-md-5">
         <h5 style="color:#4A1E6B;">Ingredients</h5>
